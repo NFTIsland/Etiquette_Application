@@ -1,0 +1,113 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+
+class More extends StatefulWidget{//More에서 구현할 화면
+  State createState() =>_More();
+}
+
+class _More extends State<More>{
+  List <String> Option = ['Application Guide', 'Notice', '1:1 Customer Service', 'FAQ', 'Setting'];
+  Widget build(BuildContext context){
+    return Scaffold(
+        appBar : AppBar(title : Text("More"), backgroundColor : Colors.white24, foregroundColor: Colors.black, elevation : 0,
+          actions: <Widget>[
+           IconButton(icon : Icon(Icons.notifications), onPressed : (){}),
+           IconButton(icon : Icon(Icons.search), onPressed : (){})
+         ],
+        ),
+        // 왼쪽 위 부가 메뉴버튼을 단순 ListView에서 Drawer 사용하여 슬라이드로
+        drawer: Drawer(
+          child: ListView(padding: EdgeInsets.all(10), children: [
+            UserAccountsDrawerHeader(
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white24,
+                backgroundImage: AssetImage('assets/mainlogo.png'),
+              ),
+              accountName: Text('guest1', style: TextStyle(color: Colors.black),),
+              accountEmail: Text('a1234@naver.com', style: TextStyle(color: Colors.black),),
+              decoration: BoxDecoration(
+                color: Colors.white24,
+              ),
+            ),
+            ListTile(
+              title: Text('Wallet'),
+              onTap: () {
+                Navigator.pop(context); // 네비게이션 필요
+              },
+              trailing: Icon(Icons.add),
+            ),
+            ListTile(
+              title: Text('List of holding tickets'),
+              onTap: () {
+                Navigator.pop(context); // 네비게이션 필요
+              },
+              trailing: Icon(Icons.add),
+            ),
+            ListTile(
+              title: Text('Interest Tickets'),
+              onTap: () {
+                Navigator.pop(context); // 네비게이션 필요
+              },
+              trailing: Icon(Icons.add),
+            ),
+            ListTile(
+              title: Text('Bid Tickets'),
+              onTap: () {
+                Navigator.pop(context); // 네비게이션 필요
+              },
+              trailing: Icon(Icons.add),
+            ),
+            ListTile(
+              title: Text('Selling Tickets'),
+              onTap: () {
+                Navigator.pop(context); // 네비게이션 필요
+              },
+              trailing: Icon(Icons.add),
+            ),
+            ListTile(
+              title: Text('List of used tickets'),
+              onTap: () {
+                Navigator.pop(context); // 네비게이션 필요
+              },
+              trailing: Icon(Icons.add),
+            ),
+          ]),
+        ),
+        body : Column(
+        children : <Widget>[
+          Expanded( child : SingleChildScrollView(
+          child : Container(
+            child : Column(
+              children : <Widget>[
+                ListView.builder(
+                  physics : const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: Option.length,
+                  itemBuilder: (BuildContext context, int index){
+                    return InkWell(
+                        onTap : (){},
+                        child :Container(
+                          padding : EdgeInsets.fromLTRB(18,25,0,0),
+                        child : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                        children : <Widget> [
+                          (
+                              Text(Option[index], textAlign: TextAlign.start, style : TextStyle(fontSize : 20, ))
+                          ),
+                          Padding(padding : EdgeInsets.only(bottom : 25)),
+                          //Divider(thickness: 1,)
+                ]
+                )
+                    )
+                    );
+                }
+                )
+              ]
+            )
+          )
+        ))]
+        )
+    );
+  }
+}
