@@ -1,7 +1,11 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-
+import 'Wallet.dart';
+import 'Bid.dart';
+import 'Interest.dart';
+import 'Selling.dart';
+import 'Hold.dart';
+import 'Used.dart';
 class More extends StatefulWidget{//More에서 구현할 화면
   State createState() =>_More();
 }
@@ -22,7 +26,7 @@ class _More extends State<More>{
             UserAccountsDrawerHeader(
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white24,
-                backgroundImage: AssetImage('assets/mainlogo.png'),
+                backgroundImage: AssetImage('assets/image/mainlogo.png'),
               ),
               accountName: Text('guest1', style: TextStyle(color: Colors.black),),
               accountEmail: Text('a1234@naver.com', style: TextStyle(color: Colors.black),),
@@ -33,44 +37,44 @@ class _More extends State<More>{
             ListTile(
               title: Text('Wallet'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Wallet())); // 네비게이션 필요
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
             ListTile(
               title: Text('List of holding tickets'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Hold())); // 네비게이션 필요
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
             ListTile(
               title: Text('Interest Tickets'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Interest())); // 네비게이션 필요
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
             ListTile(
               title: Text('Bid Tickets'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Bid())); // 네비게이션 필요
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
             ListTile(
               title: Text('Selling Tickets'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Selling())); // 네비게이션 필요
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
             ListTile(
               title: Text('List of used tickets'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Used())); // 네비게이션 필요
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
           ]),
         ),

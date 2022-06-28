@@ -1,7 +1,12 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-
+import 'Wallet.dart';
+import 'Bid.dart';
+import 'Interest.dart';
+import 'Selling.dart';
+import 'Hold.dart';
+import 'Used.dart';
+import 'Search.dart';
 class Home extends StatefulWidget {
   State createState() => _Home();
 }
@@ -23,7 +28,7 @@ class _Home extends State<Home> {
               IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () {
-                  print("아직 미구현!");
+                  Navigator.push(context, MaterialPageRoute(builder : (context) => Search()));
                 },
               )
             ]),
@@ -33,7 +38,7 @@ class _Home extends State<Home> {
             UserAccountsDrawerHeader(
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white24,
-                backgroundImage: AssetImage('assets/mainlogo.png'),
+                backgroundImage: AssetImage('assets/image/mainlogo.png'),
               ),
               accountName: Text('guest1', style: TextStyle(color: Colors.black),),
               accountEmail: Text('a1234@naver.com', style: TextStyle(color: Colors.black),),
@@ -44,44 +49,44 @@ class _Home extends State<Home> {
             ListTile(
               title: Text('Wallet'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Wallet())); // 네비게이션 필요
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
             ListTile(
               title: Text('List of holding tickets'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Hold())); // 네비게이션 필요
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
             ListTile(
               title: Text('Interest Tickets'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Interest()));
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
             ListTile(
               title: Text('Bid Tickets'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Bid()));
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
             ListTile(
               title: Text('Selling Tickets'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Selling()));
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
             ListTile(
               title: Text('List of used tickets'),
               onTap: () {
-                Navigator.pop(context); // 네비게이션 필요
+                Navigator.push(context, MaterialPageRoute(builder : (context) => Used()));
               },
-              trailing: Icon(Icons.add),
+              //trailing: Icon(Icons.add),
             ),
           ]),
         ),
@@ -109,6 +114,7 @@ class _Home extends State<Home> {
               //아직 뭘 가져올 수가 없어서 그냥 300정도의 공간 설정
             ])
           ])))),
+          /*
           Container(
               //버튼 만들 공간 근데 이렇게 하면 왠지 버튼 가로 축 라인을 다 차지할 거 같은 느낌이...?
               alignment: Alignment.bottomRight,
@@ -124,7 +130,7 @@ class _Home extends State<Home> {
                           borderRadius: BorderRadius.circular(30)),
                       //적당히 둥글게 설정
                       minimumSize: Size(50, 40) //최소 크기 설정
-                      ))),
+                      ))),*/
         ]));
   }
 }
