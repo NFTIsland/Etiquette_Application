@@ -6,17 +6,68 @@ import 'Interest.dart';
 import 'Selling.dart';
 import 'Hold.dart';
 import 'Used.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class More extends StatefulWidget{//More에서 구현할 화면
   State createState() =>_More();
 }
 
 class _More extends State<More>{
   List <String> Option = ['Application Guide', 'Notice', '1:1 Customer Service', 'FAQ', 'Setting'];
+  bool ala = true;
+  var img = Icon(Icons.notifications);
+
+  void _setData(bool value) async{
+    var key = 'ala';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setBool(key, value);
+  }
+  void _loadData() async{
+    var key = 'ala';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState((){
+      var value = pref.getBool(key);
+      if(value != null){
+        ala = value;
+        if(ala == true){
+          img = Icon(Icons.notifications);
+        }
+        else{
+          img = Icon(Icons.notifications_none);
+        }
+      }
+    });
+  }
+
+  void initState(){
+    super.initState();
+    _loadData();
+  }
+
   Widget build(BuildContext context){
     return Scaffold(
         appBar : AppBar(title : Text("More"), backgroundColor : Colors.white24, foregroundColor: Colors.black, elevation : 0,
           actions: <Widget>[
-           IconButton(icon : Icon(Icons.notifications), onPressed : (){}),
+            Container(
+                child : IconButton(
+                  icon: img,
+                  onPressed: () {
+                    if(ala == true){
+                      ala = false;
+                      setState(() {
+                        img = Icon(Icons.notifications_none);
+                      });
+                      _setData(ala);
+                    }
+                    else{
+                      ala = true;
+                      setState(() {
+                        img = Icon(Icons.notifications);
+                      });
+                      _setData(ala);
+                    }
+                  },
+                )),
            IconButton(icon : Icon(Icons.search), onPressed : (){})
          ],
         ),

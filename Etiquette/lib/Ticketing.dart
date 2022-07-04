@@ -5,20 +5,68 @@ import 'Interest.dart';
 import 'Selling.dart';
 import 'Hold.dart';
 import 'Used.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class Ticketing extends StatefulWidget{
   State createState() =>_Ticketing();
 }
 
 class _Ticketing extends State<Ticketing>{
+  bool ala = true;
+  var img = Icon(Icons.notifications);
+
+  void _setData(bool value) async{
+    var key = 'ala';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setBool(key, value);
+  }
+  void _loadData() async{
+    var key = 'ala';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState((){
+      var value = pref.getBool(key);
+      if(value != null){
+        ala = value;
+        if(ala == true){
+          img = Icon(Icons.notifications);
+        }
+        else{
+          img = Icon(Icons.notifications_none);
+        }
+      }
+    });
+  }
+
+  void initState(){
+    super.initState();
+    _loadData();
+  }
+
   Widget build(BuildContext context){
     return Scaffold(
         appBar : AppBar(title : Text("Ticketing"), backgroundColor: Colors.white24,//티켓팅이 title인 appbar 생성
             foregroundColor: Colors.black, elevation: 0,
             actions : <Widget>[
-              IconButton(
-                icon : Icon(Icons.notifications,),
-                onPressed: (){},
-              ),
+              Container(
+                  child : IconButton(
+                    icon: img,
+                    onPressed: () {
+                      if(ala == true){
+                        ala = false;
+                        setState(() {
+                          img = Icon(Icons.notifications_none);
+                        });
+                        _setData(ala);
+                      }
+                      else{
+                        ala = true;
+                        setState(() {
+                          img = Icon(Icons.notifications);
+                        });
+                        _setData(ala);
+                      }
+                    },
+                  )),
               IconButton(
                 icon : Icon(Icons.search,),
                 onPressed: (){print("아직 미구현!");},

@@ -7,11 +7,43 @@ import 'Selling.dart';
 import 'Hold.dart';
 import 'Used.dart';
 import 'Search.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class Home extends StatefulWidget {
   State createState() => _Home();
 }
 
 class _Home extends State<Home> {
+  bool ala = true;
+  var img = Icon(Icons.notifications);
+
+  void _setData(bool value) async{
+    var key = 'ala';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setBool(key, value);
+  }
+  void _loadData() async{
+    var key = 'ala';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState((){
+      var value = pref.getBool(key);
+      if(value != null){
+        ala = value;
+        if(ala == true){
+          img = Icon(Icons.notifications);
+        }
+        else{
+          img = Icon(Icons.notifications_none);
+        }
+      }
+    });
+  }
+
+  void initState(){
+    super.initState();
+    _loadData();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -21,10 +53,26 @@ class _Home extends State<Home> {
             elevation: 0,
             //elevation은 떠보이는 느낌 설정하는 것, 0이면 뜨는 느낌 없음, foreground는 글자 색 변경
             actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.notifications),
-                onPressed: () {},
-              ),
+              Container(
+              child : IconButton(
+                icon: img,
+                onPressed: () {
+                  if(ala == true){
+                    ala = false;
+                    setState(() {
+                      img = Icon(Icons.notifications_none);
+                    });
+                    _setData(ala);
+                  }
+                  else{
+                    ala = true;
+                    setState(() {
+                      img = Icon(Icons.notifications);
+                    });
+                    _setData(ala);
+                  }
+                },
+              )),
               IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () {
