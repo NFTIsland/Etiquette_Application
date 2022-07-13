@@ -6,6 +6,8 @@ import 'Interest.dart';
 import 'Selling.dart';
 import 'Hold.dart';
 import 'Used.dart';
+import 'Setting.dart';
+import 'Search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class More extends StatefulWidget{//More에서 구현할 화면
@@ -68,7 +70,7 @@ class _More extends State<More>{
                     }
                   },
                 )),
-           IconButton(icon : Icon(Icons.search), onPressed : (){})
+           IconButton(icon : Icon(Icons.search), onPressed : (){Navigator.push(context, MaterialPageRoute(builder : (context) => Search()));})
          ],
         ),
         // 왼쪽 위 부가 메뉴버튼을 단순 ListView에서 Drawer 사용하여 슬라이드로
@@ -129,39 +131,41 @@ class _More extends State<More>{
             ),
           ]),
         ),
-        body : Column(
-        children : <Widget>[
-          Expanded( child : SingleChildScrollView(
-          child : Container(
-            child : Column(
-              children : <Widget>[
-                ListView.builder(
-                  physics : const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: Option.length,
-                  itemBuilder: (BuildContext context, int index){
-                    return InkWell(
-                        onTap : (){},
-                        child :Container(
-                          padding : EdgeInsets.fromLTRB(18,25,0,0),
-                        child : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                        children : <Widget> [
-                          (
-                              Text(Option[index], textAlign: TextAlign.start, style : TextStyle(fontSize : 20, ))
-                          ),
-                          Padding(padding : EdgeInsets.only(bottom : 25)),
-                          //Divider(thickness: 1,)
-                ]
-                )
-                    )
-                    );
-                }
-                )
-              ]
-            )
-          )
-        ))]
+        body : ListView(
+            padding : EdgeInsets.only(left : 10),
+            children : <Widget>[
+
+              ListTile(
+                  title : Text("Application Guide", style : TextStyle(fontSize: 20)),
+                  onTap : (){
+
+                  }
+              ),
+              ListTile(
+                  title : Text("Notice", style : TextStyle(fontSize: 20)),
+                  onTap : (){
+
+                  }
+              ),
+              ListTile(
+                  title : Text("1:1 Customer Service", style : TextStyle(fontSize: 20)),
+                  onTap : (){
+
+                  }
+              ),
+              ListTile(
+                  title : Text("FAQ", style : TextStyle(fontSize: 20)),
+                  onTap : (){
+
+                  }
+              ),
+              ListTile(
+                  title : Text("Setting", style : TextStyle(fontSize: 20)),
+                  onTap : (){
+                    Navigator.push(context, MaterialPageRoute(builder : (context) => Setting()));
+                  }
+              ),
+            ]
         )
     );
   }

@@ -6,9 +6,7 @@ import "Ticketing.dart";
 
 class Tabb extends StatefulWidget{
 const Tabb({Key? key}) : super(key: key);
-
 State<StatefulWidget> createState() => _Tab();
-
 }
 
 class _Tab extends State<Tabb>

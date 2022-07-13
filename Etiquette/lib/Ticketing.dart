@@ -5,6 +5,7 @@ import 'Interest.dart';
 import 'Selling.dart';
 import 'Hold.dart';
 import 'Used.dart';
+import 'Search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Ticketing extends StatefulWidget{
@@ -69,7 +70,7 @@ class _Ticketing extends State<Ticketing>{
                   )),
               IconButton(
                 icon : Icon(Icons.search,),
-                onPressed: (){print("아직 미구현!");},
+                onPressed: (){Navigator.push(context, MaterialPageRoute(builder : (context) => Search()));},
               )
             ]
         ),

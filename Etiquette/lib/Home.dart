@@ -14,7 +14,6 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
-  bool ala = true;
   var img = Icon(Icons.notifications);
 
   void _setData(bool value) async{
@@ -28,17 +27,23 @@ class _Home extends State<Home> {
     setState((){
       var value = pref.getBool(key);
       if(value != null){
-        ala = value;
-        if(ala == true){
+        if(value == true){
           img = Icon(Icons.notifications);
         }
         else{
           img = Icon(Icons.notifications_none);
         }
       }
+      else{
+        _setData(true);
+      }
     });
   }
-
+  get() async{
+    var key = 'ala';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getBool(key);
+  }
   void initState(){
     super.initState();
     _loadData();
@@ -57,19 +62,19 @@ class _Home extends State<Home> {
               child : IconButton(
                 icon: img,
                 onPressed: () {
-                  if(ala == true){
-                    ala = false;
+                  if(get() == true){
                     setState(() {
                       img = Icon(Icons.notifications_none);
+                      _setData(false);
                     });
-                    _setData(ala);
+
                   }
                   else{
-                    ala = true;
                     setState(() {
                       img = Icon(Icons.notifications);
+                      _setData(true);
                     });
-                    _setData(ala);
+
                   }
                 },
               )),

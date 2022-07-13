@@ -5,6 +5,7 @@ import 'Interest.dart';
 import 'Selling.dart';
 import 'Hold.dart';
 import 'Used.dart';
+import 'Search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Market extends StatefulWidget{
@@ -12,7 +13,6 @@ class Market extends StatefulWidget{
 }
 
 class _Market extends State<Market>{
-  bool ala = true;
   var img = Icon(Icons.notifications);
 
   void _setData(bool value) async{
@@ -26,8 +26,7 @@ class _Market extends State<Market>{
     setState((){
       var value = pref.getBool(key);
       if(value != null){
-        ala = value;
-        if(ala == true){
+        if(value == true){
           img = Icon(Icons.notifications);
         }
         else{
@@ -36,7 +35,11 @@ class _Market extends State<Market>{
       }
     });
   }
-
+  get() async{
+    var key = 'ala';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getBool(key);
+  }
   void initState(){
     super.initState();
     _loadData();
@@ -51,25 +54,25 @@ class _Market extends State<Market>{
                   child : IconButton(
                     icon: img,
                     onPressed: () {
-                      if(ala == true){
-                        ala = false;
+                      if(get() == true){
                         setState(() {
                           img = Icon(Icons.notifications_none);
+                          _setData(false);
                         });
-                        _setData(ala);
+
                       }
                       else{
-                        ala = true;
                         setState(() {
                           img = Icon(Icons.notifications);
+                          _setData(true);
                         });
-                        _setData(ala);
+
                       }
                     },
                   )),
               IconButton(//검색 버튼
                 icon : Icon(Icons.search,),
-                onPressed: (){print("아직 미구현!");},
+                onPressed: (){Navigator.push(context, MaterialPageRoute(builder : (context) => Search()));},
               )
             ]
         ),
