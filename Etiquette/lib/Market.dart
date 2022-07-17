@@ -13,6 +13,7 @@ class Market extends StatefulWidget{
 }
 
 class _Market extends State<Market>{
+  bool ala = true;
   var img = Icon(Icons.notifications);
 
   void _setData(bool value) async{
@@ -26,7 +27,8 @@ class _Market extends State<Market>{
     setState((){
       var value = pref.getBool(key);
       if(value != null){
-        if(value == true){
+        ala = value;
+        if(ala == true){
           img = Icon(Icons.notifications);
         }
         else{
@@ -34,11 +36,6 @@ class _Market extends State<Market>{
         }
       }
     });
-  }
-  get() async{
-    var key = 'ala';
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getBool(key);
   }
   void initState(){
     super.initState();
@@ -54,19 +51,19 @@ class _Market extends State<Market>{
                   child : IconButton(
                     icon: img,
                     onPressed: () {
-                      if(get() == true){
+                      if(ala == true){
+                        ala = false;
                         setState(() {
                           img = Icon(Icons.notifications_none);
-                          _setData(false);
                         });
-
+                        _setData(ala);
                       }
                       else{
+                        ala = true;
                         setState(() {
                           img = Icon(Icons.notifications);
-                          _setData(true);
                         });
-
+                        _setData(ala);
                       }
                     },
                   )),

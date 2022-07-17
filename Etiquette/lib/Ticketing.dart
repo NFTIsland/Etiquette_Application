@@ -143,6 +143,7 @@ class _Ticketing extends State<Ticketing>{
                           children : <Widget>[
                             Column(
                                 children : <Widget>[
+                                  SizedBox(height : 30),
                                   Text("Hot Pick", style : TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                                   SizedBox(height : 300),//아직 내용이 없어서 대충 공간 설정
                                 ]

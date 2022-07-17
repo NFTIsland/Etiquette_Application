@@ -82,11 +82,11 @@ class _Login extends State<Login> {
                         children: <Widget>[
                       ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                                 //로그인 버튼이 눌렸을 때 Tabb 클래스 실행되도록 -> Tabb 창 실행되도록 설정
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Tabb()));
+                                    builder: (context) => Tabb(idx : 0)));
                           },
                           child: const Text("로그인"),
                           //로그인 버튼

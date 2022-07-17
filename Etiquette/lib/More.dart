@@ -162,7 +162,10 @@ class _More extends State<More>{
               ListTile(
                   title : Text("Setting", style : TextStyle(fontSize: 20)),
                   onTap : (){
-                    Navigator.push(context, MaterialPageRoute(builder : (context) => Setting()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder : (context) => Setting()));
+                    setState((){
+                      _loadData();
+                    });
                   }
               ),
             ]

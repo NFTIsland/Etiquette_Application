@@ -14,6 +14,7 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
+  bool ala = true;
   var img = Icon(Icons.notifications);
 
   void _setData(bool value) async{
@@ -27,22 +28,15 @@ class _Home extends State<Home> {
     setState((){
       var value = pref.getBool(key);
       if(value != null){
-        if(value == true){
+        ala = value;
+        if(ala == true){
           img = Icon(Icons.notifications);
         }
         else{
           img = Icon(Icons.notifications_none);
         }
       }
-      else{
-        _setData(true);
-      }
     });
-  }
-  get() async{
-    var key = 'ala';
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getBool(key);
   }
   void initState(){
     super.initState();
@@ -62,19 +56,19 @@ class _Home extends State<Home> {
               child : IconButton(
                 icon: img,
                 onPressed: () {
-                  if(get() == true){
+                  if(ala == true){
+                    ala = false;
                     setState(() {
                       img = Icon(Icons.notifications_none);
-                      _setData(false);
                     });
-
+                    _setData(ala);
                   }
                   else{
+                    ala = true;
                     setState(() {
                       img = Icon(Icons.notifications);
-                      _setData(true);
                     });
-
+                    _setData(ala);
                   }
                 },
               )),
@@ -150,6 +144,7 @@ class _Home extends State<Home> {
                   child: Center(
                       child: Column(//세로로 배치
                           children: <Widget>[
+                            SizedBox(height : 30),
             Column(//Ticekts with high bidders를 위한 공간
                 children: <Widget>[
               Text("Ticekts with high bidders",
