@@ -25,7 +25,7 @@ class _SellTicket extends State<SellTicket> {
             automaticallyImplyLeading: false, leading : IconButton(
             icon : const Icon(Icons.arrow_back_ios_new_rounded),//뒤로가기 버튼
               onPressed: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder : (context) => Tabb(idx : 2)));//원래 있던 곳으로 돌아가게 함
+                Navigator.pop(context);//원래 있던 곳으로 돌아가게 함
               },
             )
             ),
@@ -133,6 +133,21 @@ class _SellTicket extends State<SellTicket> {
                                     ]
                                 )
                             ),
+                            Padding(
+                              padding : EdgeInsets.fromLTRB(40, 30, 40, 0),
+                              child : ElevatedButton(//이미지 고르는 버튼
+                                  onPressed: ()  {//데이터베이스랑 연동하는 코드 추가하는 곳
+                                    Navigator.pushReplacement(context, MaterialPageRoute(builder : (context) => Tabb(idx : 2)));
+                                  },
+                                  child: const Text("판매하기"),
+                                  //로그인 버튼
+                                  style: ElevatedButton.styleFrom(
+                                      primary: const Color(0xffffb877),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(12)) //둥글게 설정
+                                  ))
+                            )
                           ]
                       )
                   )

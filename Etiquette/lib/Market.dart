@@ -210,7 +210,7 @@ class _Market extends State<Market>{
                     floatingActionButton: FloatingActionButton.extended(
                       onPressed: () {
                         print("Floating Action Test");
-                        Navigator.pushReplacement(context,
+                        Navigator.push(context,
                             MaterialPageRoute(builder: (context) => SellTicket()));
                       },
                       backgroundColor: (theme ? const Color(0xffe8e8e8) : const Color(
