@@ -141,7 +141,8 @@ class _Home extends State<Home> {
           Expanded(
               child: SingleChildScrollView(
                   //만약 화면에 다 표현할 수 없으면 스크롤 할 수 있게 설정
-                  child: Center(
+                  child:Container(
+                  width : double.infinity,
                       child: Column(//세로로 배치
                           children: <Widget>[
                             SizedBox(height : 30),
@@ -161,7 +162,7 @@ class _Home extends State<Home> {
               SizedBox(height: 300),
               //아직 뭘 가져올 수가 없어서 그냥 300정도의 공간 설정
             ])
-          ])))),
+          ]))))]),
           /*
           Container(
               //버튼 만들 공간 근데 이렇게 하면 왠지 버튼 가로 축 라인을 다 차지할 거 같은 느낌이...?
@@ -179,6 +180,6 @@ class _Home extends State<Home> {
                       //적당히 둥글게 설정
                       minimumSize: Size(50, 40) //최소 크기 설정
                       ))),*/
-        ]));
+        );
   }
 }

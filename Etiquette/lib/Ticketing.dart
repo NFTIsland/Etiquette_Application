@@ -137,6 +137,7 @@ class _Ticketing extends State<Ticketing>{
               Expanded(//기억이 안남..
                   child: SingleChildScrollView(//스크롤 되도록
                       child :Container(
+                          width : double.infinity,
                           padding : EdgeInsets.only(left : 18),//좌측 여백 공간 설정
                           child : Column(
                             crossAxisAlignment: CrossAxisAlignment.start,//왼쪽에 딱 붙도록 설정

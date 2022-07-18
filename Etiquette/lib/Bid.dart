@@ -55,7 +55,6 @@ class _Bid extends State<Bid>{
                             _selected = value;
                           });
                         },
-
                       )
                   )
                 ]

@@ -73,7 +73,6 @@ class _Tab extends State<Tabb>
     var key = 'theme';
     SharedPreferences pref = await SharedPreferences.getInstance();
     theme = (pref.getBool(key) ?? false);
-    print('$theme');
     return theme;
   }
   /*
