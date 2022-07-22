@@ -12,10 +12,12 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login> {
+  final _formkey_id = GlobalKey<FormState>();
+  final _formkey_pw = GlobalKey<FormState>();
+  String id = ""; //입력한 아이디를 받을 변수
+  String pw = ""; //입력한 패스워드를 받을 변수
   @override
   Widget build(BuildContext context) {
-    String id = ""; //입력한 아이디를 받을 변수
-    String pw = ""; //입력한 패스워드를 받을 변수
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         //만약 화면 영역 밖을 선택하면 키보드 사라지게 설정
@@ -47,34 +49,57 @@ class _Login extends State<Login> {
                   children: <Widget>[
                 SizedBox(height: 30),
                 //Login/Sign up과 공간 확보를 위한 위젯
-                TextField(
-                    keyboardType: TextInputType.text,
-                    //기본으로 자판 모양의 키보드 호출되도록 설정
-                    decoration: InputDecoration(
-                      //icon: const Text("ID:"),
-                      labelText: "ID", //입력칸에 ID 표시되도록
-                      //border : OutlineInputBorder()
+                Form(
+                  key : _formkey_id,
+                  child : TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+
+                      keyboardType: TextInputType.text,
+                      //기본으로 자판 모양의 키보드 호출되도록 설정
+                      decoration: InputDecoration(
+                        //icon: const Text("ID:"),
+                        labelText: "ID", //입력칸에 ID 표시되도록
+                        //border : OutlineInputBorder()
+                      ),
+                      onSaved: (text) {
+                        setState(() {
+                          id = text as String; //텍스트 필드가 변할 때 마다 그 값을 저장하도록 설정
+                        });
+                      },
+                      validator : (value){
+                        if(value == null || value.isEmpty){
+                          return "Please enter id";
+                        }
+                        return null;
+                      }
                     ),
-                    onChanged: (text) {
-                      setState(() {
-                        id = text; //텍스트 필드가 변할 때 마다 그 값을 저장하도록 설정
-                      });
-                    }),
-                TextField(
-                    keyboardType: TextInputType.text,
-                    //기본으로 자판 모양의 키보드 호출되도록 설정
-                    obscureText: true,
-                    //비밀번호 안보이도록 설정
-                    decoration: InputDecoration(
-                      //icon: const Text("PW:"),
-                      labelText: "Password", //입력칸에 PW 표시되도록
-                      //border : OutlineInputBorder()
-                    ),
-                    onChanged: (text) {
-                      setState(() {
-                        pw = text; //텍스트 필드가 변할 때마다 그 값을 저장하도록 설정
-                      });
-                    }),
+                ),
+                Form(
+                    key : _formkey_pw,
+                  child : TextFormField(
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            keyboardType: TextInputType.text,
+                            //기본으로 자판 모양의 키보드 호출되도록 설정
+                            obscureText: true,
+                            //비밀번호 안보이도록 설정
+                            decoration: InputDecoration(
+                              //icon: const Text("PW:"),
+                              labelText: "Password", //입력칸에 PW 표시되도록
+                              //border : OutlineInputBorder()
+                            ),
+                            onSaved: (text) {
+                              setState(() {
+                                pw = text as String; //텍스트 필드가 변할 때마다 그 값을 저장하도록 설정
+                              });
+                            },
+                            validator : (value){
+                              if(value == null || value.isEmpty){
+                                return "Please enter pw";
+                              }
+                              return null;
+                            }
+                          )
+                ),
                 Padding(
                     padding: EdgeInsets.only(top: 20),
                     //비밀번호 입력하는 칸과 공간 확보
@@ -82,11 +107,21 @@ class _Login extends State<Login> {
                         children: <Widget>[
                       ElevatedButton(
                           onPressed: () {
-                            Navigator.pushReplacement(
-                                //로그인 버튼이 눌렸을 때 Tabb 클래스 실행되도록 -> Tabb 창 실행되도록 설정
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Tabb(idx : 0)));
+                            if(_formkey_id.currentState!.validate() && _formkey_pw.currentState!.validate()){
+                              _formkey_id.currentState!.save();
+                              _formkey_pw.currentState!.save();
+
+                              Navigator.pushReplacement(
+                                  //로그인 버튼이 눌렸을 때 Tabb 클래스 실행되도록 -> Tabb 창 실행되도록 설정
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Tabb(idx : 0)
+                                  )
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(id + "님 접속을 환영합니다."), ),
+                              );
+                            }
                           },
                           child: const Text("로그인"),
                           //로그인 버튼
@@ -95,7 +130,8 @@ class _Login extends State<Login> {
                               shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.circular(12)) //둥글게 설정
-                              )),
+                              )
+                      ),
                       ElevatedButton(
                           onPressed: () {
                             Navigator.push(

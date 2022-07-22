@@ -48,10 +48,10 @@ class _Tab extends State<Tabb>
         ),
         bottomNavigationBar ://화면 하단에 네이게이션 바 설정
         Container(
-        color : (theme ? const Color(0xffe8e8e8) : const Color(0xffffdddd)),//네이게이션 바 색깔 설정
+        color : (theme ? const Color(0xffe8e8e8) : const Color(0xff7b9acc)),//네이게이션 바 색깔 설정
         child : TabBar(
         controller: controller,
-        labelColor: (theme ? const Color(0xff000000) : const Color(0xff65e7ff)),//각각 label의 글자 색깔 설정
+        labelColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),//각각 label의 글자 색깔 설정
         indicatorColor: Colors.white,//지금 나타내고 있는 탭 표시하는 색깔 설정
         tabs : <Tab>[//탭 추가한 차례대로 탭 이름 설정
         Tab(icon : Text("Home")),

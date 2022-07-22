@@ -31,7 +31,9 @@ class _SellTicket extends State<SellTicket> {
             ),
         body: Column(children: <Widget>[
           Expanded(
-              child: SingleChildScrollView(
+              child: GestureDetector(
+                  onTap: () => FocusScope.of(context).unfocus(),
+              child : SingleChildScrollView(
                 //만약 화면에 다 표현할 수 없으면 스크롤 할 수 있게 설정
                   child: Center(
                       child: Column(//세로로 배치
@@ -152,6 +154,7 @@ class _SellTicket extends State<SellTicket> {
                       )
                   )
               )
+            )
           ),
           /*
           Container(

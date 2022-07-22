@@ -209,12 +209,13 @@ class _Market extends State<Market>{
                     ),
                     floatingActionButton: FloatingActionButton.extended(
                       onPressed: () {
-                        print("Floating Action Test");
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => SellTicket()));
                       },
                       backgroundColor: (theme ? const Color(0xffe8e8e8) : const Color(
-                          0xffffdddd)),
+                          0xff7b9acc)),
+                      foregroundColor: (theme ? const Color(0xffffffff) : const Color(
+                          0xffFCF6F5)),
                       label: const Text("티켓 판매"),
                       icon: const Icon(Icons.add_card),
                     ),
