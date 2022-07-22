@@ -17,6 +17,37 @@ class _Market extends State<Market>{
   bool ala = true;
   late bool theme;
   var img = Icon(Icons.notifications);
+  List? high;
+  Map<String, dynamic> ex1 = {
+    'name' : '티켓1',
+    'category' : '영화',
+    'price' : 16000,
+    'img' : 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+  };
+  Map<String, dynamic> ex2 = {
+    'name' : '티켓2',
+    'category' : '콘서트',
+    'price' : 150000,
+    'img' : 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+  };
+  Map<String, dynamic> ex3 = {
+    'name' : '티켓3',
+    'category' : '스포츠',
+    'price' : 66000,
+    'img' : 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+  };
+  Map<String, dynamic> ex4 = {
+    'name' : '티켓4',
+    'category' : '뮤지컬',
+    'price' : 130000,
+    'img' : 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+  };
+  Map<String, dynamic> ex5 = {
+    'name' : '티켓5',
+    'category' : '공연',
+    'price' : 100000,
+    'img' : 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+  };
 
   void _setData(bool value) async{
     var key = 'ala';
@@ -43,6 +74,12 @@ class _Market extends State<Market>{
     super.initState();
     _loadData();
     getTheme();
+    high = new List.empty(growable : true);
+    high!.add(ex1);
+    high!.add(ex2);
+    high!.add(ex3);
+    high!.add(ex4);
+    high!.add(ex5);
   }
   getTheme() async{
     var key = 'theme';
@@ -178,7 +215,36 @@ class _Market extends State<Market>{
                                                 Text("Best Selling Tickets",
                                                     style: TextStyle(fontSize: 20,
                                                         fontWeight: FontWeight.bold)),
-                                                SizedBox(height: 300),
+                                                //SizedBox(height: 300),
+                                                ListView.builder(
+                                                    physics: NeverScrollableScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount: high!.length,
+                                                    itemBuilder:(context, index){
+                                                      return Card(
+                                                          child : Container(
+                                                              width : double.infinity,
+                                                              child : Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children : <Widget>[
+                                                                    Expanded(child:
+                                                                    Image.network(high![index]['img'],width : 50, height : 50),
+                                                                    ),
+                                                                    Expanded(child:
+                                                                    Column(
+                                                                        children : <Widget>[
+                                                                          Text(high![index]['name']),
+                                                                          Text(high![index]['category']),
+                                                                          Text(high![index]['price'].toString()),
+                                                                        ]
+                                                                    )
+                                                                    )
+                                                                  ]
+                                                              )
+                                                          )
+                                                      );
+                                                    }
+                                                )
                                                 // 내용이 없어서 적당히 공간 설정
                                               ]
                                           ),
@@ -187,8 +253,37 @@ class _Market extends State<Market>{
                                                 Text("Deadline Imminent",
                                                     style: TextStyle(fontSize: 20,
                                                         fontWeight: FontWeight.bold)),
-                                                SizedBox(height: 300),
+                                                //SizedBox(height: 300),
                                                 // 내용이 업성서 적당히 공간 설정
+                                                ListView.builder(
+                                                    physics: NeverScrollableScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount: high!.length,
+                                                    itemBuilder:(context, index){
+                                                      return Card(
+                                                          child : Container(
+                                                              width : double.infinity,
+                                                              child : Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children : <Widget>[
+                                                                    Expanded(child:
+                                                                    Image.network(high![index]['img'],width : 50, height : 50),
+                                                                    ),
+                                                                    Expanded(child:
+                                                                    Column(
+                                                                        children : <Widget>[
+                                                                          Text(high![index]['name']),
+                                                                          Text(high![index]['category']),
+                                                                          Text(high![index]['price'].toString()),
+                                                                        ]
+                                                                    )
+                                                                    )
+                                                                  ]
+                                                              )
+                                                          )
+                                                      );
+                                                    }
+                                                )
                                               ]
                                           ),
                                           Column( //Ranking을 위한 공간 설정
@@ -196,8 +291,37 @@ class _Market extends State<Market>{
                                                 Text("Ranking", style: TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold)),
-                                                SizedBox(height: 300),
+                                                //SizedBox(height: 300),
                                                 // 내용이 업성서 적당히 공간 설정
+                                                ListView.builder(
+                                                    physics: NeverScrollableScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount: high!.length,
+                                                    itemBuilder:(context, index){
+                                                      return Card(
+                                                          child : Container(
+                                                              width : double.infinity,
+                                                              child : Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children : <Widget>[
+                                                                    Expanded(child:
+                                                                    Image.network(high![index]['img'],width : 50, height : 50),
+                                                                    ),
+                                                                    Expanded(child:
+                                                                    Column(
+                                                                        children : <Widget>[
+                                                                          Text(high![index]['name']),
+                                                                          Text(high![index]['category']),
+                                                                          Text(high![index]['price'].toString()),
+                                                                        ]
+                                                                    )
+                                                                    )
+                                                                  ]
+                                                              )
+                                                          )
+                                                      );
+                                                    }
+                                                )
                                               ]
                                           ),
                                         ]
@@ -214,7 +338,7 @@ class _Market extends State<Market>{
                       },
                       backgroundColor: (theme ? const Color(0xffe8e8e8) : const Color(
                           0xff7b9acc)),
-                      foregroundColor: (theme ? const Color(0xffffffff) : const Color(
+                      foregroundColor: (theme ? const Color(0xff000000) : const Color(
                           0xffFCF6F5)),
                       label: const Text("티켓 판매"),
                       icon: const Icon(Icons.add_card),
