@@ -149,90 +149,99 @@ class _Market extends State<Market> {
                     )
                   ]),
               // 왼쪽 위 부가 메뉴버튼을 단순 ListView에서 Drawer 사용하여 슬라이드로
-              drawer: Drawer(
-                child: ListView(padding: EdgeInsets.zero, children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Account()));
-                    },
-                    child: UserAccountsDrawerHeader(
-                      currentAccountPicture: CircleAvatar(
-                        backgroundColor: Colors.white24,
-                        backgroundImage:
-                            AssetImage('assets/image/mainlogo.png'),
+              drawer: SafeArea(
+                child: Drawer(
+                  child: ListView(padding: EdgeInsets.zero, children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Account()));
+                      },
+                      child: UserAccountsDrawerHeader(
+                        currentAccountPicture: CircleAvatar(
+                          backgroundColor: Colors.white24,
+                          backgroundImage: AssetImage(
+                            'assets/image/mainlogo.png',
+                          ),
+                        ),
+                        accountName: Text(
+                          'guest1',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        accountEmail: Text(
+                          'a1234@naver.com',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        decoration: BoxDecoration(
+                            color: (theme
+                                ? const Color(0xffe8e8e8)
+                                : const Color(0xff7b9acc)),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(40),
+                              bottomRight: Radius.circular(40),
+                            )),
                       ),
-                      accountName: Text(
-                        'guest1',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      accountEmail: Text(
-                        'a1234@naver.com',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      decoration: BoxDecoration(
-                          color: (theme
-                              ? const Color(0xffe8e8e8)
-                              : const Color(0xff7b9acc)),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(40),
-                            bottomRight: Radius.circular(40),
-                          )),
                     ),
-                  ),
-                  ListTile(
-                    title: const Text('Wallet'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Wallet())); // 네비게이션 필요
-                    },
-                    //trailing: Icon(Icons.add),
-                  ),
-                  ListTile(
-                    title: const Text('List of holding tickets'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Hold())); // 네비게이션 필요
-                    },
-                    //trailing: Icon(Icons.add),
-                  ),
-                  ListTile(
-                    title: const Text('Interest Tickets'),
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Interest()));
-                    },
-                    //trailing: Icon(Icons.add),
-                  ),
-                  ListTile(
-                    title: const Text('Bid Tickets'),
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Bid()));
-                    },
-                    //trailing: Icon(Icons.add),
-                  ),
-                  ListTile(
-                    title: const Text('Selling Tickets'),
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Selling()));
-                    },
-                    //trailing: Icon(Icons.add),
-                  ),
-                  ListTile(
-                    title: const Text('List of used tickets'),
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Used()));
-                    },
-                    //trailing: Icon(Icons.add),
-                  ),
-                ]),
+                    ListTile(
+                      title: Text('Wallet'),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Wallet())); // 네비게이션 필요
+                      },
+                      //trailing: Icon(Icons.add),
+                    ),
+                    ListTile(
+                      title: Text('List of holding tickets'),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Hold())); // 네비게이션 필요
+                      },
+                      //trailing: Icon(Icons.add),
+                    ),
+                    ListTile(
+                      title: Text('Interest Tickets'),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Interest()));
+                      },
+                      //trailing: Icon(Icons.add),
+                    ),
+                    ListTile(
+                      title: Text('Bid Tickets'),
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Bid()));
+                      },
+                      //trailing: Icon(Icons.add),
+                    ),
+                    ListTile(
+                      title: Text('Selling Tickets'),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Selling()));
+                      },
+                      //trailing: Icon(Icons.add),
+                    ),
+                    ListTile(
+                      title: Text('List of used tickets'),
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Used()));
+                      },
+                      //trailing: Icon(Icons.add),
+                    ),
+                  ]),
+                ),
               ),
               body: SingleChildScrollView(
                   child: Column(children: <Widget>[
