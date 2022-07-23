@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Account.dart';
 import 'Bid.dart';
 import 'Hold.dart';
 import 'Interest.dart';
@@ -149,22 +150,34 @@ class _Market extends State<Market> {
                   ]),
               // 왼쪽 위 부가 메뉴버튼을 단순 ListView에서 Drawer 사용하여 슬라이드로
               drawer: Drawer(
-                child: ListView(padding: const EdgeInsets.all(10), children: [
-                  const UserAccountsDrawerHeader(
-                    currentAccountPicture: CircleAvatar(
-                      backgroundColor: Colors.white24,
-                      backgroundImage: AssetImage('assets/image/mainlogo.png'),
-                    ),
-                    accountName: Text(
-                      'guest1',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    accountEmail: Text(
-                      'a1234@naver.com',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white24,
+                child: ListView(padding: EdgeInsets.zero, children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Account()));
+                    },
+                    child: UserAccountsDrawerHeader(
+                      currentAccountPicture: CircleAvatar(
+                        backgroundColor: Colors.white24,
+                        backgroundImage:
+                            AssetImage('assets/image/mainlogo.png'),
+                      ),
+                      accountName: Text(
+                        'guest1',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      accountEmail: Text(
+                        'a1234@naver.com',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      decoration: BoxDecoration(
+                          color: (theme
+                              ? const Color(0xffe8e8e8)
+                              : const Color(0xff7b9acc)),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(40),
+                            bottomRight: Radius.circular(40),
+                          )),
                     ),
                   ),
                   ListTile(
