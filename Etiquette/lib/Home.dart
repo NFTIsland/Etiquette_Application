@@ -181,6 +181,7 @@ class _Home extends State<Home> {
                         ),
                       ),
                       ListTile(
+
                         title: Text('Wallet'),
                         onTap: () {
                           Navigator.push(
