@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'Register.dart';
 import 'TabController.dart';
 
@@ -50,10 +51,9 @@ class _Login extends State<Login> {
                 SizedBox(height: 30),
                 //Login/Sign up과 공간 확보를 위한 위젯
                 Form(
-                  key : _formkey_id,
-                  child : TextFormField(
+                  key: _formkey_id,
+                  child: TextFormField(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
-
                       keyboardType: TextInputType.text,
                       //기본으로 자판 모양의 키보드 호출되도록 설정
                       decoration: InputDecoration(
@@ -66,40 +66,37 @@ class _Login extends State<Login> {
                           id = text as String; //텍스트 필드가 변할 때 마다 그 값을 저장하도록 설정
                         });
                       },
-                      validator : (value){
-                        if(value == null || value.isEmpty){
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
                           return "Please enter id";
                         }
                         return null;
-                      }
-                    ),
+                      }),
                 ),
                 Form(
-                    key : _formkey_pw,
-                  child : TextFormField(
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            keyboardType: TextInputType.text,
-                            //기본으로 자판 모양의 키보드 호출되도록 설정
-                            obscureText: true,
-                            //비밀번호 안보이도록 설정
-                            decoration: InputDecoration(
-                              //icon: const Text("PW:"),
-                              labelText: "Password", //입력칸에 PW 표시되도록
-                              //border : OutlineInputBorder()
-                            ),
-                            onSaved: (text) {
-                              setState(() {
-                                pw = text as String; //텍스트 필드가 변할 때마다 그 값을 저장하도록 설정
-                              });
-                            },
-                            validator : (value){
-                              if(value == null || value.isEmpty){
-                                return "Please enter pw";
-                              }
-                              return null;
-                            }
-                          )
-                ),
+                    key: _formkey_pw,
+                    child: TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        keyboardType: TextInputType.text,
+                        //기본으로 자판 모양의 키보드 호출되도록 설정
+                        obscureText: true,
+                        //비밀번호 안보이도록 설정
+                        decoration: InputDecoration(
+                          //icon: const Text("PW:"),
+                          labelText: "Password", //입력칸에 PW 표시되도록
+                          //border : OutlineInputBorder()
+                        ),
+                        onSaved: (text) {
+                          setState(() {
+                            pw = text as String; //텍스트 필드가 변할 때마다 그 값을 저장하도록 설정
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter pw";
+                          }
+                          return null;
+                        })),
                 Padding(
                     padding: EdgeInsets.only(top: 20),
                     //비밀번호 입력하는 칸과 공간 확보
@@ -107,7 +104,8 @@ class _Login extends State<Login> {
                         children: <Widget>[
                       ElevatedButton(
                           onPressed: () {
-                            if(_formkey_id.currentState!.validate() && _formkey_pw.currentState!.validate()){
+                            if (_formkey_id.currentState!.validate() &&
+                                _formkey_pw.currentState!.validate()) {
                               _formkey_id.currentState!.save();
                               _formkey_pw.currentState!.save();
 
@@ -115,11 +113,11 @@ class _Login extends State<Login> {
                                   //로그인 버튼이 눌렸을 때 Tabb 클래스 실행되도록 -> Tabb 창 실행되도록 설정
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Tabb(idx : 0)
-                                  )
-                              );
+                                      builder: (context) => Tabb(idx: 0)));
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(id + "님 접속을 환영합니다."), ),
+                                SnackBar(
+                                  content: Text(id + "님 접속을 환영합니다."),
+                                ),
                               );
                             }
                           },
@@ -130,8 +128,7 @@ class _Login extends State<Login> {
                               shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.circular(12)) //둥글게 설정
-                              )
-                      ),
+                              )),
                       ElevatedButton(
                           onPressed: () {
                             Navigator.push(
