@@ -15,7 +15,37 @@ class Ticketing extends StatefulWidget{
 class _Ticketing extends State<Ticketing>{
   bool ala = true;
   var img = Icon(Icons.notifications);
-
+  List? high;
+  Map<String, dynamic> ex1 = {
+    'name' : '티켓1',
+    'category' : '영화',
+    'price' : 16000,
+    'img' : 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+  };
+  Map<String, dynamic> ex2 = {
+    'name' : '티켓2',
+    'category' : '콘서트',
+    'price' : 150000,
+    'img' : 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+  };
+  Map<String, dynamic> ex3 = {
+    'name' : '티켓3',
+    'category' : '스포츠',
+    'price' : 66000,
+    'img' : 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+  };
+  Map<String, dynamic> ex4 = {
+    'name' : '티켓4',
+    'category' : '뮤지컬',
+    'price' : 130000,
+    'img' : 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+  };
+  Map<String, dynamic> ex5 = {
+    'name' : '티켓5',
+    'category' : '공연',
+    'price' : 100000,
+    'img' : 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+  };
   void _setData(bool value) async{
     var key = 'ala';
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -41,6 +71,12 @@ class _Ticketing extends State<Ticketing>{
   void initState(){
     super.initState();
     _loadData();
+    high = new List.empty(growable : true);
+    high!.add(ex1);
+    high!.add(ex2);
+    high!.add(ex3);
+    high!.add(ex4);
+    high!.add(ex5);
   }
 
   Widget build(BuildContext context){
@@ -146,19 +182,109 @@ class _Ticketing extends State<Ticketing>{
                                 children : <Widget>[
                                   SizedBox(height : 30),
                                   Text("Hot Pick", style : TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                                  SizedBox(height : 300),//아직 내용이 없어서 대충 공간 설정
+                                  //SizedBox(height : 300),//아직 내용이 없어서 대충 공간 설정
+                                  ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: high!.length,
+                                      itemBuilder:(context, index){
+                                        return Card(
+                                            child : Container(
+                                                width : double.infinity,
+                                                child : Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children : <Widget>[
+                                                      Expanded(child:
+                                                      Image.network(high![index]['img'],width : 50, height : 50),
+                                                      ),
+                                                      Expanded(child:
+                                                      Column(
+                                                          children : <Widget>[
+                                                            Text(high![index]['name']),
+                                                            Text(high![index]['category']),
+                                                            Text(high![index]['price'].toString()),
+                                                          ]
+                                                      )
+                                                      )
+                                                    ]
+                                                )
+                                            )
+                                        );
+                                      }
+                                  )
+                                  ,
                                 ]
                             ),
                             Column(
                                 children : <Widget>[
                                   Text("Deadline Imminent", style : TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                                  SizedBox(height : 300),//아직 내용이 없어서 대충 공간 설정
+                                  //SizedBox(height : 300),//아직 내용이 없어서 대충 공간 설정
+                                  ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: high!.length,
+                                      itemBuilder:(context, index){
+                                        return Card(
+                                            child : Container(
+                                                width : double.infinity,
+                                                child : Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children : <Widget>[
+                                                      Expanded(child:
+                                                      Image.network(high![index]['img'],width : 50, height : 50),
+                                                      ),
+                                                      Expanded(child:
+                                                      Column(
+                                                          children : <Widget>[
+                                                            Text(high![index]['name']),
+                                                            Text(high![index]['category']),
+                                                            Text(high![index]['price'].toString()),
+                                                          ]
+                                                      )
+                                                      )
+                                                    ]
+                                                )
+                                            )
+                                        );
+                                      }
+                                  )
+                                  ,
                                 ]
                             ),
                             Column(
                                 children : <Widget>[
                                   Text("Ranking", style : TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                                  SizedBox(height : 300),//아직 내용이 없어서 대충 공간 설정
+                                  //SizedBox(height : 300),//아직 내용이 없어서 대충 공간 설정
+                                  ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: high!.length,
+                                      itemBuilder:(context, index){
+                                        return Card(
+                                            child : Container(
+                                                width : double.infinity,
+                                                child : Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children : <Widget>[
+                                                      Expanded(child:
+                                                      Image.network(high![index]['img'],width : 50, height : 50),
+                                                      ),
+                                                      Expanded(child:
+                                                      Column(
+                                                          children : <Widget>[
+                                                            Text(high![index]['name']),
+                                                            Text(high![index]['category']),
+                                                            Text(high![index]['price'].toString()),
+                                                          ]
+                                                      )
+                                                      )
+                                                    ]
+                                                )
+                                            )
+                                        );
+                                      }
+                                  )
+                                  ,
                                 ]
                             )
                           ]
