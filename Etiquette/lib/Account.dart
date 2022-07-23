@@ -61,9 +61,13 @@ class _Account extends State<Account> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Column(children: <Widget>[
-                            Text(
-                              "대표 이미지",
-                              style: TextStyle(fontSize: 15),
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                              child: Text(
+                                "대표 이미지",
+                                style: TextStyle(fontSize: 15),
+                              ),
                             ),
                             Container(
                               height: MediaQuery.of(context).size.width * 0.4,
