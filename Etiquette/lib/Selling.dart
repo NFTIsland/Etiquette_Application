@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 class Selling extends StatefulWidget {
   State<StatefulWidget> createState() => _Selling();
 }
@@ -16,7 +16,8 @@ class _Selling extends State<Selling> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_new_rounded),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
+              //Navigator.pop(context);
             },
           ),
           elevation: 0,

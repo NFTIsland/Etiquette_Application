@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'Account.dart';
 import 'Bid.dart';
@@ -121,12 +124,14 @@ class _Home extends State<Home> {
                         onPressed: () {
                           if (ala == true) {
                             ala = false;
+                            _delToken();
                             setState(() {
                               img = Icon(Icons.notifications_none);
                             });
                             _setData(ala);
                           } else {
                             ala = true;
+                            _getToken();
                             setState(() {
                               img = Icon(Icons.notifications);
                             });
@@ -137,10 +142,13 @@ class _Home extends State<Home> {
                       IconButton(
                         icon: Icon(Icons.search),
                         onPressed: () {
+                          Get.to(Search());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Search()));
+                           */
                         },
                       )
                     ]),
@@ -150,10 +158,13 @@ class _Home extends State<Home> {
                     child: ListView(padding: EdgeInsets.zero, children: [
                       GestureDetector(
                         onTap: () {
+                          Get.to(Account());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Account()));
+                          */
                         },
                         child: UserAccountsDrawerHeader(
                           currentAccountPicture: CircleAvatar(
@@ -183,56 +194,80 @@ class _Home extends State<Home> {
                       ListTile(
                         title: Text('Wallet'),
                         onTap: () {
+                          Get.to(Wallet());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Wallet())); // 네비게이션 필요
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
                       ListTile(
                         title: Text('List of holding tickets'),
                         onTap: () {
+                          Get.to(Hold());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Hold())); // 네비게이션 필요
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
                       ListTile(
                         title: Text('Interest Tickets'),
                         onTap: () {
+                          Get.to(Interest());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Interest()));
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
                       ListTile(
                         title: Text('Bid Tickets'),
                         onTap: () {
+                          Get.to(Bid());
+                          /*
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) => Bid()));
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
                       ListTile(
                         title: Text('Selling Tickets'),
                         onTap: () {
+                          Get.to(Selling());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Selling()));
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
                       ListTile(
                         title: Text('List of used tickets'),
                         onTap: () {
+                          Get.to(Used());
+                          /*
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) => Used()));
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
@@ -348,4 +383,15 @@ class _Home extends State<Home> {
           );
         });
   }
+}
+
+_getToken() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  print("messaging.getToken(), ${await messaging.getToken()}");
+}
+
+_delToken() async{
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  await messaging.deleteToken();
+  print("deleting token");
 }

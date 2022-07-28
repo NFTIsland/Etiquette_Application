@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:get/get.dart';
 import 'Account.dart';
 import 'Bid.dart';
 import 'Hold.dart';
@@ -9,7 +9,8 @@ import 'Search.dart';
 import 'Selling.dart';
 import 'Used.dart';
 import 'Wallet.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 class Ticketing extends StatefulWidget {
   State createState() => _Ticketing();
 }
@@ -110,57 +111,64 @@ class _Ticketing extends State<Ticketing> {
                 appBar: AppBar(
                     title: Text("Ticketing"),
                     backgroundColor: Colors.white24,
-                    //티켓팅이 title인 appbar 생성
                     foregroundColor: Colors.black,
                     elevation: 0,
+                    //elevation은 떠보이는 느낌 설정하는 것, 0이면 뜨는 느낌 없음, foreground는 글자 색 변경
                     actions: <Widget>[
                       Container(
                           child: IconButton(
-                        icon: img,
-                        onPressed: () {
-                          if (ala == true) {
-                            ala = false;
-                            setState(() {
-                              img = Icon(Icons.notifications_none);
-                            });
-                            _setData(ala);
-                          } else {
-                            ala = true;
-                            setState(() {
-                              img = Icon(Icons.notifications);
-                            });
-                            _setData(ala);
-                          }
-                        },
-                      )),
+                            icon: img,
+                            onPressed: () {
+                              if (ala == true) {
+                                ala = false;
+                                _delToken();
+                                setState(() {
+                                  img = Icon(Icons.notifications_none);
+                                });
+                                _setData(ala);
+                              } else {
+                                ala = true;
+                                _getToken();
+                                setState(() {
+                                  img = Icon(Icons.notifications);
+                                });
+                                _setData(ala);
+                              }
+                            },
+                          )),
                       IconButton(
-                        icon: Icon(
-                          Icons.search,
-                        ),
+                        icon: Icon(Icons.search),
                         onPressed: () {
+                          Get.to(Search());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Search()));
+                           */
                         },
                       )
                     ]),
                 // 왼쪽 위 부가 메뉴버튼을 단순 ListView에서 Drawer 사용하여 슬라이드로
                 drawer: SafeArea(
                   child: Drawer(
-                    child: ListView(children: [
+                    child: ListView(padding: EdgeInsets.zero, children: [
                       GestureDetector(
                         onTap: () {
+                          Get.to(Account());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Account()));
+                          */
                         },
                         child: UserAccountsDrawerHeader(
                           currentAccountPicture: CircleAvatar(
                             backgroundColor: Colors.white24,
-                            backgroundImage:
-                                AssetImage('assets/image/mainlogo.png'),
+                            backgroundImage: AssetImage(
+                              'assets/image/mainlogo.png',
+                            ),
                           ),
                           accountName: Text(
                             'guest1',
@@ -183,61 +191,80 @@ class _Ticketing extends State<Ticketing> {
                       ListTile(
                         title: Text('Wallet'),
                         onTap: () {
+                          Get.to(Wallet());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Wallet())); // 네비게이션 필요
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
                       ListTile(
                         title: Text('List of holding tickets'),
                         onTap: () {
+                          Get.to(Hold());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Hold())); // 네비게이션 필요
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
                       ListTile(
                         title: Text('Interest Tickets'),
                         onTap: () {
+                          Get.to(Interest());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      Interest())); // 네비게이션 필요
+                                  builder: (context) => Interest()));
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
                       ListTile(
                         title: Text('Bid Tickets'),
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Bid())); // 네비게이션 필요
+                          Get.to(Bid());
+                          /*
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Bid()));
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
                       ListTile(
                         title: Text('Selling Tickets'),
                         onTap: () {
+                          Get.to(Selling());
+                          /*
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Selling())); // 네비게이션 필요
+                                  builder: (context) => Selling()));
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
                       ListTile(
                         title: Text('List of used tickets'),
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Used())); // 네비게이션 필요
+                          Get.to(Used());
+                          /*
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Used()));
+
+                           */
                         },
                         //trailing: Icon(Icons.add),
                       ),
@@ -404,4 +431,15 @@ class _Ticketing extends State<Ticketing> {
           );
         });
   }
+}
+
+_getToken() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  print("messaging.getToken(), ${await messaging.getToken()}");
+}
+
+_delToken() async{
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  await messaging.deleteToken();
+  print("deleting token");
 }

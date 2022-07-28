@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 class Wallet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +11,8 @@ class Wallet extends StatelessWidget {
           centerTitle: true,
           leading: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Get.back();
+                //Navigator.pop(context);
               },
               icon: Icon(Icons.arrow_back_ios_new_rounded)),
         ),

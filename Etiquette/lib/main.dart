@@ -15,7 +15,8 @@ class MyApp extends StatefulWidget {
 class _MyApp extends State<MyApp> {
   ThemeData mode = ThemeData.light();
   bool theme = false;
-
+  var img;
+  late bool ala;
   void _loadMode() async {
     var key = 'theme';
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -26,10 +27,26 @@ class _MyApp extends State<MyApp> {
       mode = ThemeData.dark();
     }
   }
+  void _loadData() async {
+    var key = 'ala';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      var value = pref.getBool(key);
+      if (value != null) {
+        ala = value;
+        if (ala == true) {
+          img = const Icon(Icons.notifications);
+        } else {
+          img = const Icon(Icons.notifications_none);
+        }
+      }
+    });
+  }
 
   void initState() {
     super.initState();
     _loadMode();
+    _loadData();
     getTheme();
   }
 
@@ -44,7 +61,14 @@ class _MyApp extends State<MyApp> {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           _initFirebaseMessaging(context);
-          _getToken();
+          print("ala는 : $ala");
+          if(ala == true) {
+            _getToken();
+            print("실행완료");
+          }
+          else if(ala == false){
+            _delToken();
+          }
           return GetMaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Etiquette', //앱 이름 etiquette으로 설정
@@ -71,6 +95,17 @@ void _initFirebaseMessaging(BuildContext context) {
   FirebaseMessaging.onMessage.listen((RemoteMessage event) {
     print(event.notification!.title);
     print(event.notification!.body);
+    Get.dialog(AlertDialog(
+        title: Text("알림"),
+        content: Text(event.notification!.body!),
+        actions: [
+          TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Get.back();
+              })
+        ]));
+    /*
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -84,7 +119,7 @@ void _initFirebaseMessaging(BuildContext context) {
                       Navigator.of(context).pop();
                     })
               ]);
-        });
+        });*/
   });
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
 }
@@ -92,4 +127,10 @@ void _initFirebaseMessaging(BuildContext context) {
 _getToken() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   print("messaging.getToken(), ${await messaging.getToken()}");
+}
+
+_delToken() async{
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  await messaging.deleteToken();
+  print("deleting token");
 }

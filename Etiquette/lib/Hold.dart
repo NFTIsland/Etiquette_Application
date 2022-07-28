@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 class Hold extends StatefulWidget {
   State<StatefulWidget> createState() => _Hold();
 }
@@ -17,7 +17,8 @@ class _Hold extends State<Hold> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_new_rounded),
             onPressed: () {
-              Navigator.pop(context);
+              Get.back();
+              //Navigator.pop(context);
             },
           ),
           elevation: 0,

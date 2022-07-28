@@ -1,3 +1,5 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,7 +12,6 @@ class Setting extends StatefulWidget {
 
 class _Setting extends State<Setting> {
   bool ala = true;
-
   bool theme = false;
 
   void initState() {
@@ -31,8 +32,11 @@ class _Setting extends State<Setting> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_new_rounded),
             onPressed: () {
+              Get.off(Tabb(idx : 3));
+              /*
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => Tabb(idx: 3)));
+              */
             },
           ),
         ),
@@ -52,6 +56,13 @@ class _Setting extends State<Setting> {
                       setState(() {
                         ala = value;
                         setAlarm(value);
+                        if(value == true){
+                          _getToken();
+                        }
+                        else{
+                          _delToken();
+                          print("Token 삭제");
+                        }
                       });
                     },
                     activeColor: Color(0xffFFB877),
@@ -234,3 +245,13 @@ FutureBuilder(
       }
     );
  */
+_getToken() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  print("messaging.getToken(), ${await messaging.getToken()}");
+}
+
+_delToken() async{
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  await messaging.deleteToken();
+  print("deleting token");
+}

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 class Bid extends StatefulWidget {
   State<StatefulWidget> createState() => _Bid();
 }
@@ -16,7 +16,10 @@ class _Bid extends State<Bid> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_new_rounded),
             onPressed: () {
+              Get.back();
+              /*
               Navigator.pop(context);
+               */
             },
           ),
           elevation: 0,

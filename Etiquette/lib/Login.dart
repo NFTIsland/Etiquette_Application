@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 import 'Register.dart';
 import 'TabController.dart';
 
@@ -109,11 +109,13 @@ class _Login extends State<Login> {
                               _formkey_id.currentState!.save();
                               _formkey_pw.currentState!.save();
 
-                              Navigator.pushReplacement(
+                              /*Navigator.pushReplacement(
                                   //로그인 버튼이 눌렸을 때 Tabb 클래스 실행되도록 -> Tabb 창 실행되도록 설정
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Tabb(idx: 0)));
+                                      builder: (context) => Tabb(idx: 0)));*/
+                              Get.off(Tabb(idx : 0));
+
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(id + "님 접속을 환영합니다."),
@@ -131,11 +133,12 @@ class _Login extends State<Login> {
                               )),
                       ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
+                            Get.to(Register());
+                            /*Navigator.push(
                                 //눌렸을 떄 Register 클래스 실행되도록 -> Register 창 실행되도록 설정
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Register()));
+                                    builder: (context) => Register()));*/
                           },
                           child: const Text("회원가입"),
                           //회원가입 버튼

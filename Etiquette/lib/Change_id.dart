@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 class ChangeID extends StatefulWidget {
   State createState() => _ChangeID();
 }
@@ -21,7 +21,7 @@ class _ChangeID extends State<ChangeID> {
 
   void acti() {
     _formkey_nick.currentState!.save();
-    Navigator.pop(context);
+    Get.back();
   }
 
   @override
@@ -36,7 +36,8 @@ class _ChangeID extends State<ChangeID> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_new_rounded),
             onPressed: () {
-              Navigator.pop(context);
+              // Navigator.pop(context);
+              Get.back();
             },
           ),
           actions: <Widget>[

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 class ChangePW extends StatefulWidget {
   State createState() => _ChangePW();
 }
@@ -26,7 +26,8 @@ class _ChangePW extends State<ChangePW> {
 
   void acti() {
     _formkey_cha.currentState!.save();
-    Navigator.pop(context);
+    Get.back();
+    // Navigator.pop(context);
   }
 
   @override
@@ -85,7 +86,8 @@ class _ChangePW extends State<ChangePW> {
               leading: IconButton(
                 icon: Icon(Icons.arrow_back_ios_new_rounded),
                 onPressed: () {
-                  Navigator.pop(context);
+                  Get.back();
+                  //Navigator.pop(context);
                 },
               ),
               actions: <Widget>[
@@ -125,6 +127,7 @@ class _ChangePW extends State<ChangePW> {
                             child: TextFormField(
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
+                              obscureText: true,
                               keyboardType: TextInputType.text,
                               //기본으로 자판 모양의 키보드 호출되도록 설정
                               decoration: InputDecoration(
@@ -191,6 +194,7 @@ class _ChangePW extends State<ChangePW> {
                           child: TextFormField(
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
+                            obscureText: true,
                             keyboardType: TextInputType.text,
                             controller: cha,
                             //기본으로 자판 모양의 키보드 호출되도록 설정
@@ -259,6 +263,7 @@ class _ChangePW extends State<ChangePW> {
                           child: TextFormField(
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
+                            obscureText: true,
                             keyboardType: TextInputType.text,
                             controller: re,
                             //기본으로 자판 모양의 키보드 호출되도록 설정

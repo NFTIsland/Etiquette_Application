@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:get/get.dart';
 import 'Change_id.dart';
 import 'Change_pw.dart';
 
@@ -50,7 +50,8 @@ class _Account extends State<Account> {
                   leading: IconButton(
                     icon: Icon(Icons.arrow_back_ios_new_rounded),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.back();
+                      //Navigator.pop(context);
                     },
                   ),
                 ),
@@ -124,10 +125,13 @@ class _Account extends State<Account> {
                                           fontWeight: FontWeight.bold)),
                                   subtitle: Text("Guest1"),
                                   onTap: () {
+                                    Get.to(ChangeID());
+                                    /*
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => ChangeID()));
+                                    */
                                   },
                                 ),
                                 ListTile(
@@ -136,10 +140,13 @@ class _Account extends State<Account> {
                                           fontWeight: FontWeight.bold)),
                                   //subtitle: Text("Guest1"),
                                   onTap: () {
+                                    Get.to(ChangePW());
+                                    /*
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => ChangePW()));
+                                     */
                                   },
                                 ),
                               ])

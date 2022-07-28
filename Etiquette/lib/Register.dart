@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 import 'Login.dart';
 
 class Register extends StatefulWidget {
@@ -257,6 +257,8 @@ class _Register extends State<Register> {
                               _formkey_name.currentState!.validate()) {
                             _formkey_ph.currentState!.save();
                             _formkey_name.currentState!.save();
+                            Get.back();
+                            /*
                             Navigator.push(
                                 //눌렸을 떄 Register 클래스 실행되도록 -> Register 창 실행되도록 설정
                                 context,
@@ -267,6 +269,7 @@ class _Register extends State<Register> {
                                 content: Text("가입처리 완료되었습니다."),
                               ),
                             );
+                             */
                           }
                         },
                         child: const Text("가입"),

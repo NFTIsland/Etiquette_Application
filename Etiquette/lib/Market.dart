@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 
 import 'Account.dart';
 import 'Bid.dart';
@@ -10,6 +11,8 @@ import 'SellTicket.dart';
 import 'Selling.dart';
 import 'Used.dart';
 import 'Wallet.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Market extends StatefulWidget {
   const Market({Key? key}) : super(key: key);
@@ -115,36 +118,43 @@ class _Market extends State<Market> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
               appBar: AppBar(
-                  title: const Text("Auction"),
+                  title: Text("Auction"),
                   backgroundColor: Colors.white24,
                   foregroundColor: Colors.black,
                   elevation: 0,
+                  //elevation은 떠보이는 느낌 설정하는 것, 0이면 뜨는 느낌 없음, foreground는 글자 색 변경
                   actions: <Widget>[
                     Container(
                         child: IconButton(
-                      icon: img,
-                      onPressed: () {
-                        if (ala == true) {
-                          ala = false;
-                          setState(() {
-                            img = const Icon(Icons.notifications_none);
-                          });
-                          _setData(ala);
-                        } else {
-                          ala = true;
-                          setState(() {
-                            img = const Icon(Icons.notifications);
-                          });
-                          _setData(ala);
-                        }
-                      },
-                    )),
+                          icon: img,
+                          onPressed: () {
+                            if (ala == true) {
+                              ala = false;
+                              _delToken();
+                              setState(() {
+                                img = Icon(Icons.notifications_none);
+                              });
+                              _setData(ala);
+                            } else {
+                              ala = true;
+                              _getToken();
+                              setState(() {
+                                img = Icon(Icons.notifications);
+                              });
+                              _setData(ala);
+                            }
+                          },
+                        )),
                     IconButton(
-                      //검색 버튼
-                      icon: const Icon(Icons.search),
+                      icon: Icon(Icons.search),
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Search()));
+                        Get.to(Search());
+                        /*
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Search()));
+                           */
                       },
                     )
                   ]),
@@ -154,10 +164,13 @@ class _Market extends State<Market> {
                   child: ListView(padding: EdgeInsets.zero, children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Account()));
+                        Get.to(Account());
+                        /*
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Account()));
+                          */
                       },
                       child: UserAccountsDrawerHeader(
                         currentAccountPicture: CircleAvatar(
@@ -187,56 +200,80 @@ class _Market extends State<Market> {
                     ListTile(
                       title: Text('Wallet'),
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Wallet())); // 네비게이션 필요
+                        Get.to(Wallet());
+                        /*
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Wallet())); // 네비게이션 필요
+
+                           */
                       },
                       //trailing: Icon(Icons.add),
                     ),
                     ListTile(
                       title: Text('List of holding tickets'),
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Hold())); // 네비게이션 필요
+                        Get.to(Hold());
+                        /*
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Hold())); // 네비게이션 필요
+
+                           */
                       },
                       //trailing: Icon(Icons.add),
                     ),
                     ListTile(
                       title: Text('Interest Tickets'),
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Interest()));
+                        Get.to(Interest());
+                        /*
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Interest()));
+
+                           */
                       },
                       //trailing: Icon(Icons.add),
                     ),
                     ListTile(
                       title: Text('Bid Tickets'),
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Bid()));
+                        Get.to(Bid());
+                        /*
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Bid()));
+
+                           */
                       },
                       //trailing: Icon(Icons.add),
                     ),
                     ListTile(
                       title: Text('Selling Tickets'),
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Selling()));
+                        Get.to(Selling());
+                        /*
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Selling()));
+
+                           */
                       },
                       //trailing: Icon(Icons.add),
                     ),
                     ListTile(
                       title: Text('List of used tickets'),
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Used()));
+                        Get.to(Used());
+                        /*
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Used()));
+
+                           */
                       },
                       //trailing: Icon(Icons.add),
                     ),
@@ -300,7 +337,12 @@ class _Market extends State<Market> {
                               shrinkWrap: true,
                               itemCount: high!.length,
                               itemBuilder: (context, index) {
-                                return Card(
+                                return  GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) => SellTicket()));
+                                  },
+                                  child : Card(
                                     child: Container(
                                         width: double.infinity,
                                         child: Row(
@@ -321,7 +363,8 @@ class _Market extends State<Market> {
                                                 Text(high![index]['price']
                                                     .toString()),
                                               ]))
-                                            ])));
+                                            ])))
+                                );
                               })
                         ]),
                         Column(//Ranking을 위한 공간 설정
@@ -381,4 +424,15 @@ class _Market extends State<Market> {
           );
         });
   }
+}
+
+_getToken() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  print("messaging.getToken(), ${await messaging.getToken()}");
+}
+
+_delToken() async{
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  await messaging.deleteToken();
+  print("deleting token");
 }
