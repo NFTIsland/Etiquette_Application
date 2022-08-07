@@ -1,136 +1,51 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'dart:convert' show json, base64, ascii;
 import 'Login.dart';
+import 'Home.dart';
+import 'package:Etiquette/Models/serverset.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatefulWidget {
-  State createState() => _MyApp();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
-class _MyApp extends State<MyApp> {
-  ThemeData mode = ThemeData.light();
-  bool theme = false;
-  var img;
-  late bool ala;
-  void _loadMode() async {
-    var key = 'theme';
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    theme = (pref.getBool(key) ?? false);
-    if (theme == false) {
-      mode = ThemeData.light();
-    } else {
-      mode = ThemeData.dark();
-    }
-  }
-  void _loadData() async {
-    var key = 'ala';
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(() {
-      var value = pref.getBool(key);
-      if (value != null) {
-        ala = value;
-        if (ala == true) {
-          img = const Icon(Icons.notifications);
-        } else {
-          img = const Icon(Icons.notifications_none);
-        }
-      }
-    });
+class MyApp extends StatelessWidget {
+  Future<String> get jwtOrEmpty async {
+    var jwt = await storage.read(key: "jwt");
+    if (jwt == null) return "";
+    return jwt;
   }
 
-  void initState() {
-    super.initState();
-    _loadMode();
-    _loadData();
-    getTheme();
-  }
-
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Firebase.initializeApp(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: Text('Error'),
-          );
-        }
-        if (snapshot.connectionState == ConnectionState.done) {
-          _initFirebaseMessaging(context);
-          print("ala는 : $ala");
-          if(ala == true) {
-            _getToken();
-            print("실행완료");
-          }
-          else if(ala == false){
-            _delToken();
-          }
-          return GetMaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Etiquette', //앱 이름 etiquette으로 설정
-              theme: (theme ? ThemeData.dark() : ThemeData.light()),
-              //darkTheme: ThemeData.dark(),
-              home: Login() // 최초 페이지로 Login()실행
-              );
-        }
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      },
+    return MaterialApp(
+      title: 'Etiquette',
+      home: FutureBuilder(
+          future: jwtOrEmpty,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return CircularProgressIndicator();
+            if (snapshot.data != "") {
+              var str = snapshot.data;
+              var jwt = str.toString().split(".");
+
+              if (jwt.length != 3) {
+                return Login();
+              } else {
+                var payload = json.decode(
+                    ascii.decode(base64.decode(base64.normalize(jwt[1]))));
+                if (DateTime.fromMillisecondsSinceEpoch(payload["exp"] * 1000)
+                    .isAfter(DateTime.now())) {
+                  return Home();
+                } else {
+                  return Login();
+                }
+              }
+            } else {
+              return Login();
+            }
+          }),
     );
   }
-
-  getTheme() async {
-    var key = 'theme';
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    theme = (pref.getBool(key) ?? false);
-  }
-}
-
-void _initFirebaseMessaging(BuildContext context) {
-  FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-    print(event.notification!.title);
-    print(event.notification!.body);
-    Get.dialog(AlertDialog(
-        title: Text("알림"),
-        content: Text(event.notification!.body!),
-        actions: [
-          TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                Get.back();
-              })
-        ]));
-    /*
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-              title: Text("알림"),
-              content: Text(event.notification!.body!),
-              actions: [
-                TextButton(
-                    child: Text("OK"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    })
-              ]);
-        });*/
-  });
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
-}
-
-_getToken() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  print("messaging.getToken(), ${await messaging.getToken()}");
-}
-
-_delToken() async{
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  await messaging.deleteToken();
-  print("deleting token");
 }
