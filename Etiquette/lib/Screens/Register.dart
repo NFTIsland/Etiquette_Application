@@ -118,6 +118,19 @@ class _Register extends State<Register> {
     }
   }
 
+  // KAS 계정 생성
+  Future<void> createKlaytnAddress() async {
+    Map<String, dynamic> address = await createKasAccount();
+    if (address['statusCode'] == 200) {
+      inputKlaytnAddressController.text = address['data'];
+      flag_KAS = true;
+      displayDialog_checkonly(context, "Successfully Created",
+          "The KAS account is successfully created");
+    } else {
+      displayDialog_checkonly(context, "Failed", address['msg']);
+    }
+  }
+
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
@@ -210,8 +223,7 @@ class _Register extends State<Register> {
                       keyboardType: TextInputType.text,
                       //기본으로 자판 모양의 키보드가 호출되도록 설정, pw 안보이도록 가림
                       decoration: InputDecoration(
-                        labelText:
-                            "Password (At least 8 characters)", //PW 입력하는 공간
+                        labelText: "Password (최소 8글자)", //PW 입력하는 공간
                       ),
                     )),
                 Padding(
@@ -237,7 +249,7 @@ class _Register extends State<Register> {
                       ),
                     )),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.fromLTRB(80, 20, 80, 0),
                   child: TextField(
                     keyboardType: TextInputType.text,
                     controller: inputKlaytnAddressController,
@@ -248,45 +260,40 @@ class _Register extends State<Register> {
                 ),
                 Padding(
                     padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
-                    child: Row(children: <Widget>[
-                      ElevatedButton(
-                        child: const Icon(Icons.qr_code),
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.deepPurpleAccent),
-                        onPressed: () async {
-                          final qrCodeScanResult = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const QRCodeScanner()),
-                          );
-                          inputKlaytnAddressController.text = qrCodeScanResult!;
-                        },
-                      ),
-                      ElevatedButton(
-                        child: const Text("생성"),
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.deepPurpleAccent),
-                        onPressed: () async {
-                          var address = await createKasAccount();
-                          if (address['statusCode'] == 200) {
-                            inputKlaytnAddressController.text = address['data'];
-                            flag_KAS = true;
-                            displayDialog_checkonly(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          ElevatedButton(
+                            child: const Icon(Icons.qr_code),
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.deepPurpleAccent),
+                            onPressed: () async {
+                              final qrCodeScanResult = await Navigator.push(
                                 context,
-                                "Successfully Created",
-                                "The KAS account is successfully created");
-                          }
-                        },
-                      ),
-                      ElevatedButton(
-                        child: const Text("확인"),
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.deepPurpleAccent),
-                        onPressed: () {
-                          checkKlaytnAddress();
-                        },
-                      ),
-                    ])),
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const QRCodeScanner()),
+                              );
+                              inputKlaytnAddressController.text =
+                                  qrCodeScanResult!;
+                            },
+                          ),
+                          ElevatedButton(
+                              child: const Text("생성"),
+                              style: ElevatedButton.styleFrom(
+                                  primary: Colors.deepPurpleAccent),
+                              onPressed: () async {
+                                createKlaytnAddress();
+                              }),
+                          ElevatedButton(
+                            child: const Text("확인"),
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.deepPurpleAccent),
+                            onPressed: () {
+                              checkKlaytnAddress();
+                            },
+                          ),
+                        ])),
                 ElevatedButton(
                   onPressed: () async {
                     var _id = idController.text;
