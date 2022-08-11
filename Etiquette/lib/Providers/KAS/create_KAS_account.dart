@@ -13,13 +13,20 @@ Future<Map<String, dynamic>> createKasAccount() async {
     return data;
   } on DioError catch (e) {
     final handleError = e.response?.data;
-
-    Map<String, dynamic> data = {
-      "statusCode": e.response?.statusCode,
-      "msg": handleError['msg'],
-    };
-
-    return data;
+    // 네트워크 오류
+    if (handleError == null) {
+      Map<String, dynamic> data = {
+        "statusCode": 400,
+        "msg": "서버와의 연결이 원활하지 않습니다.",
+      };
+      return data;
+    } else {
+      Map<String, dynamic> data = {
+        "statusCode": e.response?.statusCode,
+        "msg": handleError['msg'],
+      };
+      return data;
+    }
   } catch (ex) {
     Map<String, dynamic> data = {
       "statusCode": 400,
