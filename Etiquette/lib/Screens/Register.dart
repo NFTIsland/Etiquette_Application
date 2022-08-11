@@ -22,7 +22,8 @@ class _Register extends State<Register> {
   final pwController = TextEditingController(); //pw
   final repwController = TextEditingController(); //pw 재입력
   final nicknameController = TextEditingController(); //nickname
-  TextEditingController inputOtpController = TextEditingController(); // 인증 OTP
+  final inputOtpController = TextEditingController(); // 인증 OTP
+  final inputKlaytnAddressController = TextEditingController(); // KAS 주소 입력받기
   bool _flag = false; // 인증 여부 확인
 
   FirebaseAuth auth = FirebaseAuth.instance; // 인증 instance
@@ -195,19 +196,48 @@ class _Register extends State<Register> {
                                     labelText: "Name", //이름 입력하는 공간
                                   ),
                                 )),
-                            Padding(
-                                padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                //이름 입력 칸과 여백 및, 좌우 공간 여백 설정 버튼은 필요한 만큼만 쓰기 때문에 좌우 여백 지정할 필요 없음
-                                child: Column(children: <Widget>[
-                                  ElevatedButton(
-                                      onPressed: () {},
-                                      child: const Text("Klaytn Linkage"),
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Colors.red,
-                                        //클레이튼 연동 버튼, 버튼 색깔 설정 및 둥글게 설정
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12)),
-                                      )),
+                            Padding (
+                                padding : const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                child : Row (
+                                    children : <Widget>[
+                                      Flexible(
+                                        child: TextField (
+                                          keyboardType: TextInputType.text,
+                                          controller: inputKlaytnAddressController,
+                                          decoration: const InputDecoration (
+                                            labelText : "KAS 주소",
+                                          ),
+                                        ),
+                                      ),
+                                      ElevatedButton (
+                                        child : const Icon(Icons.qr_code),
+                                        style : ElevatedButton.styleFrom(primary : Colors.deepPurpleAccent),
+                                        onPressed: () async {
+                                          final qrCodeScanResult = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => const QRCodeScanner()
+                                            ),
+                                          );
+                                          inputKlaytnAddressController.text = qrCodeScanResult!;
+                                        },
+                                      ),
+                                      Container (
+                                        padding : const EdgeInsets.only(left : 10),
+                                        child :
+                                        ElevatedButton (
+                                          child : const Text ("확인"),
+                                          style : ElevatedButton.styleFrom(
+                                              backgroundColor : Colors.deepPurpleAccent
+                                          ),
+                                          onPressed: (){
+                                            checkKlaytnAddress();
+                                          },
+                                        ),
+                                      ),
+                                    ]
+                                )
+                            ),
                                   ElevatedButton(
                                     onPressed: () async {
                                       var _id = idController.text;
