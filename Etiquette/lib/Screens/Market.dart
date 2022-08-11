@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 
-import 'Account.dart';
-import 'Bid.dart';
+import 'package:Etiquette/Screens/Account.dart';
+import 'package:Etiquette/Screens/Bid.dart';
 import 'Hold.dart';
 import 'Interest.dart';
 import 'Search.dart';
@@ -11,7 +11,6 @@ import 'SellTicket.dart';
 import 'Selling.dart';
 import 'Used.dart';
 import 'Wallet.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Market extends StatefulWidget {

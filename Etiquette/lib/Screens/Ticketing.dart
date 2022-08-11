@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
-import 'Account.dart';
-import 'Bid.dart';
+import 'package:Etiquette/Screens/Account.dart';
+import 'package:Etiquette/Screens/Bid.dart';
 import 'Hold.dart';
 import 'Interest.dart';
 import 'Search.dart';

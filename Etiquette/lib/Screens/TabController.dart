@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import "Home.dart";
 import "Market.dart";
-import "More.dart";
+import 'package:Etiquette/Screens/More.dart';
 import "Ticketing.dart";
 
 class Tabb extends StatefulWidget {

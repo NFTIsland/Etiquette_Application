@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' show json, base64, ascii;
-import 'Login.dart';
-import 'Home.dart';
+import 'package:Etiquette/Screens/Login.dart';
+import 'package:Etiquette/Screens/Home.dart';
 import 'package:Etiquette/Models/serverset.dart';
 
 void main() async {

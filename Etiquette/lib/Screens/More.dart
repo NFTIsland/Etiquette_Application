@@ -8,12 +8,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'Account.dart';
 import 'Bid.dart';
-import 'Hold.dart';
-import 'Interest.dart';
-import 'Search.dart';
-import 'Selling.dart';
-import 'Setting.dart';
-import 'Used.dart';
+import 'package:Etiquette/Screens/Hold.dart';
+import 'package:Etiquette/Screens/Interest.dart';
+import 'package:Etiquette/Screens/Search.dart';
+import 'package:Etiquette/Screens/Selling.dart';
+import 'package:Etiquette/Screens/Setting.dart';
+import 'package:Etiquette/Screens/Used.dart';
 import 'Wallet.dart';
 
 class More extends StatefulWidget {

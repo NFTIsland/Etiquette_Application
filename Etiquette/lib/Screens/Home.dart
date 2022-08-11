@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'Account.dart';
-import 'Bid.dart';
+import 'package:Etiquette/Screens/Account.dart';
+import 'package:Etiquette/Screens/Bid.dart';
 import 'Hold.dart';
 import 'Interest.dart';
 import 'Search.dart';
