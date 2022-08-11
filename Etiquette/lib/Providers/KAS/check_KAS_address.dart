@@ -12,11 +12,19 @@ Future<Map<String, dynamic>> checkKasAddress(String address) async {
     return data;
   } on DioError catch (e) {
     final handleError = e.response?.data; // { statusCode: 400, msg: 존재하지 않는 KAS 주소입니다. }
-    Map<String, dynamic> data = {
-      "statusCode": e.response?.statusCode,
-      "msg": handleError['msg'],
-    };
-    return data;
+    if (handleError == null) {
+      Map<String, dynamic> data = {
+        "statusCode": 400,
+        "msg": "서버와의 연결이 원활하지 않습니다.",
+      };
+      return data;
+    } else {
+      Map<String, dynamic> data = {
+        "statusCode": e.response?.statusCode,
+        "msg": handleError['msg'],
+      };
+      return data;
+    }
   } catch (ex) {
     Map<String, dynamic> data = {
       "statusCode": 400,
