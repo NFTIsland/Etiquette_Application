@@ -53,19 +53,8 @@ const kasKip17TokenTransfer = async function (alias, token_id, sender, owner, to
     return await process(dio);
 }
 
-const kasKip17DeleteToken = async function (_category, token_id, from) {
-    var category = _category;
-    if (_category == "영화") {
-        category = "movie";
-    } else if (_category == "콘서트") {
-        category = "concert";
-    } else if (_category == "뮤지컬") {
-        category = "musical";
-    } else if (_category == "공연") {
-        category = "performance";
-    } else if (_category == "스포츠") {
-        category = "sports";
-    } else {
+const kasKip17DeleteToken = async function (category, token_id, from) {
+    if (category != "movie" && category != "concert" && category != "musical" && category != "performance" && category != "sports") {
         return {
             "statusCode": 400,
             data: {
