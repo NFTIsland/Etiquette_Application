@@ -16,8 +16,7 @@ class Register extends StatefulWidget {
 }
 
 class _Register extends State<Register> {
-  Future<int> attemptSignUp(
-      String id, String pw, String nickname, String kas_address) async {
+  Future<int> attemptSignUp(String id, String pw, String nickname, String kas_address) async {
     var res = await http.post(Uri.parse('$SERVER_IP/signup'), body: {
       "id": id,
       "pw": pw,
@@ -144,199 +143,216 @@ class _Register extends State<Register> {
               foregroundColor: Colors.black,
             ),
             body: Center(
-                child: SingleChildScrollView(
-                    //스크롤 가능하도록 설정 만약 키보드가 나와서 화면이 길어질 떄 필요함
-                    child: Column(//각종 입력 받을 텍스트 필드를 담을 공간
+                child: SingleChildScrollView( // 스크롤 가능하도록 설정 만약 키보드가 나와서 화면이 길어질 떄 필요함
+                    child: Column( // 각종 입력 받을 텍스트 필드를 담을 공간
                         children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.only(left: 80), //좌측 여백 설정
-                  child: Row //가로로 글자 배치
-                      (children: <Widget>[
-                    Text("Sign up", style: TextStyle(fontSize: 30)),
-                    Text(
-                      "/Login",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.grey,
-                      ),
+                          Padding(
+                              padding: const EdgeInsets.only(left: 80),
+                              // 좌측 여백 설정
+                              child: Row( //가로로 글자 배치
+                                  children: const <Widget>[
+                                    Text(
+                                        "Sign up",
+                                        style: TextStyle(fontSize: 30)
+                                    ),
+                                    Text(
+                                      "/Login",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.grey,
+                                      ),
+                                    )
+                                  ]
+                              )
+                          ),
+                          Column(
+                              children: <Widget>[
+                                const SizedBox(height: 30),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(80, 0, 80, 0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Flexible(
+                                        child: TextField(
+                                          controller: idController,
+                                          keyboardType: TextInputType.number,
+                                          // 기본으로 숫자 모양의 키보드가 호출되도록 설정
+                                          decoration: const InputDecoration(
+                                            labelText: "HP(ID)",
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.only(
+                                            left: 10), // 텍스트 필드와 약간의 여백 생성
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            loginWithPhone();
+                                          },
+                                          child: const Text("인증"),
+                                          style: ElevatedButton.styleFrom(
+                                              primary: Colors.deepPurpleAccent // 버튼 색깔 설정
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding( // 인증번호를 위한 공간
+                                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                    child: Row(
+                                        children: <Widget>[
+                                          Flexible(
+                                              child: TextField(
+                                                keyboardType: TextInputType.number,
+                                                // 기본으로 숫자 모양의 키보드가 호출되도록 설정
+                                                controller: inputOtpController,
+                                                decoration: const InputDecoration(
+                                                  labelText: "인증번호", // 인증번호 입력하는 공간
+                                                ),
+                                              )
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.only(left: 10),
+                                            child: ElevatedButton(
+                                                onPressed: () {
+                                                  verifyOTP();
+                                                }, // OTP 인증
+                                                child: const Text("확인"),
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Colors.deepPurpleAccent //버튼 색깔 설정
+                                                )
+                                            ),
+                                          )
+                                        ]
+                                    )
+                                ),
+                                Padding(
+                                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                    child: TextField(
+                                      controller: pwController,
+                                      obscureText: true,
+                                      // pw 안보이도록 가림
+                                      keyboardType: TextInputType.text,
+                                      // 기본으로 자판 모양의 키보드가 호출되도록 설정
+                                      decoration: const InputDecoration(
+                                        labelText: "Password (최소 8글자)", // PW 입력하는 공간
+                                      ),
+                                    )
+                                ),
+                                Padding(
+                                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                    child: TextField(
+                                      controller: repwController,
+                                      keyboardType: TextInputType.text,
+                                      obscureText: true,
+                                      decoration: const InputDecoration(
+                                        labelText: "재확인", //PW 다시 입력하는 공간
+                                      ),
+                                    )
+                                ),
+                                Padding(
+                                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                    child: TextFormField(
+                                      controller: nicknameController,
+                                      keyboardType: TextInputType.text,
+                                      decoration: const InputDecoration(
+                                        labelText: "Name", // 이름 입력하는 공간
+                                      ),
+                                    )
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                  child: TextField(
+                                    keyboardType: TextInputType.text,
+                                    controller: inputKlaytnAddressController,
+                                    decoration: const InputDecoration(
+                                      labelText: "KAS 주소",
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                    child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          ElevatedButton(
+                                            child: const Icon(Icons.qr_code),
+                                            style: ElevatedButton.styleFrom(
+                                                primary: Colors.deepPurpleAccent
+                                            ),
+                                            onPressed: () async {
+                                              final qrCodeScanResult = await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                    const QRCodeScanner()
+                                                ),
+                                              );
+                                              inputKlaytnAddressController.text = qrCodeScanResult!;
+                                            },
+                                          ),
+                                          ElevatedButton(
+                                            child: const Text("생성"),
+                                            style: ElevatedButton.styleFrom(
+                                                primary: Colors.deepPurpleAccent
+                                            ),
+                                            onPressed: () async {
+                                              createKlaytnAddress();
+                                            }
+                                          ),
+                                          ElevatedButton(
+                                            child: const Text("확인"),
+                                            style: ElevatedButton.styleFrom(
+                                                primary: Colors.deepPurpleAccent),
+                                            onPressed: () {
+                                              checkKlaytnAddress();
+                                            },
+                                          ),
+                                        ]
+                                    )
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    var _id = idController.text;
+                                    var _pw = pwController.text;
+                                    var _repw = repwController.text;
+                                    var _nickname = nicknameController.text;
+                                    var _address = inputKlaytnAddressController.text;
+                                    if (_pw.length < 8) {
+                                      displayDialog(context, "Invalid Password", "The password should be at least 8 characters long");
+                                    } else if (_pw != _repw) {
+                                      displayDialog(context, "Check Password", "Two Password Is Different");
+                                    } else if (!flag_auth) {
+                                      displayDialog(context, "Not Authenticated", "Not Authenticated");
+                                    } else if (!flag_KAS) {
+                                      displayDialog(context, "KAS Address", "The KAS account is not yet linked.");
+                                    } else {
+                                      var res = await attemptSignUp(_id, _pw, _nickname, _address);
+                                      if (res == 201) {
+                                        displayDialog_register(context, "Success", "The user was created. Log in now.");
+                                      } else if (res == 409) {
+                                        displayDialog(context, "That user is already registered", "Please try to sign up using another id or log in if you already have an account.");
+                                      } else {
+                                        displayDialog(context, "Error", "An unknown error occurred.");
+                                      }
+                                    }
+                                  },
+                                  child: const Text("가입"),
+                                  style: ElevatedButton.styleFrom(
+                                      primary: Colors.purpleAccent.shade100,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12)
+                                      )
+                                  ),
+                                )
+                              ]
+                          )
+                        ]
                     )
-                  ])),
-              Column(children: <Widget>[
-                SizedBox(height: 30),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(80, 0, 80, 0),
-                    child: Row(children: <Widget>[
-                      Flexible(
-                          child: TextField(
-                        controller: idController,
-                        keyboardType: TextInputType.number,
-                        //기본으로 숫자 모양의 키보드가 호출되도록 설정
-                        decoration: InputDecoration(
-                          labelText: "HP(ID)", //id 입력하는 공간
-                        ),
-                      )),
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        //텍스트 필드와 약간의 여백 생성
-                        child: ElevatedButton(
-                            onPressed: () {
-                              loginWithPhone();
-                            }, //인증받기 위해 누르는 버튼
-                            child: Text("인증"),
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.deepPurpleAccent //버튼 색깔 설정
-                                )),
-                      )
-                    ])),
-                Padding(
-                    //인증번호를 위한 공간
-                    padding: EdgeInsets.fromLTRB(80, 20, 80, 0),
-                    //ID 입력 칸과 여백 및, 좌우 공간 여백 설정
-                    child: Row(children: <Widget>[
-                      Flexible(
-                          child: TextField(
-                        keyboardType: TextInputType.number,
-                        controller: inputOtpController,
-                        //기본으로 숫자 모양의 키보드가 호출되도록 설정
-                        decoration: InputDecoration(
-                          labelText: "인증번호", //인증번호 입력하는 공간
-                        ),
-                      )),
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        //텍스트 필드와 약간의 여백 생성
-                        child: ElevatedButton(
-                            onPressed: () {
-                              verifyOTP();
-                            }, // OTP 인증
-                            child: Text("확인"),
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.deepPurpleAccent //버튼 색깔 설정
-                                )),
-                      )
-                    ])),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(80, 20, 80, 0),
-                    child: TextField(
-                      controller: pwController,
-                      obscureText: true,
-                      keyboardType: TextInputType.text,
-                      //기본으로 자판 모양의 키보드가 호출되도록 설정, pw 안보이도록 가림
-                      decoration: InputDecoration(
-                        labelText: "Password (최소 8글자)", //PW 입력하는 공간
-                      ),
-                    )),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(80, 20, 80, 0),
-                    child: TextField(
-                      controller: repwController,
-                      keyboardType: TextInputType.text,
-                      obscureText: true,
-                      //기본으로 자판 모양의 키보드가 호출되도록 설정, pw 안보이도록 가림
-                      decoration: InputDecoration(
-                        labelText: "재확인", //PW 다시 입력하는 공간
-                      ),
-                    )),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(80, 20, 80, 0),
-                    //재확인 입력 칸과 여백 및, 좌우 공간 여백 설정
-                    child: TextFormField(
-                      controller: nicknameController,
-                      keyboardType: TextInputType.text,
-                      //기본으로 자판 모양의 키보드가 호출되도록 설정, pw 안보이도록 가림
-                      decoration: InputDecoration(
-                        labelText: "Name", //이름 입력하는 공간
-                      ),
-                    )),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 0),
-                  child: TextField(
-                    keyboardType: TextInputType.text,
-                    controller: inputKlaytnAddressController,
-                    decoration: const InputDecoration(
-                      labelText: "KAS 주소",
-                    ),
-                  ),
-                ),
-                Padding(
-                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          ElevatedButton(
-                            child: const Icon(Icons.qr_code),
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.deepPurpleAccent),
-                            onPressed: () async {
-                              final qrCodeScanResult = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const QRCodeScanner()),
-                              );
-                              inputKlaytnAddressController.text =
-                                  qrCodeScanResult!;
-                            },
-                          ),
-                          ElevatedButton(
-                              child: const Text("생성"),
-                              style: ElevatedButton.styleFrom(
-                                  primary: Colors.deepPurpleAccent),
-                              onPressed: () async {
-                                createKlaytnAddress();
-                              }),
-                          ElevatedButton(
-                            child: const Text("확인"),
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.deepPurpleAccent),
-                            onPressed: () {
-                              checkKlaytnAddress();
-                            },
-                          ),
-                        ])),
-                ElevatedButton(
-                  onPressed: () async {
-                    var _id = idController.text;
-                    var _pw = pwController.text;
-                    var _repw = repwController.text;
-                    var _nickname = nicknameController.text;
-                    var _address = inputKlaytnAddressController.text;
-                    if (_pw.length < 8) {
-                      displayDialog(context, "Invalid Password",
-                          "The password should be at least 8 characters long");
-                    } else if (_pw != _repw) {
-                      displayDialog(context, "Check Password",
-                          "Two Password Is Different");
-                    } else if (!flag_auth) {
-                      displayDialog(
-                          context, "Not Authenticated", "Not Authenticated");
-                    } else if (!flag_KAS) {
-                      displayDialog(context, "KAS Address",
-                          "The KAS account is not yet linked.");
-                    } else {
-                      var res =
-                          await attemptSignUp(_id, _pw, _nickname, _address);
-                      if (res == 201) {
-                        displayDialog_register(context, "Success",
-                            "The user was created. Log in now.");
-                      } else if (res == 409)
-                        displayDialog(
-                            context,
-                            "That user is already registered",
-                            "Please try to sign up using another id or log in if you already have an account.");
-                      else {
-                        displayDialog(
-                            context, "Error", "An unknown error occurred.");
-                      }
-                    }
-                  },
-                  child: const Text("가입"),
-                  style: ElevatedButton.styleFrom(
-                      primary: Colors.purpleAccent.shade100,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12))),
                 )
-              ]) //가입 버튼, 버튼 색깔 설정 및 둥글게 설정
-            ])))));
+            )
+        )
+    );
   }
 }
