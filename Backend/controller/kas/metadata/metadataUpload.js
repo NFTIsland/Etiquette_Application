@@ -6,7 +6,7 @@ const metadataUpload = async function (req, res) {
 
         if (upload['statusCode'] == 200) {
             res.status(200);
-            res.json({statusCode: 200, data: upload['data']['result']});
+            res.json({statusCode: 200, data: upload['data']['uri']});
         } else {
             const errorCode = upload['data']['code'];
             res.status(upload['statusCode']);
