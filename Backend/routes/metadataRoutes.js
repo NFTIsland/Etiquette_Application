@@ -5,6 +5,6 @@ const metadataUpload = require('../controller/kas/metadata/metadataUpload');
 const metadataLoad = require('../controller/kas/metadata/metadataLoad');
 
 router.post('/metadataUpload', metadataUpload);
-router.get('/metadataLoad', metadataLoad);
+router.post('/metadataLoad', metadataLoad);
 
 module.exports = router;
