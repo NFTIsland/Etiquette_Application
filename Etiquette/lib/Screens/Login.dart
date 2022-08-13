@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'Register.dart';
 import 'Home.dart';
@@ -17,14 +20,22 @@ class _Login extends State<Login> {
   final pwController = TextEditingController();
 
   Future<String> attemptLogIn(String id, String pw) async {
-    var res = await http.post(Uri.parse("$SERVER_IP/login"), body: {
-      "id": id,
-      "pw": pw
-    });
-    if (res.statusCode == 200) {
-      return res.body;
+    try {
+      final res = await http.post(Uri.parse("$SERVER_IP/login"), body: {
+        "id": id,
+        "pw": pw
+      });
+      if (res.statusCode == 200) {
+        return res.body;
+      }
+      return "";
+    } catch (e) {
+      if (e is SocketException) { // 서버가 오프라인 상태인 경우
+        return "SocketException";
+      } else {
+        return "Unknown Error Occurred";
+      }
     }
-    return "";
   }
 
   @override
@@ -92,7 +103,13 @@ class _Login extends State<Login> {
                                                     var _id = idController.text;
                                                     var _pw = pwController.text;
                                                     var jwt = await attemptLogIn(_id, _pw);
-                                                    if (jwt != "") {
+                                                    if (jwt == "") {
+                                                      displayDialog(context, "An Error Occurred", "No account was found matching that ID and Password");
+                                                    } else if (jwt == "SocketException") {
+                                                      displayDialog(context, "An Error Occurred", "Connection to the server is not smooth.");
+                                                    } else if (jwt == "Unknown Error Occurred") {
+                                                      displayDialog(context, "An Error Occurred", jwt);
+                                                    } else {
                                                       storage.write(key: "jwt", value: jwt);
                                                       Navigator.push(
                                                           context,
@@ -105,9 +122,7 @@ class _Login extends State<Login> {
                                                             content: Text(_id + "님 접속을 환영합니다."),
                                                           )
                                                       );
-                                                    } else {
-                                                      displayDialog(context, "An Error Occurred", "No account was found matching that ID and Password");
-                                                    };
+                                                    }
                                                   },
                                                   child: const Text("로그인"),
                                                   style: ElevatedButton.styleFrom(
