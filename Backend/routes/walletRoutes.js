@@ -8,6 +8,7 @@ const transactionRetrieve = require('../controller/kas/wallet/transactionRetriev
 const klayTransaction = require('../controller/kas/wallet/klayTransaction');
 
 router.post('/createAccount', createAccount);
+router.get('/checkAccount/', checkAccount);
 router.get('/checkAccount/:address', checkAccount);
 router.post('/getBalance', getBalance);
 router.get('/transactionRetrieve/:transactionHash', transactionRetrieve);

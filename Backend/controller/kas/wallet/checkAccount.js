@@ -13,6 +13,9 @@ const checkAccount = async function (req, res) {
             res.status(check['statusCode']);
 
             switch (errorCode) {
+                case 1000000:
+                    res.json({statusCode: check['statusCode'], msg: '주소가 입력되지 않았습니다.'});
+                    break;
                 case 1010008:
                     res.json({statusCode: check['statusCode'], msg: '서버와의 네트워크 상태가 원활하지 않습니다. 잠시 후 다시 시도해주세요.'});
                     break;
