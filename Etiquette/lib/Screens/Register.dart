@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Screens/qr_code_scanner.dart';
-import 'package:Etiquette/Providers/KAS/check_KAS_address.dart';
-import 'package:Etiquette/Providers/KAS/create_KAS_account.dart';
+import 'package:Etiquette/Providers/KAS/Wallet/check_KAS_address.dart';
+import 'package:Etiquette/Providers/KAS/Wallet/create_KAS_account.dart';
 
 // 회원가입 화면
 class Register extends StatefulWidget {
