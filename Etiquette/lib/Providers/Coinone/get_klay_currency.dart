@@ -7,28 +7,37 @@ Future<Map<String, dynamic>> getKlayCurrency() async {
   try {
     final res = await dio.get("https://api.coinone.co.kr/public/v2/ticker_new/KRW/KLAY");
     Map<String, dynamic> data = res.data;
-    if (res.statusCode == 200) {
-      var lastCurrency = data["tickers"][0]["last"];
-      data.addEntries([
-        MapEntry("statusCode", res.statusCode),
-        MapEntry("lastCurrency", lastCurrency),
-      ]);
+    if (data["result"] == "success") {
+      final lastCurrency = data["tickers"][0]["last"];
+      return {
+        "statusCode": 200,
+        "lastCurrency": lastCurrency
+      };
     } else {
-      data.addEntries([
-        MapEntry("statusCode", res.statusCode),
-      ]);
+      return {
+        "statusCode": 400,
+        "msg": "KLAY 시세 정보를 불러오는데 실패했습니다."
+      };
     }
-    return data;
   } on DioError catch (e) {
-    Map<String, dynamic> data = {
-      "statusCode": 400,
-      "message": e.message
-    };
-    return data;
+    final handleError = e.response?.data;
+    if (handleError == null) {
+      Map<String, dynamic> data = {
+        "statusCode": 404,
+        "msg": "서버와의 연결이 원활하지 않습니다.",
+      };
+      return data;
+    } else {
+      Map<String, dynamic> data = {
+        "statusCode": e.response?.statusCode,
+        "msg": handleError['msg'],
+      };
+      return data;
+    }
   } catch (ex) {
     Map<String, dynamic> data = {
       "statusCode": 400,
-      "message": ex.toString()
+      "msg": ex.toString()
     };
     return data;
   }
