@@ -7,6 +7,8 @@ import 'Home.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
+import 'package:get/get.dart';
+import 'TabController.dart';
 
 // 로그인 화면
 class Login extends StatefulWidget {
@@ -111,12 +113,7 @@ class _Login extends State<Login> {
                                                       displayDialog(context, "An Error Occurred", jwt);
                                                     } else {
                                                       storage.write(key: "jwt", value: jwt);
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) => Home()
-                                                          )
-                                                      );
+                                                      Get.off(Tabb(idx:0));
                                                       ScaffoldMessenger.of(context).showSnackBar(
                                                           SnackBar(
                                                             content: Text(_id + "님 접속을 환영합니다."),
@@ -135,12 +132,7 @@ class _Login extends State<Login> {
                                               // 회원가입 버튼
                                               ElevatedButton(
                                                   onPressed: () {
-                                                    Navigator.pushReplacement(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) => const Register()
-                                                      ),
-                                                    );
+                                                    Get.to(Register());
                                                   },
                                                   child: const Text("회원가입"), // 회원가입 버튼
                                                   style: ElevatedButton.styleFrom(
