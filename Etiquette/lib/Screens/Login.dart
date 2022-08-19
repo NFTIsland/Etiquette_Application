@@ -1,14 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/material.dart';
-import 'Register.dart';
-import 'Home.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:Etiquette/Screens/Register.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
-import 'package:get/get.dart';
-import 'TabController.dart';
+import 'package:Etiquette/Screens/TabController.dart';
 
 // 로그인 화면
 class Login extends StatefulWidget {
@@ -28,7 +27,8 @@ class _Login extends State<Login> {
         "pw": pw
       });
       if (res.statusCode == 200) {
-        return res.body;
+        final data = jsonDecode(res.body);
+        return data['token'] + ":" + data['nickname'];
       }
       return "";
     } catch (e) {
@@ -112,11 +112,13 @@ class _Login extends State<Login> {
                                                     } else if (jwt == "Unknown Error Occurred") {
                                                       displayDialog(context, "An Error Occurred", jwt);
                                                     } else {
-                                                      storage.write(key: "jwt", value: jwt);
+                                                      var _JWT = jwt.split(':')[0];
+                                                      storage.write(key: "jwt", value: _JWT);
+                                                      var _nickname = jwt.split(':')[1];
                                                       Get.off(Tabb(idx:0));
                                                       ScaffoldMessenger.of(context).showSnackBar(
                                                           SnackBar(
-                                                            content: Text(_id + "님 접속을 환영합니다."),
+                                                            content: Text(_nickname + "님 접속을 환영합니다."),
                                                           )
                                                       );
                                                     }
