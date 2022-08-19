@@ -7,6 +7,9 @@ import 'package:Etiquette/Screens/Interest.dart';
 import 'package:Etiquette/Screens/Selling.dart';
 import 'package:Etiquette/Screens/Used.dart';
 import 'package:Etiquette/Screens/Wallet.dart';
+import 'package:Etiquette/Screens/Login.dart';
+import 'package:Etiquette/widgets/alertDialogWidget.dart';
+import 'package:Etiquette/Models/serverset.dart';
 
 @override
 Widget drawer(BuildContext context, bool theme) {
@@ -117,6 +120,16 @@ Widget drawer(BuildContext context, bool theme) {
             //         builder: (context) => Used()
             //     )
             // );
+          },
+        ),
+        ListTile(
+          title: const Text('Logout'),
+          onTap: () async {
+            final selected = await displayDialog_YesOrNo(context, "로그아웃", "로그아웃 하시겠습니까?");
+            if (selected) {
+              storage.deleteAll();
+              Get.to(Login());
+            }
           },
         ),
       ]),
