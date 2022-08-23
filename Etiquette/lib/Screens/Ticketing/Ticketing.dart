@@ -7,8 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Screens/Search.dart';
-import 'package:Etiquette/Screens/ticket_details.dart';
-import 'package:Etiquette/Screens/ticketing_list.dart';
+import 'package:Etiquette/Screens/Ticketing/ticketing_list.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 
 class Ticketing extends StatefulWidget {
@@ -193,7 +192,7 @@ class _Ticketing extends State<Ticketing> {
                                     children: <Widget> [
                                       Column(
                                           children: <Widget> [
-                                            const SizedBox(height: 15),
+                                            const SizedBox(height: 20),
                                             const Text(
                                                 "Hot Pick",
                                                 style: TextStyle(
@@ -201,6 +200,7 @@ class _Ticketing extends State<Ticketing> {
                                                     fontWeight: FontWeight.bold
                                                 )
                                             ),
+                                            const SizedBox(height: 20),
                                             ListView.builder(
                                                 physics: const NeverScrollableScrollPhysics(),
                                                 shrinkWrap: true,
@@ -237,7 +237,8 @@ class _Ticketing extends State<Ticketing> {
                                           ]
                                       ),
                                       Column(
-                                          children: <Widget>[
+                                          children: <Widget> [
+                                            const SizedBox(height: 20),
                                             const Text(
                                                 "Deadline Imminent",
                                                 style: TextStyle(
@@ -245,6 +246,7 @@ class _Ticketing extends State<Ticketing> {
                                                     fontWeight: FontWeight.bold
                                                 )
                                             ),
+                                            const SizedBox(height: 20),
                                             ListView.builder(
                                                 physics: const NeverScrollableScrollPhysics(),
                                                 shrinkWrap: true,
@@ -282,6 +284,7 @@ class _Ticketing extends State<Ticketing> {
                                       ),
                                       Column(
                                           children: <Widget>[
+                                            const SizedBox(height: 20),
                                             const Text(
                                                 "Ranking",
                                                 style: TextStyle(
@@ -289,6 +292,7 @@ class _Ticketing extends State<Ticketing> {
                                                     fontWeight: FontWeight.bold
                                                 )
                                             ),
+                                            const SizedBox(height: 20),
                                             ListView.builder(
                                                 physics: const NeverScrollableScrollPhysics(),
                                                 shrinkWrap: true,
@@ -322,6 +326,7 @@ class _Ticketing extends State<Ticketing> {
                                                   );
                                                 }
                                             ),
+                                            const SizedBox(height: 80),
                                           ]
                                       ),
                                     ]
