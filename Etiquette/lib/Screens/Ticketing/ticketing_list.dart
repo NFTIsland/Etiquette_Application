@@ -4,8 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Screens/ticket_details.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
-import 'package:Etiquette/Providers/Coinone/get_klay_currency.dart';
-import 'package:Etiquette/Utilities/round.dart';
 
 class TicketingList extends StatefulWidget {
   const TicketingList({Key? key}) : super(key: key);
@@ -17,6 +15,8 @@ class TicketingList extends StatefulWidget {
 class _TicketingList extends State<TicketingList> {
   List list = [];
   late final Future future;
+
+  final inputTicketNameController = TextEditingController();
 
   Future<void> getMarketTicketsFromDB() async {
     list = new List.empty(growable: true);
@@ -79,14 +79,54 @@ class _TicketingList extends State<TicketingList> {
                             children: <Widget> [
                               Column(
                                 children: <Widget> [
-                                  const SizedBox(height: 15),
-                                  const Text(
-                                      "판매 중인 티켓",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold
-                                      )
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                                    child: TextField(
+                                      keyboardType: TextInputType.emailAddress,
+                                      controller: inputTicketNameController,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: '티켓 이름',
+                                        hintStyle: const TextStyle(color: Colors.grey),
+                                        focusedBorder: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0)
+                                            ),
+                                            borderSide: BorderSide(
+                                              width: 1,
+                                              color: Colors.blueAccent,
+                                            )
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).accentColor,
+                                          ),
+                                        ),
+                                        suffixIcon: IconButton(
+                                          color: Theme.of(context).accentColor,
+                                          icon: const Icon(
+                                              Icons.search,
+                                              size: 30
+                                          ),
+                                          onPressed: () async {
+
+                                          },
+                                        ),
+                                      ),
+                                    ),
                                   ),
+                                  // const Text(
+                                  //     "판매 중인 티켓",
+                                  //     style: TextStyle(
+                                  //         fontSize: 20,
+                                  //         fontWeight: FontWeight.bold
+                                  //     )
+                                  // ),
                                   ListView.builder(
                                     physics: const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,

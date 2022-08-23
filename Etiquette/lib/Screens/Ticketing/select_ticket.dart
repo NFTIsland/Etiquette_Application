@@ -6,6 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
+import 'package:Etiquette/Utilities/round.dart';
+import 'package:Etiquette/Providers/Coinone/get_klay_currency.dart';
+import 'package:Etiquette/Providers/DB/get_ticket_seat_image_url.dart';
 
 class SelectTicket extends StatefulWidget {
   String? product_name;
@@ -27,6 +30,10 @@ class _SelectTicket extends State<SelectTicket> {
   String _price = "";
   String _payInfo = "";
   String _klayInfo = "";
+  // String image_url = "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/seat_image%2Fseoul_a_theater.jpg?alt=media&token=9e93c0ac-960c-4853-916f-731218502647";
+  String image_url = "";
+
+  double klayCurrency = 0.0;
 
   List _performanceDate = new List.empty(growable: true);
   String date_value = "예매 일자 선택";
@@ -224,10 +231,12 @@ class _SelectTicket extends State<SelectTicket> {
         var res = await http.get(Uri.parse(url));
         Map<String, dynamic> data = json.decode(res.body);
         if (res.statusCode == 200) {
+          int ticket_price = data["data"][0]["price"];
           setState(() {
-            _price = data["data"][0]["price"].toString();
+            _price = ticket_price.toString();
           });
           _payInfo = "최종 결제 금액: ${_price.replaceAllMapped(reg, mathFunc)}원";
+          _klayInfo = "(약 ${klayRound(ticket_price / klayCurrency)} KLAY)";
         } else {
           setState(() {
             _price = "";
@@ -239,10 +248,52 @@ class _SelectTicket extends State<SelectTicket> {
     }
   }
 
+  Future<void> loadKlayCurrency() async {
+    Map<String, dynamic> data = await getKlayCurrency(); // 현재 KLAY 시세 정보를 API를 통해 가져옴
+    if (data["statusCode"] == 200) { // 현재 KLAY 시세 정보를 정상적으로 가져옴
+      String _klayCurrency = data['lastCurrency'];
+      klayCurrency = double.parse(_klayCurrency);
+    } else {
+      klayCurrency = 0.0;
+    }
+  }
+
+  String klayRound(double klay) {
+    return roundDouble(klay, 2).toString().replaceAllMapped(reg, mathFunc);
+  }
+
+  Future<void> loadTicketSeatImage() async {
+    Map<String, dynamic> data = await getTicketSeatImageUrl(widget.product_name!, widget.place!);
+    if (data["statusCode"] == 200) {
+      image_url = data['data'][0]['seat_image_url'];
+    } else {
+      image_url = "";
+    }
+  }
+
+  Timer? timer;
+
   @override
   void initState() {
     super.initState();
+    getTheme();
+    loadKlayCurrency();
+    loadTicketSeatImage();
+    timer = Timer.periodic(
+      const Duration(seconds: 3), // 3초 마다 자동 갱신
+          (timer) {
+        setState(() {
+          loadKlayCurrency();
+        });
+      },
+    );
     future = init_PerformanceDate();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
   }
 
   @override
@@ -265,7 +316,25 @@ class _SelectTicket extends State<SelectTicket> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget> [
-                      const SizedBox(height : 10),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: 300.0,
+                        height: 150.0,
+                        child: image_url != "" ?
+                        Image.network(
+                          image_url,
+                          width: 250,
+                          height: 250,
+                        ) : const Center(
+                          child: Text(
+                            "등록된 좌석 이미지가 없습니다.",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
                       Table(
                           border: TableBorder.all(),
                           columnWidths: const {
@@ -350,6 +419,9 @@ class _SelectTicket extends State<SelectTicket> {
                                           load_performance_time(date_value);
                                           init_seatClassItems();
                                           init_seatNoItems();
+                                          _price = "";
+                                          _payInfo = "";
+                                          _klayInfo = "";
                                         });
                                       },
                                     ),
@@ -402,6 +474,9 @@ class _SelectTicket extends State<SelectTicket> {
                                           time_value = newValue!;
                                           load_seat_class(date_value, time_value);
                                           init_seatNoItems();
+                                          _price = "";
+                                          _payInfo = "";
+                                          _klayInfo = "";
                                         });
                                       },
                                     ),
@@ -553,16 +628,45 @@ class _SelectTicket extends State<SelectTicket> {
                               Text(
                                 _payInfo,
                                 style: const TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                 ),
                               ),
                               Text(
                                 _klayInfo,
                                 style: const TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 150,
+                        child: Center(
+                          child: ElevatedButton(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const <Widget> [
+                                Icon(Icons.credit_card),
+                                Text(
+                                  " 결제",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.all(10.0),
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)
+                              ),
+                            ),
+                            onPressed: () {
+
+                            },
                           ),
                         ),
                       ),
