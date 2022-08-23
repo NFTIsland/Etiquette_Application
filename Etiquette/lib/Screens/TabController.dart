@@ -1,10 +1,9 @@
 import "package:flutter/material.dart";
 import 'package:shared_preferences/shared_preferences.dart';
-
-import "Home.dart";
-import "Market.dart";
+import "package:Etiquette/Screens/Home.dart";
+import "package:Etiquette/Screens/Ticketing.dart";
+import 'package:Etiquette/Screens/Market/Market.dart';
 import 'package:Etiquette/Screens/More.dart';
-import "Ticketing.dart";
 
 class Tabb extends StatefulWidget {
 //const Tabb({Key? key}) : super(key: key);
