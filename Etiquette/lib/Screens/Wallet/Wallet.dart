@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:Etiquette/Screens/klay_withdraw.dart';
+import 'package:Etiquette/Screens/Wallet/klay_withdraw.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/get_balance.dart';
 import 'package:Etiquette/Providers/Coinone/get_klay_currency.dart';
 import 'package:Etiquette/Utilities/round.dart';
