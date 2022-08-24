@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
+import 'package:Etiquette/Utilities/get_theme.dart';
+import '../../widgets/appbar.dart';
 
 class TicketingList extends StatefulWidget {
   const TicketingList({Key? key}) : super(key: key);
@@ -19,8 +21,13 @@ class _TicketingList extends State<TicketingList> {
   final inputTicketNameController = TextEditingController();
 
   Future<void> getMarketTicketsFromDB() async {
+    if (inputTicketNameController.text == "") {
+      displayDialog_checkonly(context, "티켓 마켓", "검색어를 입력해 주세요.");
+      return;
+    }
+
     list = new List.empty(growable: true);
-    const url = "$SERVER_IP/ticketInfo";
+    final url = "$SERVER_IP/ticketing/search/${inputTicketNameController.text}";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
@@ -32,6 +39,7 @@ class _TicketingList extends State<TicketingList> {
             'place': ticket['place'],
           };
           list.add(ex);
+          setState(() {});
         }
       } else {
         int statusCode = res.statusCode;
@@ -46,7 +54,7 @@ class _TicketingList extends State<TicketingList> {
   @override
   void initState(){
     super.initState();
-    future = getMarketTicketsFromDB();
+    future = getTheme();
   }
 
   @override
@@ -55,8 +63,11 @@ class _TicketingList extends State<TicketingList> {
         future: future,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error'),
+            return Scaffold(
+              appBar: appbarWithArrowBackButton("Wallet"),
+              body: const Center(
+                child: Text("통신 에러가 발생했습니다."),
+              ),
             );
           }
           if (snapshot.connectionState == ConnectionState.done) {
@@ -114,7 +125,7 @@ class _TicketingList extends State<TicketingList> {
                                               size: 30
                                           ),
                                           onPressed: () async {
-
+                                            getMarketTicketsFromDB();
                                           },
                                         ),
                                       ),
