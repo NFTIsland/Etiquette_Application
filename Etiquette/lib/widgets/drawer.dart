@@ -6,7 +6,7 @@ import 'package:Etiquette/Screens/Hold.dart';
 import 'package:Etiquette/Screens/Interest.dart';
 import 'package:Etiquette/Screens/Selling.dart';
 import 'package:Etiquette/Screens/Used.dart';
-import 'package:Etiquette/Screens/Wallet.dart';
+import 'package:Etiquette/Screens/Wallet/Wallet.dart';
 import 'package:Etiquette/Screens/Login.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Models/serverset.dart';
@@ -53,7 +53,9 @@ Widget drawer(BuildContext context, bool theme) {
         ListTile(
           title: const Text('Wallet'),
           onTap: () {
-            Get.to(Wallet());
+            Get.to(
+              () => const Wallet()
+            );
             // Navigator.push(
             //     context,
             //     MaterialPageRoute(
@@ -65,7 +67,7 @@ Widget drawer(BuildContext context, bool theme) {
         ListTile(
           title: const Text('List of holding tickets'),
           onTap: () {
-            Get.to(Hold());
+            Get.to(() => const Hold());
             // Navigator.push(
             //     context,
             //     MaterialPageRoute(
