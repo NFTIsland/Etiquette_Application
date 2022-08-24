@@ -14,7 +14,7 @@ import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Screens/Selling.dart';
 import 'package:Etiquette/Screens/Setting.dart';
 import 'package:Etiquette/Screens/Used.dart';
-import 'Wallet.dart';
+import 'package:Etiquette/Screens/Wallet/Wallet.dart';
 
 class More extends StatefulWidget {
   //More에서 구현할 화면
