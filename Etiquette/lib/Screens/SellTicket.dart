@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:Etiquette/Models/testvalues.dart';
 import 'package:Etiquette/Providers/DB/upload_ticket_db.dart';
 import 'package:Etiquette/Providers/asset_upload.dart';
-import 'package:Etiquette/Providers/kip17_token_minting.dart';
+import 'package:Etiquette/Providers/KAS/Kip17/kip17_token_minting.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
