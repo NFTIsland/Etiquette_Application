@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
-import 'package:Etiquette/Screens/ticket_details.dart';
+import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 
 class TicketingList extends StatefulWidget {
@@ -120,13 +120,6 @@ class _TicketingList extends State<TicketingList> {
                                       ),
                                     ),
                                   ),
-                                  // const Text(
-                                  //     "판매 중인 티켓",
-                                  //     style: TextStyle(
-                                  //         fontSize: 20,
-                                  //         fontWeight: FontWeight.bold
-                                  //     )
-                                  // ),
                                   ListView.builder(
                                     physics: const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
