@@ -5,7 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Screens/SellTicket.dart';
-import 'package:Etiquette/Screens/bid_buy.dart';
+// import 'package:Etiquette/Screens/bid_buy.dart';
 
 class Market extends StatefulWidget {
   const Market({Key? key}) : super(key: key);
@@ -313,6 +313,7 @@ class _Market extends State<Market> {
                   ),
                 ],
               ),
+              /**
               floatingActionButton: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget> [
@@ -340,7 +341,7 @@ class _Market extends State<Market> {
                     icon: const Icon(Icons.add_card),
                   ),
                 ],
-              ),
+              ),*/
             );
           }
           return const Center(
