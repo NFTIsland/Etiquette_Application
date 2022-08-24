@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Screens/Search.dart';
-import 'package:Etiquette/Screens/Ticketing/ticketing_list.dart';
+import 'package:Etiquette/Screens/Ticketing/search_ticket.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 
 class Ticketing extends StatefulWidget {
