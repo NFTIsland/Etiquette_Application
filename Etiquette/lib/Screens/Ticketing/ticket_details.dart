@@ -7,7 +7,7 @@ import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
-import 'package:Etiquette/Screens/select_ticket.dart';
+import 'package:Etiquette/Screens/Ticketing/select_ticket.dart';
 
 class TicketDetails extends StatefulWidget {
   String? product_name;
@@ -271,6 +271,7 @@ class _TicketDetails extends State<TicketDetails> {
                           builder: (context) => SelectTicket(
                             product_name: widget.product_name!,
                             place: widget.place!,
+                            category: detail['category'],
                           )
                       )
                   );
