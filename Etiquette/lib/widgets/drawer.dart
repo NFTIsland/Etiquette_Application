@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:Etiquette/Screens/Account.dart';
 import 'package:Etiquette/Screens/Bid.dart';
-import 'package:Etiquette/Screens/Hold.dart';
+import 'package:Etiquette/Screens/Drawer/Hold.dart';
 import 'package:Etiquette/Screens/Interest.dart';
 import 'package:Etiquette/Screens/Selling.dart';
-import 'package:Etiquette/Screens/Used.dart';
+import 'package:Etiquette/Screens/Drawer/Used.dart';
 import 'package:Etiquette/Screens/Wallet/Wallet.dart';
 import 'package:Etiquette/Screens/Login.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
@@ -18,7 +18,7 @@ Widget drawer(BuildContext context, bool theme) {
       child: ListView(padding: EdgeInsets.zero, children: [
         GestureDetector(
           onTap: () {
-            Get.to(Account());
+            Get.to(() => Account());
             // Navigator.push(
             //     context,
             //     MaterialPageRoute(
@@ -79,7 +79,7 @@ Widget drawer(BuildContext context, bool theme) {
         ListTile(
           title: const Text('Interest Tickets'),
           onTap: () {
-            Get.to(Interest());
+            Get.to(() => Interest());
             // Navigator.push(
             //     context,
             //     MaterialPageRoute(
@@ -91,7 +91,7 @@ Widget drawer(BuildContext context, bool theme) {
         ListTile(
           title: const Text('Bid Tickets'),
           onTap: () {
-            Get.to(Bid());
+            Get.to(() => Bid());
             // Navigator.push(
             //     context,
             //     MaterialPageRoute(
@@ -103,7 +103,7 @@ Widget drawer(BuildContext context, bool theme) {
         ListTile(
           title: const Text('Selling Tickets'),
           onTap: () {
-            Get.to(Selling());
+            Get.to(() => Selling());
             // Navigator.push(
             //     context,
             //     MaterialPageRoute(
@@ -115,7 +115,7 @@ Widget drawer(BuildContext context, bool theme) {
         ListTile(
           title: const Text('List of used tickets'),
           onTap: () {
-            Get.to(Used());
+            Get.to(() => const Used());
             // Navigator.push(
             //     context,
             //     MaterialPageRoute(
@@ -129,8 +129,13 @@ Widget drawer(BuildContext context, bool theme) {
           onTap: () async {
             final selected = await displayDialog_YesOrNo(context, "로그아웃", "로그아웃 하시겠습니까?");
             if (selected) {
-              storage.deleteAll();
-              Get.to(Login());
+              await storage.deleteAll();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const Login(),
+                ), (route) => false
+              );
             }
           },
         ),
