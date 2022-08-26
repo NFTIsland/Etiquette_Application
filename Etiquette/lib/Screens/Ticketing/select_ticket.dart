@@ -679,11 +679,15 @@ class _SelectTicket extends State<SelectTicket> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: const <Widget> [
-                                Icon(Icons.credit_card),
+                                Icon(
+                                  Icons.credit_card,
+                                  color: Colors.white,
+                                ),
                                 Text(
                                   " 결제",
                                   style: TextStyle(
                                     fontSize: 15,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ],
