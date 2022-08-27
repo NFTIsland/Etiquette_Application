@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Screens/SellTicket.dart';
+import 'package:Etiquette/Screens/Market/upload_ticket.dart';
 // import 'package:Etiquette/Screens/bid_buy.dart';
 
 class Market extends StatefulWidget {
@@ -25,35 +26,35 @@ class _Market extends State<Market> {
     'category': '영화',
     'price': 16000,
     'img':
-        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
   };
   Map<String, dynamic> ex2 = {
     'name': '티켓2',
     'category': '콘서트',
     'price': 150000,
     'img':
-        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
   };
   Map<String, dynamic> ex3 = {
     'name': '티켓3',
     'category': '스포츠',
     'price': 66000,
     'img':
-        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
   };
   Map<String, dynamic> ex4 = {
     'name': '티켓4',
     'category': '뮤지컬',
     'price': 130000,
     'img':
-        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
   };
   Map<String, dynamic> ex5 = {
     'name': '티켓5',
     'category': '공연',
     'price': 100000,
     'img':
-        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
+    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
   };
 
   void _setData(bool value) async {
@@ -111,38 +112,38 @@ class _Market extends State<Market> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
               appBar: AppBar(
-                title: const Text("Auction"),
-                backgroundColor: Colors.white24,
-                foregroundColor: Colors.black,
-                elevation: 0,
-                actions: <Widget>[
-                  IconButton(
-                    icon: img,
-                    onPressed: () {
-                      if (ala == true) {
-                        ala = false;
-                        _delToken();
-                        setState(() {
-                          img = const Icon(Icons.notifications_none);
-                        });
-                        _setData(ala);
-                      } else {
-                        ala = true;
-                        _getToken();
-                        setState(() {
-                          img = const Icon(Icons.notifications);
-                        });
-                        _setData(ala);
-                      }
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      Get.to(Search());
-                    },
-                  )
-                ]
+                  title: const Text("Auction"),
+                  backgroundColor: Colors.white24,
+                  foregroundColor: Colors.black,
+                  elevation: 0,
+                  actions: <Widget>[
+                    IconButton(
+                      icon: img,
+                      onPressed: () {
+                        if (ala == true) {
+                          ala = false;
+                          _delToken();
+                          setState(() {
+                            img = const Icon(Icons.notifications_none);
+                          });
+                          _setData(ala);
+                        } else {
+                          ala = true;
+                          _getToken();
+                          setState(() {
+                            img = const Icon(Icons.notifications);
+                          });
+                          _setData(ala);
+                        }
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        Get.to(Search());
+                      },
+                    )
+                  ]
               ),
               drawer: drawer(context, theme),
               body: Column(
@@ -302,7 +303,7 @@ class _Market extends State<Market> {
                                             );
                                           }
                                       ),
-                                      const SizedBox(height: 140),
+                                      const SizedBox(height: 80),
                                     ]
                                 ),
                               ]
@@ -313,14 +314,14 @@ class _Market extends State<Market> {
                   ),
                 ],
               ),
-              /**
-              floatingActionButton: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+              floatingActionButton: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget> [
                   FloatingActionButton.extended(
+                    heroTag: null,
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => BBuy()));
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (context) => BBuy()));
                     },
                     backgroundColor: (theme ? const Color(0xffe8e8e8) : const Color(0xff7b9acc)),
                     foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
@@ -331,17 +332,22 @@ class _Market extends State<Market> {
                     height: 10,
                   ),
                   FloatingActionButton.extended(
+                    heroTag: null,
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => BBuy()));
+                          MaterialPageRoute(
+                              builder: (context) => const UploadTicket()
+                          )
+                      );
                     },
                     backgroundColor: (theme ? const Color(0xffe8e8e8) : const Color(0xff7b9acc)),
                     foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
-                    label: const Text("티켓 판매"),
+                    label: const Text("티켓 업로드"),
                     icon: const Icon(Icons.add_card),
                   ),
                 ],
-              ),*/
+              ),
+              floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             );
           }
           return const Center(
