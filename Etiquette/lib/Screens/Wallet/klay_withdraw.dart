@@ -66,19 +66,19 @@ class _KlayWithdraw extends State<KlayWithdraw> {
       final data = await klayTransaction(senderAddress, inputValueController.text, inputReceiverAddressController.text);
       if (data["statusCode"] == 200) {
         showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text("KLAY 출금"),
-              content: const Text("KLAY 출금이 완료되었습니다."),
-              actions: <Widget> [
-                TextButton(
-                  onPressed: () => {
-                    Navigator.of(context).pop()
-                  },
-                  child: const Text("확인"),
-                )
-              ],
-            )
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("KLAY 출금"),
+            content: const Text("KLAY 출금이 완료되었습니다."),
+            actions: <Widget> [
+              TextButton(
+                onPressed: () => {
+                  Navigator.of(context).pop(),
+                },
+                child: const Text("확인"),
+              )
+            ],
+          )
         );
       } else {
         int statusCode = data["statusCode"];
