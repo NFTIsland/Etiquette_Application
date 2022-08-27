@@ -9,6 +9,7 @@ import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Providers/KAS/Kip17/kip17_get_token_data.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/Utilities/compare_strings_ignore_case.dart';
+import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class Hold extends StatefulWidget {
@@ -269,6 +270,17 @@ class _Hold extends State<Hold> {
                                     horizontal: 10,
                                   ),
                                   child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) => TicketDetails(
+                                                product_name: holdlist[index]['product_name'],
+                                                place: holdlist[index]['place'],
+                                                showPurchaseButton: false,
+                                              )
+                                          )
+                                      );
+                                    },
                                     child: SizedBox(
                                       width: double.infinity,
                                       child: Row(
