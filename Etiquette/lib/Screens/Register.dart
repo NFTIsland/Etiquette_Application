@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
-import 'package:Etiquette/Screens/qr_code_scanner.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/check_KAS_address.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/create_KAS_account.dart';
+import 'package:Etiquette/Screens/qr_code_scanner.dart';
+import 'package:Etiquette/Screens/Login.dart';
 
 // 회원가입 화면
 class Register extends StatefulWidget {
@@ -330,7 +331,13 @@ class _Register extends State<Register> {
                                     } else {
                                       var res = await attemptSignUp(_id, _pw, _nickname, _address);
                                       if (res == 201) {
-                                        displayDialog_register(context, "Success", "The user was created. Log in now.");
+                                        await displayDialog_checkonly(context, "Success", "The user was created. Log in now.");
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => const Login(),
+                                            ), (route) => false
+                                        );
                                       } else if (res == 409) {
                                         displayDialog(context, "That user is already registered", "Please try to sign up using another id or log in if you already have an account.");
                                       } else {
