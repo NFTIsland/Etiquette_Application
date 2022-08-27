@@ -45,6 +45,7 @@ dependencies:
   firebase_auth: ^3.6.2
   qr_flutter: ^4.0.0
   qr_code_scanner: ^1.0.0
+  ticket_widget: ^0.0.1
 
 dev_dependencies:
   flutter_test:
