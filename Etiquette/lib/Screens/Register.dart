@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -35,6 +37,7 @@ class _Register extends State<Register> {
   final inputKlaytnAddressController = TextEditingController(); // KAS 주소 입력받기
   bool flag_auth = false; // 인증 여부 확인
   bool flag_KAS = false; // KAS 연동 여부 확인
+  bool allow_change_kas_address = true;
 
   FirebaseAuth auth = FirebaseAuth.instance; // 인증 instance
   User? user;
@@ -103,8 +106,7 @@ class _Register extends State<Register> {
     Map<String, dynamic> data = await checkKasAddress(inputAddress);
 
     if (data["statusCode"] == 200) {
-      displayDialog_checkonly(
-          context, "KAS(Klaytn Api Service) 주소 확인", availableKasAddressMsg);
+      displayDialog_checkonly(context, "KAS(Klaytn Api Service) 주소 확인", availableKasAddressMsg);
       flag_KAS = true;
     } else {
       final notAvailableKasAddressMsg = data["msg"] +
@@ -112,25 +114,53 @@ class _Register extends State<Register> {
           notAvailableKasAddressMsg1 +
           notAvailableKasAddressMsg2 +
           notAvailableKasAddressMsg3;
-      displayDialog_checkonly(
-          context, "KAS(Klaytn Api Service) 주소 확인", notAvailableKasAddressMsg);
+      displayDialog_checkonly(context, "KAS(Klaytn Api Service) 주소 확인", notAvailableKasAddressMsg);
       flag_KAS = false;
     }
   }
 
   // KAS 계정 생성
   Future<void> createKlaytnAddress() async {
-    Map<String, dynamic> address = await createKasAccount();
-    if (address['statusCode'] == 200) {
-      inputKlaytnAddressController.text = address['data'];
-      flag_KAS = true;
-      displayDialog_checkonly(context, "Successfully Created",
-          "The KAS account is successfully created");
+    if (allow_change_kas_address) {
+      Map<String, dynamic> address = await createKasAccount();
+      if (address['statusCode'] == 200) {
+        inputKlaytnAddressController.text = address['data'];
+        displayDialog_checkonly(context, "KAS 계정 생성", "KAS 계정이 성공적으로 생성되었습니다.");
+        flag_KAS = true;
+        allow_change_kas_address = false;
+      } else {
+        displayDialog_checkonly(context, "Failed", address['msg']);
+      }
     } else {
-      displayDialog_checkonly(context, "Failed", address['msg']);
+      displayDialog_checkonly(context, "KAS 계정 생성", "이미 KAS 계정을 생성하였습니다.");
     }
   }
 
+  Future<Map<String, dynamic>> checkNicknameIsDuplicate() async {
+    if (nicknameController.text == "") {
+      return {
+        "statusCode": 400,
+        "msg": "사용할 닉네임을 입력해 주세요.",
+      };
+    }
+
+    const url = "$SERVER_IP/checkNickname";
+    try {
+      final res = await http.post(Uri.parse(url), body: {
+        "nickname": nicknameController.text,
+      });
+      Map<String, dynamic> data = json.decode(res.body);
+      return data;
+    } catch (ex) {
+      print("닉네임 중복 확인 --> ${ex.toString()}");
+      return {
+        "statusCode": 400,
+        "msg": ex.toString(),
+      };
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
@@ -148,9 +178,8 @@ class _Register extends State<Register> {
                     child: Column( // 각종 입력 받을 텍스트 필드를 담을 공간
                         children: <Widget>[
                           Padding(
-                              padding: const EdgeInsets.only(left: 80),
-                              // 좌측 여백 설정
-                              child: Row( //가로로 글자 배치
+                              padding: const EdgeInsets.only(left: 80), // 좌측 여백 설정
+                              child: Row( // 가로로 글자 배치
                                   children: const <Widget>[
                                     Text(
                                         "Sign up",
@@ -175,17 +204,17 @@ class _Register extends State<Register> {
                                     children: <Widget>[
                                       Flexible(
                                         child: TextField(
+                                          maxLines: 1,
+                                          maxLength: 11,
                                           controller: idController,
-                                          keyboardType: TextInputType.number,
-                                          // 기본으로 숫자 모양의 키보드가 호출되도록 설정
+                                          keyboardType: TextInputType.number, // 기본으로 숫자 모양의 키보드가 호출되도록 설정
                                           decoration: const InputDecoration(
                                             labelText: "HP(ID)",
                                           ),
                                         ),
                                       ),
                                       Container(
-                                        padding: const EdgeInsets.only(
-                                            left: 10), // 텍스트 필드와 약간의 여백 생성
+                                        padding: const EdgeInsets.only(left: 10), // 텍스트 필드와 약간의 여백 생성
                                         child: ElevatedButton(
                                           onPressed: () {
                                             loginWithPhone();
@@ -200,13 +229,14 @@ class _Register extends State<Register> {
                                   ),
                                 ),
                                 Padding( // 인증번호를 위한 공간
-                                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                    padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
                                     child: Row(
                                         children: <Widget>[
                                           Flexible(
                                               child: TextField(
-                                                keyboardType: TextInputType.number,
-                                                // 기본으로 숫자 모양의 키보드가 호출되도록 설정
+                                                maxLines: 1,
+                                                maxLength: 6,
+                                                keyboardType: TextInputType.number, // 기본으로 숫자 모양의 키보드가 호출되도록 설정
                                                 controller: inputOtpController,
                                                 decoration: const InputDecoration(
                                                   labelText: "인증번호", // 인증번호 입력하는 공간
@@ -229,42 +259,68 @@ class _Register extends State<Register> {
                                     )
                                 ),
                                 Padding(
-                                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                    padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
                                     child: TextField(
+                                      maxLines: 1,
+                                      maxLength: 20,
                                       controller: pwController,
-                                      obscureText: true,
-                                      // pw 안보이도록 가림
-                                      keyboardType: TextInputType.text,
-                                      // 기본으로 자판 모양의 키보드가 호출되도록 설정
+                                      obscureText: true, // pw 안보이도록 가림
+                                      keyboardType: TextInputType.text, // 기본으로 자판 모양의 키보드가 호출되도록 설정
                                       decoration: const InputDecoration(
                                         labelText: "Password (최소 8글자)", // PW 입력하는 공간
                                       ),
                                     )
                                 ),
                                 Padding(
-                                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                    padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
                                     child: TextField(
+                                      maxLines: 1,
+                                      maxLength: 20,
                                       controller: repwController,
                                       keyboardType: TextInputType.text,
                                       obscureText: true,
                                       decoration: const InputDecoration(
-                                        labelText: "재확인", //PW 다시 입력하는 공간
+                                        labelText: "재확인", // PW 다시 입력하는 공간
                                       ),
                                     )
                                 ),
                                 Padding(
-                                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
-                                    child: TextFormField(
-                                      controller: nicknameController,
-                                      keyboardType: TextInputType.text,
-                                      decoration: const InputDecoration(
-                                        labelText: "Name", // 이름 입력하는 공간
-                                      ),
+                                    padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
+                                    child: Row(
+                                      children: <Widget> [
+                                        Flexible(
+                                          child: TextFormField(
+                                            maxLines: 1,
+                                            maxLength: 20,
+                                            controller: nicknameController,
+                                            keyboardType: TextInputType.text,
+                                            decoration: const InputDecoration(
+                                              labelText: "닉네임", // 이름 입력하는 공간
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.only(left: 10),
+                                          child: ElevatedButton(
+                                              onPressed: () async {
+                                                final res = await checkNicknameIsDuplicate();
+                                                displayDialog_checkonly(context, "닉네임 중복 확인", res["msg"]);
+                                              }, // OTP 인증
+                                              child: const Text("중복확인"),
+                                              style: ElevatedButton.styleFrom(
+                                                  primary: Colors.deepPurpleAccent // 버튼 색깔 설정
+                                              )
+                                          ),
+                                        )
+                                      ],
                                     )
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                  padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
                                   child: TextField(
+                                    maxLines: 1,
+                                    maxLength: 42,
+                                    enabled: allow_change_kas_address,
                                     keyboardType: TextInputType.text,
                                     controller: inputKlaytnAddressController,
                                     decoration: const InputDecoration(
@@ -273,7 +329,7 @@ class _Register extends State<Register> {
                                   ),
                                 ),
                                 Padding(
-                                    padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
+                                    padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
                                     child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: <Widget>[
@@ -299,15 +355,17 @@ class _Register extends State<Register> {
                                                 primary: Colors.deepPurpleAccent
                                             ),
                                             onPressed: () async {
-                                              createKlaytnAddress();
+                                              await createKlaytnAddress();
+                                              setState(() {});
                                             }
                                           ),
                                           ElevatedButton(
                                             child: const Text("확인"),
                                             style: ElevatedButton.styleFrom(
-                                                primary: Colors.deepPurpleAccent),
-                                            onPressed: () {
-                                              checkKlaytnAddress();
+                                                primary: Colors.deepPurpleAccent
+                                            ),
+                                            onPressed: () async {
+                                              await checkKlaytnAddress();
                                             },
                                           ),
                                         ]
