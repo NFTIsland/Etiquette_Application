@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
-import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
-import '../../widgets/appbar.dart';
+import 'package:Etiquette/widgets/alertDialogWidget.dart';
+import 'package:Etiquette/widgets/appbar.dart';
 
 class TicketingList extends StatefulWidget {
   const TicketingList({Key? key}) : super(key: key);
@@ -72,12 +72,7 @@ class _TicketingList extends State<TicketingList> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-              appBar: AppBar(
-                title: const Text("Ticketing"),
-                backgroundColor: Colors.white24,
-                foregroundColor: Colors.black,
-                elevation: 0,
-              ),
+              appBar: defaultAppbar("Ticketing"),
               body: Column(
                 children: <Widget> [
                   Expanded(
@@ -151,6 +146,7 @@ class _TicketingList extends State<TicketingList> {
                                                     builder: (context) => TicketDetails(
                                                       product_name: list[index]['product_name'],
                                                       place: list[index]['place'],
+                                                      showPurchaseButton: true,
                                                     )
                                                 )
                                             );
