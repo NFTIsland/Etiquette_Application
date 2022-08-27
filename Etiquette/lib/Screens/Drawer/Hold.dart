@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:ticket_widget/ticket_widget.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:Etiquette/widgets/appbar.dart';
@@ -10,7 +12,6 @@ import 'package:Etiquette/Providers/KAS/Kip17/kip17_get_token_data.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/Utilities/compare_strings_ignore_case.dart';
 import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 class Hold extends StatefulWidget {
   const Hold({Key? key}) : super(key: key);
@@ -66,6 +67,7 @@ class _Hold extends State<Hold> {
   }
 
   void showTicketQrCodeDialog(
+      String category,
       String product_name,
       String place,
       String seat_class,
@@ -77,63 +79,89 @@ class _Hold extends State<Hold> {
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 10),
+          insetPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           title: const Text("모바일 티켓"),
           content: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget> [
-                  const Text(
-                    "캡쳐화면 사용 시 입장이 제한될 수 있습니다.",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
+            child: TicketWidget(
+              width: 300,
+              height: 525,
+              isCornerRounded: true,
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget> [
+                    const Text(
+                      "캡쳐화면 사용 시 입장이 제한될 수 있습니다.",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    product_name,
-                    style: const TextStyle(
-                      fontSize: 35,
+                    const SizedBox(height: 15),
+                    Container(
+                      width: 120.0,
+                      height: 25.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30.0),
+                        border: Border.all(width: 1.0, color: Colors.green),
+                      ),
+                      child: Center(
+                        child: Text(
+                          category,
+                          style: const TextStyle(color: Colors.green),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox( // QR 코드 부분
-                    width: 200.0,
-                    height: 200.0,
-                    child: QrImage(
-                      errorStateBuilder: (context, error) => Text(error.toString()),
-                      data: tokenUri,
-                      size: 200,
-                      backgroundColor: Colors.white,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget> [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12.0, right: 50.0),
+                            child: ticketDetailsWidget('티켓명', product_name, "장소", place),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12.0, right: 47.0),
+                            child: ticketDetailsWidget(
+                                '예매 날짜', performance_date.substring(0, 10).replaceAll("-", "."),
+                                '예매 시각', performance_date.substring(11, 16)
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12.0, right: 79.0),
+                            child: ticketDetailsWidget("좌석", "$seat_class석" ,"번호", "$seat_No번"),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    place,
-                    style: const TextStyle(
-                      fontSize: 25,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
+                      child: SizedBox(
+                        width: 250.0,
+                        height: 230.0,
+                        child: QrImage(
+                          errorStateBuilder: (context, error) => Text(error.toString()),
+                          data: tokenUri,
+                          size: 250,
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "${seat_class}석 ${seat_No}번",
-                    style: const TextStyle(
-                      fontSize: 25,
+                    const Text(
+                      '입장 전 위 QR 코드를 제시해 주시기 바랍니다.',
+                      style: TextStyle(
+                        fontSize: 15,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    performance_date.substring(0, 10).replaceAll("-", ".") + " " + performance_date.substring(11, 16),
-                    style: const TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
+          contentPadding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
           actions: <Widget> [
             TextButton(
               style: TextButton.styleFrom(
@@ -148,6 +176,68 @@ class _Hold extends State<Hold> {
         );
       }
     );
+  }
+
+  Widget ticketDetailsWidget(String firstTitle, String firstDesc, String secondTitle, String secondDesc) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                firstTitle,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  firstDesc,
+                  style: const TextStyle(color: Colors.black),
+                ),
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                secondTitle,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  secondDesc,
+                  style: const TextStyle(color: Colors.black),
+                ),
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  String translateCategory(String category) {
+    if (category == "movie") {
+      return "영화";
+    } else if (category == "musical") {
+      return "뮤지컬";
+    } else if (category == "concert") {
+      return "콘서트";
+    } else if (category == "performance") {
+      return "공연";
+    } else if (category == "sports") {
+      return "스포츠";
+    } else {
+      return "";
+    }
   }
 
   @override
@@ -358,13 +448,15 @@ class _Hold extends State<Hold> {
                                                       final kas_address = kas_address_data['data'][0]['kas_address'];
 
                                                       if (compareStringsIgnoreCase(owner, kas_address)) {
+                                                        final category = translateCategory(alias);
                                                         final product_name = holdlist[index]['product_name'];
                                                         final place = holdlist[index]['place'];
                                                         final seat_class = holdlist[index]['seat_class'];
                                                         final seat_No = holdlist[index]['seat_No'];
                                                         final performance_date = holdlist[index]['performance_date'];
                                                         final tokenUri = _kip17GetTokenData['data']['tokenUri'];
-                                                        showTicketQrCodeDialog(product_name, place, seat_class, seat_No, performance_date, tokenUri);
+
+                                                        showTicketQrCodeDialog(category, product_name, place, seat_class, seat_No, performance_date, tokenUri);
                                                       } else {
                                                         displayDialog_checkonly(context, "모바일 티켓", "해당 티켓은 변조로 인해 사용할 수 없습니다. 서비스 센터에 문의해 주세요.");
                                                       }
