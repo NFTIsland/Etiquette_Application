@@ -12,7 +12,8 @@ import 'package:Etiquette/Screens/Ticketing/select_ticket.dart';
 class TicketDetails extends StatefulWidget {
   String? product_name;
   String? place;
-  TicketDetails({Key? key, this.product_name, this.place}) : super(key: key);
+  bool? showPurchaseButton;
+  TicketDetails({Key? key, this.product_name, this.place, this.showPurchaseButton}) : super(key: key);
 
   @override
   State createState() => _TicketDetails();
@@ -264,22 +265,25 @@ class _TicketDetails extends State<TicketDetails> {
                     ),
                   )
               ),
-              floatingActionButton: FloatingActionButton.extended(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(
-                          builder: (context) => SelectTicket(
-                            product_name: widget.product_name!,
-                            place: widget.place!,
-                            category: detail['category'],
-                          )
-                      )
-                  );
-                },
-                backgroundColor: (theme ? const Color(0xffe8e8e8) : Colors.green),
-                foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
-                label: const Text("구매하기"),
-                icon: const Icon(Icons.navigation),
+              floatingActionButton: Visibility(
+                visible: widget.showPurchaseButton!,
+                child: FloatingActionButton.extended(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(
+                            builder: (context) => SelectTicket(
+                              product_name: widget.product_name!,
+                              place: widget.place!,
+                              category: detail['category'],
+                            )
+                        )
+                    );
+                  },
+                  backgroundColor: (theme ? const Color(0xffe8e8e8) : Colors.green),
+                  foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
+                  label: const Text("구매하기"),
+                  icon: const Icon(Icons.navigation),
+                ),
               ),
               floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             );
