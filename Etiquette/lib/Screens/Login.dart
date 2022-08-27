@@ -66,21 +66,26 @@ class _Login extends State<Login> {
                                   children: <Widget> [
                                     const SizedBox(height: 30), // Login/Sign up과 공간 확보를 위한 위젯
                                     TextFormField(
-                                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                                        keyboardType: TextInputType.number, // 기본으로 숫자 모양의 키보드 호출되도록 설정
-                                        controller: idController,
-                                        decoration: const InputDecoration(
-                                          labelText: "HP(ID)", // 입력칸에 ID 표시되도록
-                                          hintText: "Please Enter Your HP(ID)",
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return "ID is null now";
-                                          }
-                                          return null;
+                                      maxLines: 1,
+                                      maxLength: 11,
+                                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                                      keyboardType: TextInputType.number, // 기본으로 숫자 모양의 키보드 호출되도록 설정
+                                      controller: idController,
+                                      decoration: const InputDecoration(
+                                        labelText: "HP(ID)", // 입력칸에 ID 표시되도록
+                                        hintText: "Please Enter Your HP(ID)",
+                                        counterText: "",
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "ID is null now";
                                         }
+                                        return null;
+                                      }
                                     ),
                                     TextFormField(
+                                        maxLines: 1,
+                                        maxLength: 20,
                                         autovalidateMode: AutovalidateMode.onUserInteraction,
                                         keyboardType: TextInputType.text, // 기본으로 자판 모양의 키보드 호출되도록 설정
                                         obscureText: true, // 비밀번호 안보이도록 설정
@@ -88,6 +93,7 @@ class _Login extends State<Login> {
                                         decoration: const InputDecoration(
                                           labelText: "Password", // 입력칸에 PW 표시되도록
                                           hintText: "Please Enter Your Password",
+                                          counterText: "",
                                         ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
