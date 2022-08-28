@@ -169,7 +169,7 @@ class _LoadHoldingTickets extends State<LoadHoldingTickets> {
                                           ),
                                         ),
                                         Expanded(
-                                          flex: 3,
+                                          flex: 4,
                                           child: Center(
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -178,28 +178,28 @@ class _LoadHoldingTickets extends State<LoadHoldingTickets> {
                                                 Text(
                                                   holdlist[index]['product_name'],
                                                   style: const TextStyle(
-                                                    fontSize: 25,
+                                                    fontSize: 20,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 10),
                                                 Text(
                                                   holdlist[index]['place'],
                                                   style: const TextStyle(
-                                                    fontSize: 15,
+                                                    fontSize: 13,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 10),
                                                 Text(
                                                   "${holdlist[index]['seat_class']}석 ${holdlist[index]['seat_No']}번",
                                                   style: const TextStyle(
-                                                    fontSize: 15,
+                                                    fontSize: 13,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 10),
                                                 Text(
                                                   holdlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + holdlist[index]['performance_date'].substring(11, 16),
                                                   style: const TextStyle(
-                                                    fontSize: 15,
+                                                    fontSize: 13,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 10),
