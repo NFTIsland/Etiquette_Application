@@ -80,37 +80,51 @@ class _Hold extends State<Hold> {
       builder: (BuildContext context) {
         return AlertDialog(
           insetPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          title: const Text("모바일 티켓"),
+          // title: const Text("모바일 티켓"),
           content: SingleChildScrollView(
             child: TicketWidget(
               width: 300,
-              height: 525,
+              height: 580,
               isCornerRounded: true,
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget> [
-                    const Text(
-                      "캡쳐화면 사용 시 입장이 제한될 수 있습니다.",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 15),
+                    const Center(
+                      child: Text(
+                        "모바일 티켓",
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 15),
-                    Container(
-                      width: 120.0,
-                      height: 25.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30.0),
-                        border: Border.all(width: 1.0, color: Colors.green),
+                    const Center(
+                      child: Text(
+                        "캡쳐화면 사용 시 입장이 제한될 수 있습니다.",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      child: Center(
-                        child: Text(
-                          category,
-                          style: const TextStyle(color: Colors.green),
+                    ),
+                    const SizedBox(height: 15),
+                    Center(
+                      child: Container(
+                        width: 120.0,
+                        height: 25.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30.0),
+                          border: Border.all(width: 1.0, color: Colors.green),
+                        ),
+                        child: Center(
+                          child: Text(
+                            category,
+                            style: const TextStyle(color: Colors.green),
+                          ),
                         ),
                       ),
                     ),
@@ -120,8 +134,55 @@ class _Hold extends State<Hold> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget> [
                           Padding(
-                            padding: const EdgeInsets.only(top: 12.0, right: 50.0),
-                            child: ticketDetailsWidget('티켓명', product_name, "장소", place),
+                            padding: const EdgeInsets.only(left: 12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  '티켓명',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    product_name,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  "장소",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    place,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 12.0, right: 47.0),
@@ -150,12 +211,15 @@ class _Hold extends State<Hold> {
                         ),
                       ),
                     ),
-                    const Text(
-                      '입장 전 위 QR 코드를 제시해 주시기 바랍니다.',
-                      style: TextStyle(
-                        fontSize: 15,
+                    const Center(
+                      child: Text(
+                        '입장 전 위 QR 코드를 제시해 주시기 바랍니다.',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -189,13 +253,19 @@ class _Hold extends State<Hold> {
             children: <Widget>[
               Text(
                 firstTitle,
-                style: const TextStyle(color: Colors.grey),
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 15,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
                   firstDesc,
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
                 ),
               )
             ],
@@ -208,13 +278,19 @@ class _Hold extends State<Hold> {
             children: [
               Text(
                 secondTitle,
-                style: const TextStyle(color: Colors.grey),
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 15,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
                   secondDesc,
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
                 ),
               )
             ],
@@ -388,7 +464,7 @@ class _Hold extends State<Hold> {
                                             ),
                                           ),
                                           Expanded(
-                                            flex: 3,
+                                            flex: 4,
                                             child: Center(
                                               child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -397,28 +473,28 @@ class _Hold extends State<Hold> {
                                                   Text(
                                                     holdlist[index]['product_name'],
                                                     style: const TextStyle(
-                                                      fontSize: 25,
+                                                      fontSize: 20,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 10),
                                                   Text(
                                                     holdlist[index]['place'],
                                                     style: const TextStyle(
-                                                      fontSize: 15,
+                                                      fontSize: 13,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 10),
                                                   Text(
                                                     "${holdlist[index]['seat_class']}석 ${holdlist[index]['seat_No']}번",
                                                     style: const TextStyle(
-                                                      fontSize: 15,
+                                                      fontSize: 13,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 10),
                                                   Text(
                                                     holdlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + holdlist[index]['performance_date'].substring(11, 16),
                                                     style: const TextStyle(
-                                                      fontSize: 15,
+                                                      fontSize: 13,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 10),
