@@ -129,10 +129,10 @@ class _SelectTicket extends State<SelectTicket> {
           set_performanceDate.add(item["date"]);
         }
         List list_performanceDate = set_performanceDate.toList();
-        for (var item in list_performanceDate) {
+        for (String item in list_performanceDate) {
           _performanceDateItems.add(DropdownMenuItem(
             value: item,
-            child: Text(item),
+            child: Text(item.replaceAll("-", ".")),
           ));
         }
       } else {
@@ -157,10 +157,10 @@ class _SelectTicket extends State<SelectTicket> {
             set_performanceTime.add(item["time"]);
           }
           List list_performanceTime = set_performanceTime.toList();
-          for (var item in list_performanceTime) {
+          for (String item in list_performanceTime) {
             _performanceTimeItems.add(DropdownMenuItem(
               value: item,
-              child: Text(item),
+              child: Text(item.substring(0, 5)),
             ));
           }
         } else {
