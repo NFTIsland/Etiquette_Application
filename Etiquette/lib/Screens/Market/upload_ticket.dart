@@ -163,17 +163,20 @@ class _UploadTicket extends State<UploadTicket> {
                                     builder: (context) => const LoadHoldingTickets()
                                 )
                             );
-                            setState(() {
-                              token_id = data["token_id"];
-                              product_name = data["product_name"];
-                              place = data["place"];
-                              original_price = data["original_price"].toString();
-                              end_year = int.parse(data["end_year"]);
-                              end_month = int.parse(data["end_month"]);
-                              end_day = int.parse(data["end_day"]);
-                              end_hour = int.parse(data["end_hour"]);
-                              end_minute = int.parse(data["end_minute"]);
-                            });
+                            if (data != null) {
+                              setState(() {
+                                token_id = data["token_id"];
+                                product_name = data["product_name"];
+                                place = data["place"];
+                                original_price = data["original_price"].toString();
+                                end_year = int.parse(data["end_year"]);
+                                end_month = int.parse(data["end_month"]);
+                                end_day = int.parse(data["end_day"]);
+                                end_hour = int.parse(data["end_hour"]);
+                                end_minute = int.parse(data["end_minute"]);
+                              });
+                              print(DateTime(end_year, end_month, end_day, end_hour, end_minute));
+                            }
                           },
                           child: const Text("티켓 불러오기"),
                         )
@@ -206,21 +209,30 @@ class _UploadTicket extends State<UploadTicket> {
                       padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
                       child: ElevatedButton(
                           onPressed: () {
-                            DatePicker.showDateTimePicker(
-                              context,
-                              showTitleActions: true,
-                              minTime: DateTime.now(),
-                              maxTime: DateTime(end_year, end_month, end_day, end_hour, end_minute).subtract(const Duration(hours: 3)),
-                              onChanged: (date) {
-                                print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
-                              },
-                              onConfirm: (date) {
-                                setState(() {
-                                  auction_end_date = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:00";
-                                });
-                              },
-                              locale: LocaleType.ko,
-                            );
+                            if (product_name != "" && place != "" && original_price != "") {
+                              final maxTime = DateTime(end_year, end_month, end_day, end_hour, end_minute).subtract(const Duration(hours: 3));
+                              DatePicker.showDateTimePicker(
+                                context,
+                                showTitleActions: true,
+                                minTime: DateTime.now().add(const Duration(minutes: 1)),
+                                maxTime: maxTime,
+                                onChanged: (date) {
+                                  print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+                                },
+                                onConfirm: (date) {
+                                  if (date.isBefore(maxTime) || date.isAtSameMomentAs(maxTime)) {
+                                    setState(() {
+                                      auction_end_date = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:00";
+                                    });
+                                  } else {
+                                    displayDialog_checkonly(context, "티켓 업로드", "경매 마감 시각은 티켓 사용 시각으로부터 3시간 전 까지 선택 할 수 있습니다.");
+                                  }
+                                },
+                                locale: LocaleType.ko,
+                              );
+                            } else {
+                              displayDialog_checkonly(context, "티켓 업로드", "업로드 할 티켓을 선택해 주세요.");
+                            }
                           },
                           child: const Text(
                             '경매 마감 날짜 및 시각 선택',
@@ -230,7 +242,7 @@ class _UploadTicket extends State<UploadTicket> {
                           )
                       ),
                     ),
-                    const Text("(경매 마감 3시간 전까지 선택 가능)"),
+                    const Text("(티켓 사용 시각 3시간 전까지 선택 가능)"),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(40, 30, 40, 0),
                       child: Row(
