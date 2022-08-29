@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:ticket_widget/ticket_widget.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:Etiquette/widgets/appbar.dart';
@@ -78,131 +77,216 @@ class _Hold extends State<Hold> {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
+        // final height = MediaQuery.of(context).size.height;
         return AlertDialog(
           insetPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           // title: const Text("모바일 티켓"),
           content: SingleChildScrollView(
-            child: TicketWidget(
-              width: 300,
-              height: 580,
-              isCornerRounded: true,
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: Center(
-                child: Column(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget> [
+                const SizedBox(height: 15),
+                const Center(
+                  child: Text(
+                    "모바일 티켓",
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                const Center(
+                  child: Text(
+                    "캡쳐화면 사용 시 입장이 제한될 수 있습니다.",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 15, 0, 0),
+                  child: Container(
+                    width: 120.0,
+                    height: 25.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30.0),
+                      border: Border.all(width: 1.0, color: Colors.green),
+                    ),
+                    child: Center(
+                      child: Text(
+                        category,
+                        style: const TextStyle(color: Colors.green),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget> [
-                    const SizedBox(height: 15),
-                    const Center(
-                      child: Text(
-                        "모바일 티켓",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    const Center(
-                      child: Text(
-                        "캡쳐화면 사용 시 입장이 제한될 수 있습니다.",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Center(
-                      child: Container(
-                        width: 120.0,
-                        height: 25.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30.0),
-                          border: Border.all(width: 1.0, color: Colors.green),
-                        ),
-                        child: Center(
-                          child: Text(
-                            category,
-                            style: const TextStyle(color: Colors.green),
-                          ),
-                        ),
-                      ),
-                    ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
+                      padding: const EdgeInsets.only(left: 12.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget> [
+                          const Text(
+                            '티켓명',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                            ),
+                          ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                const Text(
-                                  '티켓명',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 15,
-                                  ),
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              product_name,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget> [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget> [
+                          const Text(
+                            "장소",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              place,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget> [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget> [
+                              const Text(
+                                "예매 날짜",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    product_name,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                const Text(
-                                  "장소",
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 15,
-                                  ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                performance_date.substring(0, 10).replaceAll("-", "."),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    place,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12.0, right: 47.0),
-                            child: ticketDetailsWidget(
-                                '예매 날짜', performance_date.substring(0, 10).replaceAll("-", "."),
-                                '예매 시각', performance_date.substring(11, 16)
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12.0, right: 79.0),
-                            child: ticketDetailsWidget("좌석", "$seat_class석" ,"번호", "$seat_No번"),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget> [
+                              const Text(
+                                "예매 시각",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                performance_date.substring(11, 16),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
+                      padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget> [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget> [
+                              const Text(
+                                "좌석",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "$seat_class석",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget> [
+                              const Text(
+                                "번호",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "$seat_No번",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Center(
                       child: SizedBox(
                         width: 250.0,
-                        height: 230.0,
+                        height: 250.0,
                         child: QrImage(
                           errorStateBuilder: (context, error) => Text(error.toString()),
                           data: tokenUri,
@@ -211,6 +295,7 @@ class _Hold extends State<Hold> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 15),
                     const Center(
                       child: Text(
                         '입장 전 위 QR 코드를 제시해 주시기 바랍니다.',
@@ -219,10 +304,10 @@ class _Hold extends State<Hold> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
-              ),
+              ],
             ),
           ),
           contentPadding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
