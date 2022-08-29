@@ -1,3 +1,4 @@
+import 'package:Etiquette/Screens/Market/search_market_ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,7 +7,6 @@ import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Screens/SellTicket.dart';
 import 'package:Etiquette/Screens/Market/upload_ticket.dart';
-// import 'package:Etiquette/Screens/bid_buy.dart';
 
 class Market extends StatefulWidget {
   const Market({Key? key}) : super(key: key);
@@ -320,8 +320,12 @@ class _Market extends State<Market> {
                   FloatingActionButton.extended(
                     heroTag: null,
                     onPressed: () {
-                      // Navigator.push(context,
-                      //     MaterialPageRoute(builder: (context) => BBuy()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SearchMarketTicket()
+                          )
+                      );
                     },
                     backgroundColor: (theme ? const Color(0xffe8e8e8) : const Color(0xff7b9acc)),
                     foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
