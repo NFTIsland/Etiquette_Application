@@ -77,7 +77,7 @@ class _Hold extends State<Hold> {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        // final height = MediaQuery.of(context).size.height;
+        final width = MediaQuery.of(context).size.width;
         return AlertDialog(
           insetPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           // title: const Text("모바일 티켓"),
@@ -184,102 +184,97 @@ class _Hold extends State<Hold> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget> [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget> [
-                              const Text(
-                                "예매 날짜",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15,
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+                        width: width - 40,
+                        height: 100,
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          childAspectRatio: 3 / 1,
+                          children: <Widget> [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget> [
+                                const Text(
+                                  "예매 날짜",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                performance_date.substring(0, 10).replaceAll("-", "."),
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
+                                const SizedBox(height: 4),
+                                Text(
+                                  performance_date.substring(0, 10).replaceAll("-", "."),
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget> [
-                              const Text(
-                                "예매 시각",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15,
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget> [
+                                const Text(
+                                  "예매 시각",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                performance_date.substring(11, 16),
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
+                                const SizedBox(height: 4),
+                                Text(
+                                  performance_date.substring(11, 16),
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget> [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget> [
-                              const Text(
-                                "좌석",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15,
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget> [
+                                const Text(
+                                  "좌석",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "$seat_class석",
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
+                                const SizedBox(height: 4),
+                                Text(
+                                  "$seat_class석",
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget> [
-                              const Text(
-                                "번호",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15,
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget> [
+                                const Text(
+                                  "번호",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "$seat_No번",
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
+                                const SizedBox(height: 4),
+                                Text(
+                                  "$seat_No번",
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 15),
