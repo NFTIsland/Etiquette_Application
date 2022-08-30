@@ -7,6 +7,7 @@ import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
+import 'package:Etiquette/Screens/Market/auction_status.dart';
 
 class Selling extends StatefulWidget {
   const Selling({Key? key}) : super(key: key);
@@ -38,6 +39,7 @@ class _Selling extends State<Selling> {
           List tickets = data["data"];
           for (Map<String, dynamic> ticket in tickets) {
             Map<String, dynamic> ex = {
+              'token_id': ticket['token_id'],
               'product_name': ticket['product_name'],
               'place': ticket['place'],
               'seat_class': ticket['seat_class'],
@@ -66,8 +68,9 @@ class _Selling extends State<Selling> {
     final end_day = int.parse(auction_end_date.substring(8, 10));
     final end_hour = int.parse(auction_end_date.substring(11, 13));
     final end_minute = int.parse(auction_end_date.substring(14, 16));
-    final remaining = DateTime(end_year, end_month, end_day, end_hour, end_minute).difference(DateTime.now()).toString();
-    return "(${remaining.substring(0, 2)}시간 ${remaining.substring(3, 5)}분 남음)";
+    final remaining = DateTime(end_year, end_month, end_day, end_hour, end_minute).difference(DateTime.now());
+    // return "${remaining.inDays}일 ${remaining.inHours % 24}시간 ${remaining.inMinutes % 60}분 남음";
+    return "${remaining.inDays}일 ${remaining.inHours % 24}시간 ${remaining.inMinutes % 60}분";
   }
 
   @override
@@ -173,74 +176,191 @@ class _Selling extends State<Selling> {
                                     horizontal: 10,
                                   ),
                                   child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) => AuctionStatus(
+                                                token_id: sellinglist[index]['token_id'],
+                                              )
+                                          )
+                                      );
+                                    },
                                     child: SizedBox(
                                       width: double.infinity,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: <Widget> [
-                                          Expanded(
-                                            flex: 2,
+                                          Container(
+                                            width: (width - 20) / 5 * 2,
+                                            height: 190,
+                                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                                             child: Center(
                                               child: Image.network(
-                                                  'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
-                                                  width: 80,
-                                                  height: 80
+                                                'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
+                                                width: 100,
+                                                height: 100,
                                               ),
                                             ),
                                           ),
-                                          Expanded(
-                                            flex: 4,
-                                            child: Center(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: <Widget> [
-                                                  const SizedBox(height: 10),
-                                                  Text(
-                                                    sellinglist[index]['product_name'],
-                                                    style: const TextStyle(
-                                                      fontSize: 20,
+                                          Container(
+                                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                            width: (width - 20) / 5 * 3,
+                                            height: 190,
+                                            child: GridView.count(
+                                              crossAxisCount: 2,
+                                              childAspectRatio: (width - 20) / 150,
+                                              children: <Widget> [
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget> [
+                                                    const Text(
+                                                      "티켓명",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  Text(
-                                                    sellinglist[index]['place'],
-                                                    style: const TextStyle(
-                                                      fontSize: 13,
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      sellinglist[index]['product_name'],
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  Text(
-                                                    "${sellinglist[index]['seat_class']}석 ${sellinglist[index]['seat_No']}번",
-                                                    style: const TextStyle(
-                                                      fontSize: 13,
+                                                  ],
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget> [
+                                                    const Text(
+                                                      "장소",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  Text(
-                                                    "예매 일자: " + sellinglist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + sellinglist[index]['performance_date'].substring(11, 16),
-                                                    style: const TextStyle(
-                                                      fontSize: 13,
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      sellinglist[index]['place'],
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget> [
+                                                    const Text(
+                                                      "좌석 등급",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  Text(
-                                                    "경매 마감 일자: " + sellinglist[index]['auction_end_date'].substring(0, 10).replaceAll("-", ".") + " " + sellinglist[index]['performance_date'].substring(11, 16),
-                                                    style: const TextStyle(
-                                                      fontSize: 13,
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      "${sellinglist[index]['seat_class']}석",
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget> [
+                                                    const Text(
+                                                      "좌석 번호",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  Text(
-                                                    remainSellingTime(sellinglist[index]['auction_end_date']),
-                                                    style: const TextStyle(
-                                                      fontSize: 13,
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      "${sellinglist[index]['seat_No']}번",
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget> [
+                                                    const Text(
+                                                      "예매 날짜",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                ],
-                                              ),
-                                            ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      sellinglist[index]['performance_date'].substring(0, 10).replaceAll("-", ".")
+                                                          + " "
+                                                          + sellinglist[index]['performance_date'].substring(11, 16),
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [],
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget> [
+                                                    const Text(
+                                                      "경매 마감 날짜",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      sellinglist[index]['auction_end_date'].substring(0, 10).replaceAll("-", ".")
+                                                          + " " +
+                                                          sellinglist[index]['auction_end_date'].substring(11, 16),
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget> [
+                                                    const Text(
+                                                      "남은 시간",
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      remainSellingTime(sellinglist[index]['auction_end_date']),
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            )
                                           ),
                                         ],
                                       ),
