@@ -6,6 +6,7 @@ import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/Screens/Market/market_details.dart';
+import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 
 class SearchMarketTicket extends StatefulWidget {
   const SearchMarketTicket({Key? key}) : super(key: key);
@@ -37,6 +38,7 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
           Map<String, dynamic> ex = {
             'token_id': ticket['token_id'],
             'product_name': ticket['product_name'],
+            'owner': ticket['owner'],
             'place': ticket['place'],
             'performance_date': ticket['performance_date'],
             'seat_class': ticket['seat_class'],
@@ -144,7 +146,17 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
                                           horizontal: 10,
                                         ),
                                         child: InkWell(
-                                          onTap: () {
+                                          onTap: () async {
+                                            final kas_address_data = await getKasAddress();
+                                            if (kas_address_data['statusCode'] != 200) {
+                                              displayDialog_checkonly(context, "티켓 검색", "티켓 목록을 불러오는데 실패했습니다.");
+                                              return;
+                                            }
+                                            final kas_address = kas_address_data['data'][0]['kas_address'];
+                                            if (kas_address == list[index]['owner']) {
+                                              displayDialog_checkonly(context, "티켓 검색", "이미 해당 티켓을 가지고 있습니다.");
+                                              return;
+                                            }
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                     builder: (context) => MarketDetails(
