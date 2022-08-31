@@ -4,7 +4,7 @@ import 'package:Etiquette/Screens/Account.dart';
 import 'package:Etiquette/Screens/Bid.dart';
 import 'package:Etiquette/Screens/Drawer/Hold.dart';
 import 'package:Etiquette/Screens/Interest.dart';
-import 'package:Etiquette/Screens/Selling.dart';
+import 'package:Etiquette/Screens/Drawer/Selling.dart';
 import 'package:Etiquette/Screens/Drawer/Used.dart';
 import 'package:Etiquette/Screens/Wallet/Wallet.dart';
 import 'package:Etiquette/Screens/Login.dart';
