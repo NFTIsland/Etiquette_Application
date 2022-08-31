@@ -420,8 +420,17 @@ class _MarketDetails extends State<MarketDetails> {
                               const SizedBox(height: 15),
                               ElevatedButton(
                                   onPressed: () async {
-                                    final selected = await displayDialog_YesOrNo(context, "입찰하기", "위 입찰가로 경매에 참여하시겠습니까?");
+                                    if (bid_price_controller.text == auction_details['immediate_purchase_price'].toString()) {
+                                      final immidiate_purchase = await displayDialog_YesOrNo(context, "입찰", "즉시 입찰가를 입력하셨습니다. 즉시 입찰 하시겠습니까?");
+                                      if (immidiate_purchase) {
+                                        print("Process!");
+                                        return;
+                                      } else {
+                                        return;
+                                      }
+                                    }
 
+                                    final selected = await displayDialog_YesOrNo(context, "입찰하기", "위 입찰가로 경매에 참여하시겠습니까?");
                                     if (selected) {
                                       bid();
                                     }
