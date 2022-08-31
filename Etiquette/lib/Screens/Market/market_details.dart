@@ -7,9 +7,7 @@ import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
-import 'package:Etiquette/Screens/Ticketing/select_ticket.dart';
-
-import '../../Providers/DB/get_kas_address.dart';
+import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 
 class MarketDetails extends StatefulWidget {
   String? token_id;
@@ -36,6 +34,7 @@ class _MarketDetails extends State<MarketDetails> {
   late Map<String, dynamic> details;
   late Map<String, dynamic> auction_details;
 
+  final rows = <DataRow> [];
   final bid_price_controller = TextEditingController();
 
   @override
@@ -94,6 +93,31 @@ class _MarketDetails extends State<MarketDetails> {
       int statusCode = 400;
       String msg = ex.toString();
       displayDialog_checkonly(context, "티켓 마켓", "statusCode: $statusCode\n\nmessage: $msg");
+    }
+
+    // bidlist
+    const url_bidlist_top5 = "$SERVER_IP/market/bidStatusTop5";
+    try {
+      var res = await http.post(Uri.parse(url_bidlist_top5), body: {
+        'token_id': widget.token_id!,
+      });
+      Map<String, dynamic> data = json.decode(res.body);
+      if (res.statusCode == 200) {
+        List bid_data = data["data"];
+        int rank = 1;
+        for (Map<String, dynamic> bid in bid_data) {
+          rows.add(
+              dataRow(rank.toString(), bid['nickname'], bid['bid_date'], bid['bid_price'].toString().replaceAllMapped(reg, mathFunc) + " 원")
+          );
+          rank += 1;
+          setState(() {});
+        }
+      } else {
+        String msg = data['msg'];
+        displayDialog_checkonly(context, "입찰 현황", msg);
+      }
+    } catch (ex) {
+      print("입찰 현황 --> ${ex.toString()}");
     }
   }
 
@@ -185,9 +209,12 @@ class _MarketDetails extends State<MarketDetails> {
                                   children: <TableRow>[
                                     tableRow("카테고리", details['category']),
                                     tableRow("티켓 이름", widget.product_name!),
-                                    tableRow("원가", _price + " 원"),
+                                    tableRow("원가", _price.replaceAllMapped(reg, mathFunc) + " 원"),
                                     tableRow("장소", widget.place!),
-                                    tableRow("날짜", widget.performance_date!),
+                                    tableRow("날짜",
+                                        widget.performance_date!.substring(0, 10).replaceAll("-", ".")
+                                        + " "
+                                        + widget.performance_date!.substring(11, 16)),
                                     tableRow("좌석 정보", "${widget.seat_class!}석 ${widget.seat_No!}번"),
                                   ]
                               ),
@@ -204,7 +231,7 @@ class _MarketDetails extends State<MarketDetails> {
                               const Text(
                                 "해당 티켓의 옥션 현황 정보",
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 25,
                                 ),
                               ),
                               const SizedBox(height: 15),
@@ -214,12 +241,134 @@ class _MarketDetails extends State<MarketDetails> {
                                   0: FixedColumnWidth(140.0),
                                 },
                                 children: <TableRow> [
-                                  tableRow("거래 종료일", auction_details['auction_end_date']),
-                                  tableRow("경매 시작가", auction_details['auction_start_price'].toString() + " 원"),
-                                  tableRow("입찰 단위", auction_details['bid_unit'].toString() + " 원"),
-                                  tableRow("즉시 거래가", auction_details['immediate_purchase_price'].toString() + " 원"),
-                                  tableRow("판매자 코멘트", auction_details['auction_comments']),
+                                  tableRow("거래 종료일",
+                                      auction_details['auction_end_date'].substring(0, 10).replaceAll("-", ".")
+                                          + " "
+                                          + auction_details['auction_end_date'].substring(11, 16)),
+                                  tableRow("경매 시작가", auction_details['auction_start_price'].toString().replaceAllMapped(reg, mathFunc) + " 원"),
+                                  tableRow("입찰 단위", auction_details['bid_unit'].toString().replaceAllMapped(reg, mathFunc) + " 원"),
+                                  tableRow("즉시 거래가", auction_details['immediate_purchase_price'].toString().replaceAllMapped(reg, mathFunc) + " 원"),
+                                  TableRow(
+                                    children: <Widget> [
+                                      TableCell(
+                                        verticalAlignment: TableCellVerticalAlignment.middle,
+                                        child: Container(
+                                            height: 300,
+                                            alignment: Alignment.center,
+                                            child: const Text(
+                                                "판매자 코멘트",
+                                                style: TextStyle(
+                                                  fontFamily: 'FiraBold',
+                                                  fontSize: 20,
+                                                )
+                                            )
+                                        ),
+                                      ),
+                                      TableCell(
+                                        verticalAlignment: TableCellVerticalAlignment.middle,
+                                        child: Container(
+                                            height: 300,
+                                            alignment: Alignment.center,
+                                            padding: const EdgeInsets.all(10.0),
+                                            child : Text(
+                                                auction_details['auction_comments'],
+                                                style : const TextStyle(
+                                                  fontFamily: 'FiraRegular',
+                                                  fontSize: 15,
+                                                )
+                                            )
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ],
+                              ),
+                              const SizedBox(height: 15),
+                              const Text(
+                                "입찰 현황",
+                                style: TextStyle(
+                                  fontSize: 25,
+                                ),
+                              ),
+                              Visibility(
+                                visible: rows.isEmpty,
+                                child: Column(
+                                  children: const <Widget> [
+                                    SizedBox(height: 15),
+                                    Text(
+                                      "아직 입찰이 없습니다.",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ),
+                              Visibility(
+                                visible: rows.isNotEmpty,
+                                child: Container(
+                                  width: width - 30,
+                                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                                  child: DataTable(
+                                    columnSpacing: 0,
+                                    horizontalMargin: 0,
+                                    columns: <DataColumn> [
+                                      DataColumn(
+                                        label: SizedBox(
+                                            width: (width - 30) / 10,
+                                            child: const Center(
+                                              child: Text(
+                                                '순위',
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            )
+                                        ),
+                                      ),
+                                      DataColumn(
+                                        label: SizedBox(
+                                            width: (width - 30) / 10 * 3,
+                                            child: const Center(
+                                              child: Text(
+                                                '입찰자',
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            )
+                                        ),
+                                      ),
+                                      DataColumn(
+                                        label: SizedBox(
+                                            width: (width - 30) / 10 * 4,
+                                            child: const Center(
+                                              child: Text(
+                                                '입찰 날짜',
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            )
+                                        ),
+                                      ),
+                                      DataColumn(
+                                        label: SizedBox(
+                                            width: (width - 30) / 10 * 2,
+                                            child: const Center(
+                                              child: Text(
+                                                '입찰가',
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            )
+                                        ),
+                                      ),
+                                    ],
+                                    rows: rows,
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 15),
                               const Text(
@@ -240,6 +389,15 @@ class _MarketDetails extends State<MarketDetails> {
                                   ),
                                   decoration: InputDecoration(
                                     hintText: '입찰가 입력',
+                                    suffix: const Padding(
+                                      padding: EdgeInsets.all(2.0),
+                                      child: Text(
+                                        '원',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
                                     hintStyle: const TextStyle(color: Colors.grey),
                                     focusedBorder: const OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
@@ -290,6 +448,65 @@ class _MarketDetails extends State<MarketDetails> {
   }
 }
 
+DataRow dataRow(String ranking, String bidder, String bid_date, String bid_price) {
+  return DataRow(
+    cells: <DataCell> [
+      DataCell(
+          Container(
+            height: 50,
+            alignment: Alignment.center,
+            child: Text(
+              ranking,
+              style: const TextStyle(
+                fontFamily: 'FiraBold',
+                fontSize: 20,
+              ),
+            ),
+          )
+      ),
+      DataCell(
+          Container(
+            height: 50,
+            alignment: Alignment.center,
+            child: Text(
+              bidder,
+              style: const TextStyle(
+                fontFamily: 'FiraBold',
+                fontSize: 12,
+              ),
+            ),
+          )
+      ),
+      DataCell(
+          Container(
+            height: 50,
+            alignment: Alignment.center,
+            child: Text(
+              bid_date,
+              style: const TextStyle(
+                fontFamily: 'FiraBold',
+                fontSize: 12,
+              ),
+            ),
+          )
+      ),
+      DataCell(
+          Container(
+            height: 50,
+            alignment: Alignment.center,
+            child: Text(
+              bid_price,
+              style: const TextStyle(
+                fontFamily: 'FiraBold',
+                fontSize: 12,
+              ),
+            ),
+          )
+      ),
+    ],
+  );
+}
+
 TableRow tableRow(String title, String value) {
   return TableRow(
     children: <Widget> [
@@ -312,6 +529,7 @@ TableRow tableRow(String title, String value) {
         child: Container(
             height: 50,
             alignment: Alignment.center,
+            padding: const EdgeInsets.all(10.0),
             child : Text(
                 value,
                 style : const TextStyle(
