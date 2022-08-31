@@ -162,6 +162,7 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
                                                     builder: (context) => MarketDetails(
                                                       token_id: list[index]['token_id'],
                                                       product_name: list[index]['product_name'],
+                                                      owner: list[index]['owner'],
                                                       place: list[index]['place'],
                                                       performance_date: list[index]['performance_date'],
                                                       seat_class: list[index]['seat_class'],
