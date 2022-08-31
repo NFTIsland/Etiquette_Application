@@ -11,7 +11,7 @@ import 'Bid.dart';
 import 'package:Etiquette/Screens/Drawer/Hold.dart';
 import 'package:Etiquette/Screens/Interest.dart';
 import 'package:Etiquette/Screens/Search.dart';
-import 'package:Etiquette/Screens/Selling.dart';
+import 'package:Etiquette/Screens/Drawer/Selling.dart';
 import 'package:Etiquette/Screens/Setting.dart';
 import 'package:Etiquette/Screens/Drawer/Used.dart';
 import 'package:Etiquette/Screens/Wallet/Wallet.dart';
