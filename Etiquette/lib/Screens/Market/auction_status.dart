@@ -19,7 +19,7 @@ class _AuctionStatus extends State<AuctionStatus> {
   late double width;
   late double height;
   late final Future future;
-  List bidlist = [];
+  final rows = <DataRow> [];
 
   Future<void> getBidlistFromDB() async {
     const url = "$SERVER_IP/market/bidStatus";
@@ -29,13 +29,13 @@ class _AuctionStatus extends State<AuctionStatus> {
       });
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
+        int rank = 1;
         List bid_data = data["data"];
         for (Map<String, dynamic> bid in bid_data) {
-          Map<String, dynamic> ex = {
-            'bid_date': bid['bid_date'],
-            'bid_price': bid['bid_price'],
-          };
-          bidlist.add(ex);
+          rows.add(
+            dataRow(rank.toString(), bid['nickname'], bid['bid_date'], bid['bid_price'].toString().replaceAllMapped(reg, mathFunc) + " 원")
+          );
+          rank += 1;
           setState(() {});
         }
       } else {
@@ -76,7 +76,7 @@ class _AuctionStatus extends State<AuctionStatus> {
               child: Column(
                 children: <Widget> [
                   Visibility(
-                    visible: bidlist.isEmpty,
+                    visible: rows.isEmpty,
                     child: SizedBox(
                       height: height - 200,
                       child: const Center(
@@ -90,60 +90,70 @@ class _AuctionStatus extends State<AuctionStatus> {
                     ),
                   ),
                   Visibility(
-                    visible: bidlist.isNotEmpty,
-                    child: const Card(
-                      elevation: 0,
-                      color: Colors.white24,
-                      child: ListTile(
-                        leading: Text(
-                          "순위",
-                          style: TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                        title: Padding(
-                          padding: EdgeInsets.only(left: 12.0),
-                          child: Text(
-                            "입찰 날짜",
-                            style: TextStyle(
-                              fontSize: 15,
+                    visible: rows.isNotEmpty,
+                    child: Container(
+                      width: width - 20,
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      child: DataTable(
+                        columnSpacing: 0,
+                        horizontalMargin: 0,
+                        columns: <DataColumn> [
+                          DataColumn(
+                            label: SizedBox(
+                              width: (width - 20) / 10,
+                              child: const Center(
+                                child: Text(
+                                  '순위',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              )
                             ),
                           ),
-                        ),
-                        trailing: Text(
-                          "입찰가",
-                          style: TextStyle(
-                            fontSize: 15,
+                          DataColumn(
+                            label: SizedBox(
+                              width: (width - 20) / 10 * 3,
+                              child: const Center(
+                                child: Text(
+                                  '입찰자',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              )
+                            ),
                           ),
-                        ),
+                          DataColumn(
+                            label: SizedBox(
+                              width: (width - 20) / 10 * 4,
+                              child: const Center(
+                                child: Text(
+                                  '입찰 날짜',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              )
+                            ),
+                          ),
+                          DataColumn(
+                            label: SizedBox(
+                              width: (width - 20) / 10 * 2,
+                              child: const Center(
+                                child: Text(
+                                  '입찰가',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              )
+                            ),
+                          ),
+                        ],
+                        rows: rows,
                       ),
                     ),
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: bidlist.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        child: ListTile(
-                          leading: Text(
-                            (index + 1).toString(),
-                            style: const TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          title: Padding(
-                            padding: const EdgeInsets.only(left: 12.0),
-                            child: Text(
-                              bidlist[index]['bid_date'],
-                            ),
-                          ),
-                          trailing: Text(
-                            bidlist[index]['bid_price'].toString().replaceAllMapped(reg, mathFunc) + "원",
-                          ),
-                        ),
-                      );
-                    },
                   )
                 ],
               )
@@ -157,3 +167,128 @@ class _AuctionStatus extends State<AuctionStatus> {
     );
   }
 }
+
+DataRow dataRow(String ranking, String bidder, String bid_date, String bid_price) {
+  return DataRow(
+    cells: <DataCell> [
+      DataCell(
+        Container(
+          height: 50,
+          alignment: Alignment.center,
+          child: Text(
+            ranking,
+            style: const TextStyle(
+              fontFamily: 'FiraBold',
+              fontSize: 20,
+            ),
+          ),
+        )
+      ),
+      DataCell(
+          Container(
+            height: 50,
+            alignment: Alignment.center,
+            child: Text(
+              bidder,
+              style: const TextStyle(
+                fontFamily: 'FiraBold',
+                fontSize: 12,
+              ),
+            ),
+          )
+      ),
+      DataCell(
+          Container(
+            height: 50,
+            alignment: Alignment.center,
+            child: Text(
+              bid_date,
+              style: const TextStyle(
+                fontFamily: 'FiraBold',
+                fontSize: 12,
+              ),
+            ),
+          )
+      ),
+      DataCell(
+          Container(
+            height: 50,
+            alignment: Alignment.center,
+            child: Text(
+              bid_price,
+              style: const TextStyle(
+                fontFamily: 'FiraBold',
+                fontSize: 12,
+              ),
+            ),
+          )
+      ),
+    ],
+  );
+}
+
+// TableRow tableRow(String ranking, String bidder, String bid_date, String bid_price) {
+//   return TableRow(
+//     children: <Widget> [
+//       TableCell(
+//         verticalAlignment: TableCellVerticalAlignment.middle,
+//         child: Container(
+//             height: 50,
+//             alignment: Alignment.center,
+//             child: Text(
+//                 ranking,
+//                 style: const TextStyle(
+//                   fontFamily: 'FiraBold',
+//                   fontSize: 20,
+//                 )
+//             )
+//         ),
+//       ),
+//       TableCell(
+//         verticalAlignment: TableCellVerticalAlignment.middle,
+//         child: Container(
+//             height: 50,
+//             alignment: Alignment.center,
+//             padding: const EdgeInsets.all(10.0),
+//             child : Text(
+//                 bidder,
+//                 style : const TextStyle(
+//                   fontFamily: 'FiraRegular',
+//                   fontSize: 12,
+//                 )
+//             )
+//         ),
+//       ),
+//       TableCell(
+//         verticalAlignment: TableCellVerticalAlignment.middle,
+//         child: Container(
+//             height: 50,
+//             alignment: Alignment.center,
+//             padding: const EdgeInsets.all(10.0),
+//             child : Text(
+//                 bid_date,
+//                 style : const TextStyle(
+//                   fontFamily: 'FiraRegular',
+//                   fontSize: 12,
+//                 )
+//             )
+//         ),
+//       ),
+//       TableCell(
+//         verticalAlignment: TableCellVerticalAlignment.middle,
+//         child: Container(
+//             height: 50,
+//             alignment: Alignment.center,
+//             padding: const EdgeInsets.all(10.0),
+//             child : Text(
+//                 bid_price,
+//                 style : const TextStyle(
+//                   fontFamily: 'FiraRegular',
+//                   fontSize: 12,
+//                 )
+//             )
+//         ),
+//       )
+//     ],
+//   );
+// }
