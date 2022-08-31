@@ -4,12 +4,14 @@ import 'package:Etiquette/Screens/Account.dart';
 import 'package:Etiquette/Screens/Bid.dart';
 import 'package:Etiquette/Screens/Drawer/Hold.dart';
 import 'package:Etiquette/Screens/Interest.dart';
-import 'package:Etiquette/Screens/Selling.dart';
+import 'package:Etiquette/Screens/Drawer/Selling.dart';
 import 'package:Etiquette/Screens/Drawer/Used.dart';
 import 'package:Etiquette/Screens/Wallet/Wallet.dart';
 import 'package:Etiquette/Screens/Login.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Models/serverset.dart';
+
+import 'package:Etiquette/TestScreens/test_firebase_fetch_image.dart';
 
 @override
 Widget drawer(BuildContext context, bool theme) {
@@ -139,6 +141,17 @@ Widget drawer(BuildContext context, bool theme) {
             }
           },
         ),
+        // ListTile(
+        //   title: const Text('(Test) Firebase 이미지 Url'),
+        //   onTap: () async {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => const TestFirebaseFetchImage()
+        //       )
+        //     );
+        //   },
+        // ),
       ]),
     ),
   );
