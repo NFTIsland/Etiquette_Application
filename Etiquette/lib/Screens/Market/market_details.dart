@@ -7,17 +7,23 @@ import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
+import 'package:Etiquette/Providers/Coinone/get_klay_currency.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+
+import '../../Providers/DB/update_ticket_owner.dart';
+import '../../Providers/KAS/Kip17/kip17_token_transfer.dart';
+import '../../Providers/KAS/Wallet/klay_transaction.dart';
 
 class MarketDetails extends StatefulWidget {
   String? token_id;
   String? product_name;
+  String? owner;
   String? place;
   String? performance_date;
   String? seat_class;
   String? seat_No;
 
-  MarketDetails({Key? key, this.token_id, this.product_name, this.place, this.performance_date, this.seat_class, this.seat_No}) : super(key: key);
+  MarketDetails({Key? key, this.token_id, this.product_name, this.owner, this.place, this.performance_date, this.seat_class, this.seat_No}) : super(key: key);
 
   @override
   State createState() => _MarketDetails();
@@ -29,6 +35,7 @@ class _MarketDetails extends State<MarketDetails> {
   late double height;
   String? remain;
   String _price = "";
+  double _klayCurrency = 0.0;
 
   late final Future future;
   late Map<String, dynamic> details;
@@ -36,11 +43,6 @@ class _MarketDetails extends State<MarketDetails> {
 
   final rows = <DataRow> [];
   final bid_price_controller = TextEditingController();
-
-  @override
-  void dispose(){
-    super.dispose();
-  }
 
   Future<bool> getTheme() async {
     var key = 'theme';
@@ -169,11 +171,38 @@ class _MarketDetails extends State<MarketDetails> {
     }
   }
 
+  Future<void> loadKlayCurrency() async {
+    Map<String, dynamic> data = await getKlayCurrency(); // 현재 KLAY 시세 정보를 API를 통해 가져옴
+    if (data["statusCode"] == 200) { // 현재 KLAY 시세 정보를 정상적으로 가져옴
+      String klayCurrency = data['lastCurrency'];
+      _klayCurrency = double.parse(klayCurrency);
+    } else {
+      _klayCurrency = 0.0;
+    }
+  }
+
+  Timer? timer;
+
   @override
   void initState() {
     super.initState();
     getTheme();
+    loadKlayCurrency();
+    timer = Timer.periodic(
+      const Duration(seconds: 3), // 3초 마다 자동 갱신
+          (timer) {
+        setState(() {
+          loadKlayCurrency();
+        });
+      },
+    );
     future = getMarketDetailFromDB();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
   }
 
   @override
@@ -213,8 +242,8 @@ class _MarketDetails extends State<MarketDetails> {
                                     tableRow("장소", widget.place!),
                                     tableRow("날짜",
                                         widget.performance_date!.substring(0, 10).replaceAll("-", ".")
-                                        + " "
-                                        + widget.performance_date!.substring(11, 16)),
+                                            + " "
+                                            + widget.performance_date!.substring(11, 16)),
                                     tableRow("좌석 정보", "${widget.seat_class!}석 ${widget.seat_No!}번"),
                                   ]
                               ),
@@ -291,18 +320,18 @@ class _MarketDetails extends State<MarketDetails> {
                                 ),
                               ),
                               Visibility(
-                                visible: rows.isEmpty,
-                                child: Column(
-                                  children: const <Widget> [
-                                    SizedBox(height: 15),
-                                    Text(
-                                      "아직 입찰이 없습니다.",
-                                      style: TextStyle(
-                                        fontSize: 15,
+                                  visible: rows.isEmpty,
+                                  child: Column(
+                                    children: const <Widget> [
+                                      SizedBox(height: 15),
+                                      Text(
+                                        "아직 입찰이 없습니다.",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                )
+                                    ],
+                                  )
                               ),
                               Visibility(
                                 visible: rows.isNotEmpty,
@@ -420,10 +449,60 @@ class _MarketDetails extends State<MarketDetails> {
                               const SizedBox(height: 15),
                               ElevatedButton(
                                   onPressed: () async {
-                                    if (bid_price_controller.text == auction_details['immediate_purchase_price'].toString()) {
+                                    if (int.parse(bid_price_controller.text) >= auction_details['immediate_purchase_price']) {
                                       final immidiate_purchase = await displayDialog_YesOrNo(context, "입찰", "즉시 입찰가를 입력하셨습니다. 즉시 입찰 하시겠습니까?");
                                       if (immidiate_purchase) {
-                                        print("Process!");
+                                        final kas_address_data = await getKasAddress(); // jwt token으로부터 kas_address 가져오기
+                                        final owner = widget.owner!;
+
+                                        if (kas_address_data['statusCode'] == 200) {
+                                          final bidder = kas_address_data['data'][0]['kas_address'];
+                                          double payment_klay = auction_details['immediate_purchase_price'] / _klayCurrency;
+
+                                          if (payment_klay.isFinite) {
+                                            Map<String, dynamic> klayTransactionData = await klayTransaction(bidder, payment_klay.toString(), owner);
+
+                                            if (klayTransactionData['statusCode'] == 200) { // 트랜잭션 성공
+                                              Map<String, dynamic> kip17TokenTransferData = await kip17TokenTransfer(details['category'], widget.token_id!, owner, owner, bidder);
+
+                                              if (kip17TokenTransferData['statusCode'] == 200) {
+                                                Map<String, dynamic> updateTicketOwnerData = await updateTicketOwner(bidder, widget.token_id!);
+
+                                                if (updateTicketOwnerData['statusCode'] == 200) {
+                                                  displayDialog_checkonly(context, "즉시 입찰 완료", "즉시 입찰이 성공적으로 완료되었습니다.");
+                                                } else { // DB에 티켓 owner를 업데이트 하지 못함
+                                                  String errorMessage = "즉시 입찰에 실패했습니다.\n\n서버와의 통신이 원활하지 않습니다.";
+                                                  displayDialog_checkonly(context, "즉시 입찰 실패", errorMessage);
+                                                }
+                                              } else { // 토큰 전송 실패
+                                                String message = kip17TokenTransferData["msg"];
+                                                String errorMessage = "즉시 입찰에 실패했습니다.\n\n$message";
+                                                displayDialog_checkonly(context, "즉시 입찰 실패", errorMessage);
+
+                                                // 토큰 전송 실패로 인한 klay 환불 조치
+                                                // 문제점 1. owner의 klay 잔액이 부족하면 환불이 진행되지 않는다.
+                                                payment_klay = payment_klay + 0.000525;
+                                                Map<String, dynamic> klayTransactionData = await klayTransaction(owner, payment_klay.toString(), bidder);
+                                                if (klayTransactionData['statusCode'] == 200) {
+                                                  displayDialog_checkonly(context, "즉시 입찰 실패", "알 수 없는 오류로 거래가 취소되었습니다.\n\n다시 시도해 주십시오.");
+                                                } else {
+                                                  displayDialog_checkonly(context, "즉시 입찰 실패", "알 수 없는 오류로 거래가 취소되었습니다.\n\n서비스 센터에 문의해 주십시오.");
+                                                }
+                                              }
+                                            } else { // 트랜잭션 실패
+                                              String message = klayTransactionData["msg"];
+                                              String errorMessage = "즉시 입찰에 실패했습니다.\n\n$message";
+                                              displayDialog_checkonly(context, "즉시 입찰 실패", errorMessage);
+                                            }
+                                          } else { // _klayCurrency가 0일 경우
+                                            String errorMessage = "즉시 입찰에 실패했습니다.\n\nKLAY 환율 정보를 받아오지 못했습니다.";
+                                            displayDialog_checkonly(context, "즉시 입찰 실패", errorMessage);
+                                          }
+                                        } else { // jwt token으로부터 kas_address를 가져오지 못했을 경우
+                                          String? message = kas_address_data["msg"];
+                                          String errorMessage = "잔액 정보를 가져오지 못했습니다.\n\n$message";
+                                          displayDialog_checkonly(context, "통신 오류", errorMessage);
+                                        }
                                         return;
                                       } else {
                                         return;

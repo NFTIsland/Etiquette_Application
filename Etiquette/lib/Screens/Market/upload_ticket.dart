@@ -366,7 +366,43 @@ class _UploadTicket extends State<UploadTicket> {
                               && (_bidUnit % 100 == 0)
                               && _immediatePurchasePrice <= _originalPrice) {
                             if (comments_controller.text != "") {
-                              final selected = await displayDialog_YesOrNo(context, "티켓 업로드", "위 옵션으로 티켓 업로드를 진행하시겠습니까?");
+                              // final selected = await displayDialog_YesOrNo(context, "티켓 업로드", "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n(한번 업로드한 티켓은 취소할 수 없습니다.)");
+                              final selected = await showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text("티켓 업로드"),
+                                  content: RichText(
+                                      text: const TextSpan(
+                                        children: [
+                                          TextSpan(
+                                              text: "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 13,
+                                              )
+                                          ),
+                                          TextSpan(
+                                              text: "한번 업로드한 티켓은 취소할 수 없습니다.",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              )
+                                          )
+                                        ],
+                                      )
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('Cancel'),
+                                      onPressed: () => Navigator.pop(context, false),
+                                    ),
+                                    TextButton(
+                                      child: const Text('OK'),
+                                      onPressed: () => Navigator.pop(context, true),
+                                    ),
+                                  ],
+                                ),
+                              );
 
                               if (selected) {
                                 upload_ticket();
