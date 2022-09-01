@@ -1,9 +1,18 @@
+import 'dart:async';
+import 'package:async/async.dart';
+import 'dart:convert';
+import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:timer_builder/timer_builder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Screens/Search.dart';
+import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/widgets/appbar.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -13,45 +22,19 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
+  final AsyncMemoizer _memoizer = AsyncMemoizer();
+
   bool ala = true;
   var img = const Icon(Icons.notifications);
   late bool theme;
-  List? high;
-  Map<String, dynamic> ex1 = {
-    'name': '티켓1',
-    'category': '영화',
-    'price': 16000,
-    'img':
-        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex2 = {
-    'name': '티켓2',
-    'category': '콘서트',
-    'price': 150000,
-    'img':
-        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex3 = {
-    'name': '티켓3',
-    'category': '스포츠',
-    'price': 66000,
-    'img':
-        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex4 = {
-    'name': '티켓4',
-    'category': '뮤지컬',
-    'price': 130000,
-    'img':
-        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex5 = {
-    'name': '티켓5',
-    'category': '공연',
-    'price': 100000,
-    'img':
-        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
+  late double width;
+  late double height;
+
+  String currentTime = "Loading...";
+  String klayCurrency = "Loading...";
+
+  List home_posters = [];
+  List notices = [];
 
   void _setData(bool value) async {
     var key = 'ala';
@@ -75,33 +58,110 @@ class _Home extends State<Home> {
     });
   }
 
-  getTheme() async {
+  Future<bool> getTheme() async {
     var key = 'theme';
     SharedPreferences pref = await SharedPreferences.getInstance();
     theme = (pref.getBool(key) ?? false);
     return theme;
   }
 
+  String loadCurrentTime() {
+    final now = DateTime.now();
+    // currentTime = "${now.year}년 ${now.month}월 ${now.day}일 ${now.hour}시 ${now.minute}분 ${now.second}초";
+    return "${now.year}년 ${now.month}월 ${now.day}일 ${now.hour}시 ${now.minute}분 ${now.second}초";
+  }
+
+  Future<void> getKlayCurrency() async {
+    final res = await http.get(Uri.parse("https://api.coinone.co.kr/public/v2/ticker_new/KRW/KLAY"));
+    Map<String, dynamic> data = json.decode(res.body);
+    if (data["result"] == "success") {
+      klayCurrency = data["tickers"][0]["last"].toString();
+    } else {
+      klayCurrency = "Loading...";
+    }
+  }
+
+  String getStrKlayCurrency() {
+    getKlayCurrency();
+    if (double.tryParse(klayCurrency) == null) {
+      return klayCurrency;
+    } else {
+      return klayCurrency + " ￦";
+    }
+  }
+
+  Future<void> loadHomePosters() async {
+    const url = "$SERVER_IP/screen/homePosters";
+    try {
+      var res = await http.get(Uri.parse(url));
+      Map<String, dynamic> data = json.decode(res.body);
+      if (res.statusCode == 200) {
+        for (var _image in data['data']) {
+          home_posters.add(_image['poster_url']);
+        }
+      } else {
+        String msg = data['msg'];
+        displayDialog_checkonly(context, "Home", msg);
+      }
+    } catch (ex) {
+      displayDialog_checkonly(context, "Home", "네트워크 상태가 원활하지 않습니다.");
+    }
+  }
+
+  _fetchData() async {
+    return this._memoizer.runOnce(() async {
+      getTheme();
+      _loadData();
+      loadHomePosters();
+      getHomeNotices();
+      await Future.delayed(
+          const Duration(milliseconds: 1000)
+      );
+      return;
+    });
+  }
+
+  Future<void> getHomeNotices() async {
+    const url = "$SERVER_IP/screen/homeNotices";
+    try {
+      var res = await http.get(Uri.parse(url));
+      Map<String, dynamic> data = json.decode(res.body);
+      if (res.statusCode == 200) {
+        for (var _title in data['data']) {
+          notices.add(_title);
+        }
+      } else {
+        String msg = data['msg'];
+        displayDialog_checkonly(context, "Home", msg);
+      }
+    } catch (ex) {
+      displayDialog_checkonly(context, "Home", "네트워크 상태가 원활하지 않습니다.");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _loadData();
-    high = List.empty(growable: true);
-    high!.add(ex1);
-    high!.add(ex2);
-    high!.add(ex3);
-    high!.add(ex4);
-    high!.add(ex5);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
     return FutureBuilder(
-        future: getTheme(),
+        future: _fetchData(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error'),
+            return Scaffold(
+              appBar: appbarWithArrowBackButton("Home"),
+              body: const Center(
+                child: Text("통신 에러가 발생했습니다."),
+              ),
             );
           }
           if (snapshot.connectionState == ConnectionState.done) {
@@ -146,98 +206,200 @@ class _Home extends State<Home> {
                       )
                     ]
                 ),
-                drawer: drawer(context, theme), // 왼쪽 위 부가 메뉴버튼을 단순 ListView에서 Drawer 사용하여 슬라이드로
-                body: SingleChildScrollView( // 만약 화면에 다 표현할 수 없으면 스크롤 할 수 있게 설정
-                    child: SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          children: <Widget> [
-                            const SizedBox(height: 15),
-                            Column( // Tickets with high bidders를 위한 공간
-                              children: <Widget> [
+                drawer: drawer(context, true),
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget> [
+                      SizedBox(
+                        width : width * 0.91,
+                        height : height * 0.4,
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                            height: height * 0.4,
+                            autoPlay: true, //자동재생 여부
+                          ),
+                          items: home_posters.map((item) {
+                            return Builder(builder: (BuildContext context) {
+                              return Container(
+                                width : width * 0.91,
+                                height : height * 0.4,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  //border 를 주기 위해 decoration 사용
+                                  border: Border.all(
+                                    width: 3,
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                                child: ClipRRect(
+                                  //ClipRRect : 위젯 모서리 둥글게 하기위해 사용하는 위젯
+                                  borderRadius: BorderRadius.circular(16.0),
+                                  child: Image.network(
+                                    item,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              );
+                            });
+                          }).toList(),
+                        ),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              width * 0.044, height * 0.04125, width * 0.044, 0
+                          ),
+                          child: Container(
+                            width: width * 0.91,
+                            height: height * 0.06125,
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget> [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: width * 0.0361),
+                                    child: const Text(
+                                        "Klay 시세",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.black
+                                        )
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(right: width * 0.0361),
+                                    child: TimerBuilder.periodic(
+                                      const Duration(seconds: 3),
+                                      builder: (context) {
+                                        return Text(
+                                          getStrKlayCurrency(),
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                ]
+                            ),
+                            decoration: BoxDecoration(
+                                color: const Color(0xffd9d9d9),
+                                borderRadius: BorderRadius.circular(9)
+                            ),
+                          )
+                      ),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              width * 0.044, height * 0.02, width * 0.044, 0
+                          ),
+                          child: Container(
+                            width: width * 0.91,
+                            height: height * 0.06125,
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget> [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: width * 0.0361),
+                                    child: const Text(
+                                        "서버시간",
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.black
+                                        )
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(right: width * 0.0361),
+                                    child: TimerBuilder.periodic(
+                                      const Duration(seconds: 1),
+                                      builder: (context) {
+                                        return Text(
+                                          loadCurrentTime(),
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                ]
+                            ),
+                            decoration: BoxDecoration(
+                                color: const Color(0xffd9d9d9),
+                                borderRadius: BorderRadius.circular(9)),
+                          )
+                      ),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              width * 0.044, height * 0.04125, width * 0.044, 0),
+                          child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
                                 const Text(
-                                    "Tickets with high bidders",
-                                    style: TextStyle(
-                                        fontSize: 20, fontWeight: FontWeight.bold
-                                    )
+                                    "공지사항",
+                                    style: TextStyle(fontSize: 20, color: Colors.black)
                                 ),
-                                ListView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: high!.length,
-                                    itemBuilder: (context, index) {
-                                      return Card(
-                                          child: SizedBox(
-                                              width: double.infinity,
-                                              child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                      child: Image.network(
-                                                          high![index]['img'],
-                                                          width: 50,
-                                                          height: 50
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                        child: Column(
-                                                            children: <Widget>[
-                                                              Text(high![index]['name']),
-                                                              Text(high![index]['category']),
-                                                              Text(high![index]['price'].toString()),
-                                                            ]
-                                                        )
-                                                    )
-                                                  ]
-                                              )
-                                          )
-                                      );
-                                    }
-                                ),
-                                const Text(
-                                    "Deadline Imminent",
-                                    style: TextStyle(
-                                        fontSize: 20, fontWeight: FontWeight.bold
-                                    )
-                                ),
-                                ListView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: high!.length,
-                                    itemBuilder: (context, index) {
-                                      return Card(
-                                          child: SizedBox(
-                                              width: double.infinity,
-                                              child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: <Widget> [
-                                                    Expanded(
-                                                      child: Image.network(
-                                                          high![index]['img'],
-                                                          width: 50,
-                                                          height: 50
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                        child: Column(
-                                                            children: <Widget> [
-                                                              Text(high![index]['name']),
-                                                              Text(high![index]['category']),
-                                                              Text(high![index]['price'].toString()),
-                                                            ]
-                                                        )
-                                                    )
-                                                  ]
-                                              )
-                                          )
-                                      );
-                                    }
+                                TextButton(
+                                  onPressed: () {
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) => const NoticePage()
+                                    //     )
+                                    // )
+                                  },
+                                  child: const Text(
+                                      "+more",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                      )
+                                  ),
                                 ),
                               ]
-                            )
-                          ]
-                        )
-                    )
+                          )
+                      ),
+                      Padding(
+                          padding : EdgeInsets.fromLTRB(width*0.044, height*0.019, width*0.044, height*0.02875),
+                          child : Container(
+                              width : width * 0.91,
+                              decoration : BoxDecoration(borderRadius: BorderRadius.circular(9), color : Color(0xffd9d9d9),),
+                              child : ListView.separated(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount : notices.length,
+                                itemBuilder : (context, index) {
+                                  return Container(
+                                      alignment: Alignment.centerLeft,
+                                      width : width * 0.91,
+                                      height : height * 0.065,
+                                      child : InkWell(
+                                          onTap : () {
+
+                                          },
+                                          child : Padding(
+                                              padding : EdgeInsets.only(left : width * 0.0361),
+                                              child : Text(
+                                                  notices[index]['title'],
+                                                  style: const TextStyle(fontSize: 20, color: Colors.black)
+                                              )
+                                          )
+                                      )
+                                  );
+                                },
+                                separatorBuilder: (BuildContext context, int index) => const Divider(
+                                  thickness: 1,
+                                  height : 0,
+                                  color : Colors.black,
+                                ),
+                              )
+                          )
+                      ),
+                    ],
+                  ),
                 )
             );
           }
