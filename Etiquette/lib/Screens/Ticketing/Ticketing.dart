@@ -26,42 +26,6 @@ class _Ticketing extends State<Ticketing> {
 
   late final Future future;
 
-  Map<String, dynamic> ex1 = {
-    'name': '티켓1',
-    'category': '영화',
-    'price': 16000,
-    'img':
-    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex2 = {
-    'name': '티켓2',
-    'category': '콘서트',
-    'price': 150000,
-    'img':
-    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex3 = {
-    'name': '티켓3',
-    'category': '스포츠',
-    'price': 66000,
-    'img':
-    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex4 = {
-    'name': '티켓4',
-    'category': '뮤지컬',
-    'price': 130000,
-    'img':
-    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex5 = {
-    'name': '티켓5',
-    'category': '공연',
-    'price': 100000,
-    'img':
-    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-
   void _setData(bool value) async {
     var key = 'ala';
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -91,45 +55,13 @@ class _Ticketing extends State<Ticketing> {
     return theme;
   }
 
-  Future<void> getMarketTicketsFromDB() async {
-    list = List.empty(growable: true);
-    const url = "$SERVER_IP/ticketInfo";
-    try {
-      var res = await http.get(Uri.parse(url));
-      Map<String, dynamic> data = json.decode(res.body);
-      if (res.statusCode == 200) {
-        List tickets = data["data"];
-        for (Map<String, dynamic> ticket in tickets) {
-          Map<String, dynamic> ex = {
-            'product_name': ticket['product_name'],
-            'place': ticket['place'],
-          };
-          list.add(ex);
-        }
-      } else {
-        int statusCode = res.statusCode;
-        String msg = data['msg'];
-        displayDialog_checkonly(context, "티켓팅", "statusCode: $statusCode\n\nmessage: $msg");
-      }
-    } catch (ex) {
-      int statusCode = 404;
-      String msg = ex.toString();
-      displayDialog_checkonly(context, "티켓팅", "statusCode: $statusCode\n\nmessage: $msg");
-    }
-  }
+
 
   @override
   void initState() {
     super.initState();
     _loadData();
-    getTheme();
-    future = getMarketTicketsFromDB();
-    high = List.empty(growable: true);
-    high!.add(ex1);
-    high!.add(ex2);
-    high!.add(ex3);
-    high!.add(ex4);
-    high!.add(ex5);
+    future = getTheme();
   }
 
   @override
@@ -187,150 +119,103 @@ class _Ticketing extends State<Ticketing> {
                             child: Container(
                                 width: double.infinity,
                                 padding: const EdgeInsets.only(left: 18, right: 18),
-                                child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽에 딱 붙도록 설정
-                                    children: <Widget> [
-                                      Column(
-                                          children: <Widget> [
-                                            const SizedBox(height: 20),
-                                            const Text(
-                                                "Hot Pick",
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold
-                                                )
-                                            ),
-                                            const SizedBox(height: 20),
-                                            ListView.builder(
-                                                physics: const NeverScrollableScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount: high!.length,
-                                                itemBuilder: (context, index) {
-                                                  return Card(
-                                                      child: SizedBox(
-                                                          width: double.infinity,
-                                                          child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: <Widget>[
-                                                                Expanded(
-                                                                  child: Image.network(
-                                                                      high![index]['img'],
-                                                                      width: 50,
-                                                                      height: 50
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                    child: Column(
-                                                                        children: <Widget>[
-                                                                          Text(high![index]['name']),
-                                                                          Text(high![index]['category']),
-                                                                          Text(high![index]['price'].toString()),
-                                                                        ]
-                                                                    )
-                                                                )
-                                                              ]
-                                                          )
-                                                      )
-                                                  );
-                                                }
-                                            ),
-                                          ]
-                                      ),
-                                      Column(
-                                          children: <Widget> [
-                                            const SizedBox(height: 20),
-                                            const Text(
-                                                "Deadline Imminent",
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold
-                                                )
-                                            ),
-                                            const SizedBox(height: 20),
-                                            ListView.builder(
-                                                physics: const NeverScrollableScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount: high!.length,
-                                                itemBuilder: (context, index) {
-                                                  return Card(
-                                                      child: SizedBox(
-                                                          width: double.infinity,
-                                                          child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: <Widget> [
-                                                                Expanded(
-                                                                  child: Image.network(
-                                                                      high![index]['img'],
-                                                                      width: 50,
-                                                                      height: 50
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                    child: Column(
-                                                                        children: <Widget>[
-                                                                          Text(high![index]['name']),
-                                                                          Text(high![index]['category']),
-                                                                          Text(high![index]['price'].toString()),
-                                                                        ]
-                                                                    )
-                                                                )
-                                                              ]
-                                                          )
-                                                      )
-                                                  );
-                                                }
-                                            ),
-                                          ]
-                                      ),
-                                      Column(
-                                          children: <Widget>[
-                                            const SizedBox(height: 20),
-                                            const Text(
-                                                "Ranking",
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold
-                                                )
-                                            ),
-                                            const SizedBox(height: 20),
-                                            ListView.builder(
-                                                physics: const NeverScrollableScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount: high!.length,
-                                                itemBuilder: (context, index) {
-                                                  return Card(
-                                                      child: SizedBox(
-                                                          width: double.infinity,
-                                                          child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: <Widget> [
-                                                                Expanded(
-                                                                  child: Image.network(
-                                                                      high![index]['img'],
-                                                                      width: 50,
-                                                                      height: 50
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                    child: Column(
-                                                                        children: <Widget>[
-                                                                          Text(high![index]['name']),
-                                                                          Text(high![index]['category']),
-                                                                          Text(high![index]['price'].toString()),
-                                                                        ]
-                                                                    )
-                                                                )
-                                                              ]
-                                                          )
-                                                      )
-                                                  );
-                                                }
-                                            ),
-                                            const SizedBox(height: 80),
-                                          ]
-                                      ),
-                                    ]
-                                )
+                                // child: Column(
+                                //     crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽에 딱 붙도록 설정
+                                //     children: <Widget> [
+                                //       Column(
+                                //           children: <Widget> [
+                                //             const SizedBox(height: 20),
+                                //             const Text(
+                                //                 "Hot Pick",
+                                //                 style: TextStyle(
+                                //                     fontSize: 20,
+                                //                     fontWeight: FontWeight.bold
+                                //                 )
+                                //             ),
+                                //             const SizedBox(height: 20),
+                                //             ListView.builder(
+                                //                 physics: const NeverScrollableScrollPhysics(),
+                                //                 shrinkWrap: true,
+                                //                 itemCount: high!.length,
+                                //                 itemBuilder: (context, index) {
+                                //                   return Card(
+                                //                       child: SizedBox(
+                                //                           width: double.infinity,
+                                //                           child: Row(
+                                //                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                               children: <Widget>[
+                                //                                 Expanded(
+                                //                                   child: Image.network(
+                                //                                       high![index]['img'],
+                                //                                       width: 50,
+                                //                                       height: 50
+                                //                                   ),
+                                //                                 ),
+                                //                                 Expanded(
+                                //                                     child: Column(
+                                //                                         children: <Widget>[
+                                //                                           Text(high![index]['name']),
+                                //                                           Text(high![index]['category']),
+                                //                                           Text(high![index]['price'].toString()),
+                                //                                         ]
+                                //                                     )
+                                //                                 )
+                                //                               ]
+                                //                           )
+                                //                       )
+                                //                   );
+                                //                 }
+                                //             ),
+                                //           ]
+                                //       ),
+                                //       Column(
+                                //           children: <Widget> [
+                                //             const SizedBox(height: 20),
+                                //             const Text(
+                                //                 "Deadline Imminent",
+                                //                 style: TextStyle(
+                                //                     fontSize: 20,
+                                //                     fontWeight: FontWeight.bold
+                                //                 )
+                                //             ),
+                                //             const SizedBox(height: 20),
+                                //             ListView.builder(
+                                //                 physics: const NeverScrollableScrollPhysics(),
+                                //                 shrinkWrap: true,
+                                //                 itemCount: high!.length,
+                                //                 itemBuilder: (context, index) {
+                                //                   return Card(
+                                //                       child: SizedBox(
+                                //                           width: double.infinity,
+                                //                           child: Row(
+                                //                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                               children: <Widget> [
+                                //                                 Expanded(
+                                //                                   child: Image.network(
+                                //                                       high![index]['img'],
+                                //                                       width: 50,
+                                //                                       height: 50
+                                //                                   ),
+                                //                                 ),
+                                //                                 Expanded(
+                                //                                     child: Column(
+                                //                                         children: <Widget>[
+                                //                                           Text(high![index]['name']),
+                                //                                           Text(high![index]['category']),
+                                //                                           Text(high![index]['price'].toString()),
+                                //                                         ]
+                                //                                     )
+                                //                                 )
+                                //                               ]
+                                //                           )
+                                //                       )
+                                //                   );
+                                //                 }
+                                //             ),
+                                //           ]
+                                //       ),
+                                //     ]
+                                // )
                             ),
                           ),
                         )
