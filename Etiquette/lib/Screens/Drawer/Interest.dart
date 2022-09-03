@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
@@ -8,6 +7,7 @@ import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
+import 'package:Etiquette/Screens/Market/market_details.dart';
 
 class Interest extends StatefulWidget {
   const Interest({Key? key}) : super(key: key);
@@ -70,8 +70,11 @@ class _Interest extends State<Interest> {
         List tickets = data["data"];
         for (Map<String, dynamic> ticket in tickets) {
           Map<String, dynamic> ex = {
+            'token_id': ticket['token_id'],
             'product_name': ticket['product_name'],
+            'owner': ticket['owner'],
             'place': ticket['place'],
+            'performance_date': ticket['performance_date'],
             'seat_class': ticket['seat_class'],
             'seat_No': ticket['seat_No'],
           };
@@ -161,15 +164,15 @@ class _Interest extends State<Interest> {
                                       ),
                                       child: InkWell(
                                         onTap: () {
-                                          // Navigator.of(context).push(
-                                          //     MaterialPageRoute(
-                                          //         builder: (context) => TicketDetails(
-                                          //           product_name: holdlist[index]['product_name'],
-                                          //           place: holdlist[index]['place'],
-                                          //           showPurchaseButton: false,
-                                          //         )
-                                          //     )
-                                          // );
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) => TicketDetails(
+                                                    product_name: interest_ticketing_list[index]['product_name'],
+                                                    place: interest_ticketing_list[index]['place'],
+                                                    showPurchaseButton: true,
+                                                  )
+                                              )
+                                          );
                                         },
                                         child: SizedBox(
                                           width: double.infinity,
@@ -266,15 +269,19 @@ class _Interest extends State<Interest> {
                                       ),
                                       child: InkWell(
                                         onTap: () {
-                                          // Navigator.of(context).push(
-                                          //     MaterialPageRoute(
-                                          //         builder: (context) => TicketDetails(
-                                          //           product_name: holdlist[index]['product_name'],
-                                          //           place: holdlist[index]['place'],
-                                          //           showPurchaseButton: false,
-                                          //         )
-                                          //     )
-                                          // );
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) => MarketDetails(
+                                                    token_id: interest_auction_list[index]['token_id'],
+                                                    product_name: interest_auction_list[index]['product_name'],
+                                                    owner: interest_auction_list[index]['owner'],
+                                                    place: interest_auction_list[index]['place'],
+                                                    performance_date: interest_auction_list[index]['performance_date'],
+                                                    seat_class: interest_auction_list[index]['seat_class'],
+                                                    seat_No: interest_auction_list[index]['seat_No'],
+                                                  )
+                                              )
+                                          );
                                         },
                                         child: SizedBox(
                                           width: double.infinity,
