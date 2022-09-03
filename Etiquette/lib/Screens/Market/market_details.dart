@@ -43,7 +43,8 @@ class _MarketDetails extends State<MarketDetails> {
   late Map<String, dynamic> auction_details;
 
   final rows = <DataRow> [];
-  final bid_price_controller = TextEditingController();
+  final TextEditingController bid_price_controller = TextEditingController();
+  // String bid_price = "";
 
   Future<bool> getTheme() async {
     var key = 'theme';
@@ -575,8 +576,20 @@ class _MarketDetails extends State<MarketDetails> {
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                                 child: TextField(
+                                  onChanged: (bid_price) {
+                                    setState(() {
+                                      int? _parse = int.tryParse(bid_price);
+                                      if (_parse != null) {
+                                        if (_parse > auction_details['immediate_purchase_price']) {
+                                          bid_price_controller.text = auction_details['immediate_purchase_price'].toString();
+                                        }
+                                      }
+                                    });
+                                  },
                                   keyboardType: TextInputType.number,
                                   controller: bid_price_controller,
+                                  maxLines: 1,
+                                  maxLength: 11,
                                   style: const TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
@@ -584,6 +597,7 @@ class _MarketDetails extends State<MarketDetails> {
                                   ),
                                   decoration: InputDecoration(
                                     hintText: '입찰가 입력',
+                                    counterText: "",
                                     suffix: const Padding(
                                       padding: EdgeInsets.all(2.0),
                                       child: Text(
