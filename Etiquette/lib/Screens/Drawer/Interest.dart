@@ -102,254 +102,254 @@ class _Interest extends State<Interest> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     return FutureBuilder(
-      future: future,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Scaffold(
-            appBar: appbarWithArrowBackButton("관심 티켓"),
-            body: const Center(
-              child: Text("통신 에러가 발생했습니다."),
-            ),
-          );
-        }
-        if (snapshot.connectionState == ConnectionState.done) {
-          return Scaffold(
+        future: future,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Scaffold(
               appBar: appbarWithArrowBackButton("관심 티켓"),
-              body: Container(
-                  width: double.infinity,
-                  alignment: Alignment.topLeft,
-                  child: Column(
-                      children: <Widget> [
-                        const SizedBox(
-                          child: Text(
-                            "Interesting Tickets For Ticketing",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
+              body: const Center(
+                child: Text("통신 에러가 발생했습니다."),
+              ),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Scaffold(
+                appBar: appbarWithArrowBackButton("관심 티켓"),
+                body: Container(
+                    width: double.infinity,
+                    alignment: Alignment.topLeft,
+                    child: Column(
+                        children: <Widget> [
+                          const SizedBox(
+                            child: Text(
+                              "Interesting Tickets For Ticketing",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                        Visibility(
-                          visible: interest_ticketing_list.isEmpty,
-                          child: Center(
-                              child: Column(
-                                children: const <Widget> [
-                                  SizedBox(height: 10),
-                                  Text(
-                                    "관심 목록이 없습니다.",
-                                    style: TextStyle(
-                                      fontSize: 20,
+                          Visibility(
+                            visible: interest_ticketing_list.isEmpty,
+                            child: Center(
+                                child: Column(
+                                  children: const <Widget> [
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "관심 목록이 없습니다.",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              )
+                                  ],
+                                )
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Center(
-                              child: ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: interest_ticketing_list.length,
-                                  itemBuilder: (context, index) {
-                                    return Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      margin: const EdgeInsets.symmetric(
-                                        vertical: 10,
-                                        horizontal: 10,
-                                      ),
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) => TicketDetails(
-                                                    product_name: interest_ticketing_list[index]['product_name'],
-                                                    place: interest_ticketing_list[index]['place'],
-                                                    showPurchaseButton: true,
-                                                  )
-                                              )
-                                          );
-                                        },
-                                        child: SizedBox(
-                                          width: double.infinity,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget> [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Center(
-                                                  child: Image.network(
-                                                      'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
-                                                      width: 80,
-                                                      height: 80
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Center(
+                                child: ListView.builder(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: interest_ticketing_list.length,
+                                    itemBuilder: (context, index) {
+                                      return Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                          horizontal: 10,
+                                        ),
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) => TicketDetails(
+                                                      product_name: interest_ticketing_list[index]['product_name'],
+                                                      place: interest_ticketing_list[index]['place'],
+                                                      showPurchaseButton: true,
+                                                    )
+                                                )
+                                            );
+                                          },
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              children: <Widget> [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Center(
+                                                    child: Image.network(
+                                                        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
+                                                        width: 80,
+                                                        height: 80
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Expanded(
-                                                flex: 3,
-                                                child: Center(
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: <Widget> [
-                                                      const SizedBox(height: 10),
-                                                      Text(
-                                                        interest_ticketing_list[index]['product_name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Center(
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: <Widget> [
+                                                        const SizedBox(height: 10),
+                                                        Text(
+                                                          interest_ticketing_list[index]['product_name'],
+                                                          style: const TextStyle(
+                                                            fontSize: 20,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                      Text(
-                                                        interest_ticketing_list[index]['place'],
-                                                        style: const TextStyle(
-                                                          fontSize: 13,
+                                                        const SizedBox(height: 10),
+                                                        Text(
+                                                          interest_ticketing_list[index]['place'],
+                                                          style: const TextStyle(
+                                                            fontSize: 13,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                    ],
+                                                        const SizedBox(height: 10),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  }
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          child: Text(
-                            "Interesting Tickets For Auction",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: interest_auction_list.isEmpty,
-                          child: Center(
-                            child: Column(
-                              children: const <Widget> [
-                                SizedBox(height: 10),
-                                Text(
-                                  "관심 목록이 없습니다.",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
+                                      );
+                                    }
                                 ),
-                              ],
-                            )
-                          ),
-                        ),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Center(
-                              child: ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: interest_auction_list.length,
-                                  itemBuilder: (context, index) {
-                                    return Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      margin: const EdgeInsets.symmetric(
-                                        vertical: 10,
-                                        horizontal: 10,
-                                      ),
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) => MarketDetails(
-                                                    token_id: interest_auction_list[index]['token_id'],
-                                                    product_name: interest_auction_list[index]['product_name'],
-                                                    owner: interest_auction_list[index]['owner'],
-                                                    place: interest_auction_list[index]['place'],
-                                                    performance_date: interest_auction_list[index]['performance_date'],
-                                                    seat_class: interest_auction_list[index]['seat_class'],
-                                                    seat_No: interest_auction_list[index]['seat_No'],
-                                                  )
-                                              )
-                                          );
-                                        },
-                                        child: SizedBox(
-                                          width: double.infinity,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget> [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Center(
-                                                  child: Image.network(
-                                                      'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
-                                                      width: 80,
-                                                      height: 80
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 3,
-                                                child: Center(
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: <Widget> [
-                                                      const SizedBox(height: 10),
-                                                      Text(
-                                                        interest_auction_list[index]['product_name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                      Text(
-                                                        interest_auction_list[index]['place'],
-                                                        style: const TextStyle(
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                      Text(
-                                                        "${interest_auction_list[index]['seat_class']}석 ${interest_auction_list[index]['seat_No']}번",
-                                                        style: const TextStyle(
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
                               ),
                             ),
                           ),
-                        ),
-                      ]
-                  )
-              )
+                          const SizedBox(
+                            child: Text(
+                              "Interesting Tickets For Auction",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: interest_auction_list.isEmpty,
+                            child: Center(
+                                child: Column(
+                                  children: const <Widget> [
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "관심 목록이 없습니다.",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                            ),
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Center(
+                                child: ListView.builder(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: interest_auction_list.length,
+                                    itemBuilder: (context, index) {
+                                      return Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                          horizontal: 10,
+                                        ),
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) => MarketDetails(
+                                                      token_id: interest_auction_list[index]['token_id'],
+                                                      product_name: interest_auction_list[index]['product_name'],
+                                                      owner: interest_auction_list[index]['owner'],
+                                                      place: interest_auction_list[index]['place'],
+                                                      performance_date: interest_auction_list[index]['performance_date'],
+                                                      seat_class: interest_auction_list[index]['seat_class'],
+                                                      seat_No: interest_auction_list[index]['seat_No'],
+                                                    )
+                                                )
+                                            );
+                                          },
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              children: <Widget> [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Center(
+                                                    child: Image.network(
+                                                        'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
+                                                        width: 80,
+                                                        height: 80
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Center(
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: <Widget> [
+                                                        const SizedBox(height: 10),
+                                                        Text(
+                                                          interest_auction_list[index]['product_name'],
+                                                          style: const TextStyle(
+                                                            fontSize: 20,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 10),
+                                                        Text(
+                                                          interest_auction_list[index]['place'],
+                                                          style: const TextStyle(
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 10),
+                                                        Text(
+                                                          "${interest_auction_list[index]['seat_class']}석 ${interest_auction_list[index]['seat_No']}번",
+                                                          style: const TextStyle(
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 10),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]
+                    )
+                )
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
           );
         }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
     );
   }
 }
