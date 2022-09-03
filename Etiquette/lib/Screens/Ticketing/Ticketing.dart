@@ -4,11 +4,13 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
-import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Screens/Search.dart';
+import 'package:Etiquette/Screens/Ticketing/total_imminent.dart';
 import 'package:Etiquette/Screens/Ticketing/search_ticket.dart';
+import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
+import 'package:Etiquette/widgets/appbar.dart';
 
 class Ticketing extends StatefulWidget {
   const Ticketing({Key? key}) : super(key: key);
@@ -21,8 +23,9 @@ class _Ticketing extends State<Ticketing> {
   bool ala = true;
   late bool theme;
   var img = const Icon(Icons.notifications);
-  List? high;
-  List list = [];
+  List hotpick = [];
+  List deadline = [];
+  String? nickname = "";
 
   late final Future future;
 
@@ -55,13 +58,70 @@ class _Ticketing extends State<Ticketing> {
     return theme;
   }
 
+  Future<void> getHotPickFromDB() async {
+    const url = "$SERVER_IP/ticketing/hotPick";
+    try {
+      var res = await http.get(Uri.parse(url));
+      Map<String, dynamic> data = json.decode(res.body);
+      if (data['statusCode'] == 200) {
+        List _hotpick = data["data"];
+        for (Map<String, dynamic> item in _hotpick) {
+          Map<String, dynamic> ex = {
+            'product_name': item['product_name'],
+            'place': item['place'],
+          };
+          hotpick.add(ex);
+          setState(() {});
+        }
+      } else {
+        displayDialog_checkonly(context, "Hot Pick", "서버와의 상태가 원활하지 않습니다.");
+      }
+    } catch (ex) {
+      String msg = ex.toString();
+      displayDialog_checkonly(context, "티켓팅", msg);
+    }
+  }
 
+  Future<void> getImminentDeadlineFromDB() async {
+    const url = "$SERVER_IP/ticketing/deadLineTop5";
+    try {
+      var res = await http.get(Uri.parse(url));
+      Map<String, dynamic> data = json.decode(res.body);
+      if (data['statusCode'] == 200) {
+        List _deadline = data["data"];
+        for (Map<String, dynamic> item in _deadline) {
+          Map<String, dynamic> ex = {
+            'product_name': item['product_name'],
+            'place': item['place'],
+          };
+          deadline.add(ex);
+          setState(() {});
+        }
+      } else {
+        displayDialog_checkonly(context, "Imminent Deadline", "서버와의 상태가 원활하지 않습니다.");
+      }
+    } catch (ex) {
+      String msg = ex.toString();
+      displayDialog_checkonly(context, "Imminent Deadline", msg);
+    }
+  }
+
+  Future<void> getNickname() async {
+    nickname = await storage.read(key: "nickname");
+  }
+
+  Future<void> getTicketingDataFromDB() async {
+    getHotPickFromDB();
+    getImminentDeadlineFromDB();
+  }
 
   @override
   void initState() {
     super.initState();
     _loadData();
-    future = getTheme();
+    getTheme();
+    getNickname();
+    future = getTicketingDataFromDB();
   }
 
   @override
@@ -70,8 +130,11 @@ class _Ticketing extends State<Ticketing> {
         future: future,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error'),
+            return Scaffold(
+              appBar: appbarWithArrowBackButton("Ticketing"),
+              body: const Center(
+                child: Text("통신 에러가 발생했습니다."),
+              ),
             );
           }
           if (snapshot.connectionState == ConnectionState.done) {
@@ -110,7 +173,7 @@ class _Ticketing extends State<Ticketing> {
                     )
                   ]
               ),
-              drawer: drawer(context, theme),
+              drawer: drawer(context, theme, nickname),
               body: Column(
                   children: <Widget>[
                     Expanded(
@@ -119,103 +182,143 @@ class _Ticketing extends State<Ticketing> {
                             child: Container(
                                 width: double.infinity,
                                 padding: const EdgeInsets.only(left: 18, right: 18),
-                                // child: Column(
-                                //     crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽에 딱 붙도록 설정
-                                //     children: <Widget> [
-                                //       Column(
-                                //           children: <Widget> [
-                                //             const SizedBox(height: 20),
-                                //             const Text(
-                                //                 "Hot Pick",
-                                //                 style: TextStyle(
-                                //                     fontSize: 20,
-                                //                     fontWeight: FontWeight.bold
-                                //                 )
-                                //             ),
-                                //             const SizedBox(height: 20),
-                                //             ListView.builder(
-                                //                 physics: const NeverScrollableScrollPhysics(),
-                                //                 shrinkWrap: true,
-                                //                 itemCount: high!.length,
-                                //                 itemBuilder: (context, index) {
-                                //                   return Card(
-                                //                       child: SizedBox(
-                                //                           width: double.infinity,
-                                //                           child: Row(
-                                //                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //                               children: <Widget>[
-                                //                                 Expanded(
-                                //                                   child: Image.network(
-                                //                                       high![index]['img'],
-                                //                                       width: 50,
-                                //                                       height: 50
-                                //                                   ),
-                                //                                 ),
-                                //                                 Expanded(
-                                //                                     child: Column(
-                                //                                         children: <Widget>[
-                                //                                           Text(high![index]['name']),
-                                //                                           Text(high![index]['category']),
-                                //                                           Text(high![index]['price'].toString()),
-                                //                                         ]
-                                //                                     )
-                                //                                 )
-                                //                               ]
-                                //                           )
-                                //                       )
-                                //                   );
-                                //                 }
-                                //             ),
-                                //           ]
-                                //       ),
-                                //       Column(
-                                //           children: <Widget> [
-                                //             const SizedBox(height: 20),
-                                //             const Text(
-                                //                 "Deadline Imminent",
-                                //                 style: TextStyle(
-                                //                     fontSize: 20,
-                                //                     fontWeight: FontWeight.bold
-                                //                 )
-                                //             ),
-                                //             const SizedBox(height: 20),
-                                //             ListView.builder(
-                                //                 physics: const NeverScrollableScrollPhysics(),
-                                //                 shrinkWrap: true,
-                                //                 itemCount: high!.length,
-                                //                 itemBuilder: (context, index) {
-                                //                   return Card(
-                                //                       child: SizedBox(
-                                //                           width: double.infinity,
-                                //                           child: Row(
-                                //                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //                               children: <Widget> [
-                                //                                 Expanded(
-                                //                                   child: Image.network(
-                                //                                       high![index]['img'],
-                                //                                       width: 50,
-                                //                                       height: 50
-                                //                                   ),
-                                //                                 ),
-                                //                                 Expanded(
-                                //                                     child: Column(
-                                //                                         children: <Widget>[
-                                //                                           Text(high![index]['name']),
-                                //                                           Text(high![index]['category']),
-                                //                                           Text(high![index]['price'].toString()),
-                                //                                         ]
-                                //                                     )
-                                //                                 )
-                                //                               ]
-                                //                           )
-                                //                       )
-                                //                   );
-                                //                 }
-                                //             ),
-                                //           ]
-                                //       ),
-                                //     ]
-                                // )
+                                child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽에 딱 붙도록 설정
+                                    children: <Widget> [
+                                      const SizedBox(height: 20),
+                                      const Text(
+                                          "Hot Pick",
+                                          style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold
+                                          )
+                                      ),
+                                      const Text(
+                                          "사람들의 관심도가 높은 티켓을 보여드립니다.",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                          )
+                                      ),
+                                      const SizedBox(height: 20),
+                                      ListView.builder(
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: hotpick.length,
+                                          itemBuilder: (context, index) {
+                                            return Card(
+                                                child: SizedBox(
+                                                    width: double.infinity,
+                                                    child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        children: <Widget>[
+                                                          Expanded(
+                                                              flex: 1,
+                                                              child: Center(
+                                                                child: Text(
+                                                                  (index + 1).toString(),
+                                                                  style: const TextStyle(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 25,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                          ),
+                                                          Expanded(
+                                                            flex: 1,
+                                                            child: Image.network(
+                                                                "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
+                                                                width: 40,
+                                                                height: 40
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                              flex: 4,
+                                                              child: Column(
+                                                                  children: <Widget>[
+                                                                    Text(hotpick[index]['product_name']),
+                                                                    Text(hotpick[index]['place'].toString()),
+                                                                  ]
+                                                              )
+                                                          )
+                                                        ]
+                                                    )
+                                                )
+                                            );
+                                          }
+                                      ),
+                                      const SizedBox(height: 40),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget> [
+                                          const Text(
+                                              "Deadline Imminent",
+                                              style: TextStyle(
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.bold
+                                              )
+                                          ),
+                                          TextButton(
+                                            child: const Text(
+                                                "+ 더보기",
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.grey,
+                                                )
+                                            ),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => const TotalImminent()
+                                                  )
+                                              );
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                      const Text(
+                                          "마감 시각이 임박한 티켓들을 보여드립니다. (24시간 이내)",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                          )
+                                      ),
+                                      const SizedBox(height: 10),
+                                      ListView.builder(
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: deadline.length,
+                                          itemBuilder: (context, index) {
+                                            return Card(
+                                                child: SizedBox(
+                                                    width: double.infinity,
+                                                    child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        children: <Widget> [
+                                                          Expanded(
+                                                            flex: 1,
+                                                            child: Image.network(
+                                                                "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
+                                                                width: 40,
+                                                                height: 40
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Column(
+                                                                children: <Widget>[
+                                                                  Text(deadline[index]['product_name']),
+                                                                  Text(deadline[index]['place']),
+                                                                ]
+                                                            ),
+                                                          )
+                                                        ]
+                                                    )
+                                                )
+                                            );
+                                          }
+                                      ),
+                                    ]
+                                )
                             ),
                           ),
                         )
