@@ -117,7 +117,8 @@ class _UploadTicket extends State<UploadTicket> {
         "auction_comments": comments_controller.text
       });
       if (res.statusCode == 200) {
-        displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드가 성공적으로 완료되었습니다.");
+        await displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드가 성공적으로 완료되었습니다.");
+        Navigator.of(context).pop();
       } else {
         displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드에 실패했습니다.");
       }
@@ -366,46 +367,50 @@ class _UploadTicket extends State<UploadTicket> {
                               && (_bidUnit % 100 == 0)
                               && _immediatePurchasePrice <= _originalPrice) {
                             if (comments_controller.text != "") {
-                              // final selected = await displayDialog_YesOrNo(context, "티켓 업로드", "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n(한번 업로드한 티켓은 취소할 수 없습니다.)");
-                              final selected = await showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text("티켓 업로드"),
-                                  content: RichText(
-                                      text: const TextSpan(
-                                        children: [
-                                          TextSpan(
-                                              text: "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 13,
-                                              )
-                                          ),
-                                          TextSpan(
-                                              text: "한번 업로드한 티켓은 취소할 수 없습니다.",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              )
-                                          )
-                                        ],
-                                      )
+                              if (auction_end_date != "") {
+                                // final selected = await displayDialog_YesOrNo(context, "티켓 업로드", "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n(한번 업로드한 티켓은 취소할 수 없습니다.)");
+                                final selected = await showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text("티켓 업로드"),
+                                    content: RichText(
+                                        text: const TextSpan(
+                                          children: [
+                                            TextSpan(
+                                                text: "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n",
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 13,
+                                                )
+                                            ),
+                                            TextSpan(
+                                                text: "한번 업로드한 티켓은 취소할 수 없습니다.",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                )
+                                            )
+                                          ],
+                                        )
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('Cancel'),
+                                        onPressed: () => Navigator.pop(context, false),
+                                      ),
+                                      TextButton(
+                                        child: const Text('OK'),
+                                        onPressed: () => Navigator.pop(context, true),
+                                      ),
+                                    ],
                                   ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: const Text('Cancel'),
-                                      onPressed: () => Navigator.pop(context, false),
-                                    ),
-                                    TextButton(
-                                      child: const Text('OK'),
-                                      onPressed: () => Navigator.pop(context, true),
-                                    ),
-                                  ],
-                                ),
-                              );
+                                );
 
-                              if (selected) {
-                                upload_ticket();
+                                if (selected) {
+                                  upload_ticket();
+                                }
+                              } else {
+                                displayDialog_checkonly(context, "티켓 업로드", "경매 마감 날짜 및 시각을 선택해 주세요.");
                               }
                             } else {
                               displayDialog_checkonly(context, "티켓 업로드", "사용자 코멘트를 작성해 주십시오.");
