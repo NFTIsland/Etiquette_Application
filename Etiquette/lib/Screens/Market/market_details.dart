@@ -8,14 +8,13 @@ import 'package:like_button/like_button.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
-import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 import 'package:Etiquette/Providers/Coinone/get_klay_currency.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:Etiquette/Providers/DB/update_ticket_owner.dart';
 import 'package:Etiquette/Providers/KAS/Kip17/kip17_token_transfer.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/klay_transaction.dart';
-
-import '../../Utilities/round.dart';
+import 'package:Etiquette/Utilities/add_comma_to_number.dart';
+import 'package:Etiquette/Utilities/round.dart';
 
 class MarketDetails extends StatefulWidget {
   String? token_id;
@@ -780,7 +779,8 @@ class _MarketDetails extends State<MarketDetails> {
                                           return;
                                         }
 
-                                        displayDialog_checkonly(context, "즉시 입찰 완료", "즉시 입찰이 성공적으로 완료되었습니다.");
+                                        await displayDialog_checkonly(context, "즉시 입찰 완료", "즉시 입찰이 성공적으로 완료되었습니다.");
+                                        Navigator.of(context).pop();
                                         return;
                                       } else {
                                         return;
