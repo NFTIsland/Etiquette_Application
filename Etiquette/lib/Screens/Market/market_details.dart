@@ -56,8 +56,8 @@ class _MarketDetails extends State<MarketDetails> {
     final kas_address_data = await getKasAddress();
 
     if (kas_address_data['statusCode'] != 200) {
-      displayDialog_checkonly(context, "티켓 마켓", "서버와의 연결이 원활하지 않습니다.");
-      return;
+      await displayDialog_checkonly(context, "티켓 마켓", "서버와의 연결이 원활하지 않습니다.");
+      Navigator.of(context).pop();
     }
 
     final kas_address = kas_address_data['data'][0]['kas_address'];
@@ -72,9 +72,8 @@ class _MarketDetails extends State<MarketDetails> {
           _price = ticket_price.toString();
         });
       } else {
-        int statusCode = res.statusCode;
         String msg = data['msg'];
-        displayDialog_checkonly(context, "티켓 마켓", "statusCode: $statusCode\n\nmessage: $msg");
+        displayDialog_checkonly(context, "티켓 마켓", msg);
         setState(() {
           _price = "";
         });
@@ -119,10 +118,10 @@ class _MarketDetails extends State<MarketDetails> {
       Map<String, dynamic> data = json.decode(res.body);
       details = data["data"][0];
     } catch (ex) {
-      int statusCode = 400;
       String msg = ex.toString();
-      displayDialog_checkonly(context, "티켓 마켓", "statusCode: $statusCode\n\nmessage: $msg");
-      return;
+
+      await displayDialog_checkonly(context, "티켓 마켓", msg);
+      Navigator.of(context).pop();
     }
 
     const url_auction = "$SERVER_IP/market/auctionInfo";
@@ -131,7 +130,21 @@ class _MarketDetails extends State<MarketDetails> {
         "token_id": widget.token_id!,
       });
       Map<String, dynamic> data = json.decode(res.body);
-      auction_details = data["data"][0];
+
+      if (data['statusCode'] == 200) {
+        auction_details = data["data"][0];
+      } else if (data['statusCode'] == 201) { // 이미 경매가 마감된 티켓인 경우
+        String msg = data['msg'];
+
+        await displayDialog_checkonly(context, "티켓 마켓", msg);
+        Navigator.of(context).pop();
+      } else {
+        String msg = data['msg'];
+
+        await displayDialog_checkonly(context, "티켓 마켓", msg);
+        Navigator.of(context).pop();
+      }
+
     } catch (ex) {
       int statusCode = 400;
       String msg = ex.toString();
