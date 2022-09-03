@@ -14,6 +14,8 @@ import 'package:Etiquette/Providers/DB/update_ticket_owner.dart';
 import 'package:Etiquette/Providers/KAS/Kip17/kip17_token_transfer.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/klay_transaction.dart';
 
+import '../../Utilities/round.dart';
+
 class MarketDetails extends StatefulWidget {
   String? token_id;
   String? product_name;
@@ -320,7 +322,6 @@ class _MarketDetails extends State<MarketDetails> {
   void initState() {
     super.initState();
     getTheme();
-    loadKlayCurrency();
     future = getMarketDetailFromDB();
   }
 
@@ -630,7 +631,87 @@ class _MarketDetails extends State<MarketDetails> {
                               ElevatedButton(
                                   onPressed: () async {
                                     if (int.parse(bid_price_controller.text) >= auction_details['immediate_purchase_price']) {
-                                      final immidiate_purchase = await displayDialog_YesOrNo(context, "입찰", "즉시 입찰가를 입력하셨습니다. 즉시 입찰 하시겠습니까?");
+                                      final immediate_purchase_price = auction_details['immediate_purchase_price'];
+                                      await loadKlayCurrency();
+
+                                      if (_klayCurrency == 0.0) {
+                                        await displayDialog_checkonly(context, "통신 오류", "서버와의 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.");
+                                        return;
+                                      }
+
+                                      // final immidiate_purchase = await displayDialog_YesOrNo(context,
+                                      //     "입찰",
+                                      //     "즉시 입찰가를 입력하셨습니다. 즉시 입찰 하시겠습니까?\n\n"
+                                      //         "현재 KLAY 시세 기준 약 ${roundDouble(immediate_purchase_price / _klayCurrency, 2)} KLAY가 차감됩니다."
+                                      // );
+
+                                      final immidiate_purchase = await showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text("입찰"),
+                                          content: RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  const TextSpan(
+                                                      text: "즉시 입찰가를 입력하셨습니다.\n\n",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                      )
+                                                  ),
+                                                  const TextSpan(
+                                                      text: "현재 KLAY 시세 기준 약 ",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                      )
+                                                  ),
+                                                  TextSpan(
+                                                      text: "${roundDouble(immediate_purchase_price / _klayCurrency, 2)} KLAY",
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                      )
+                                                  ),
+                                                  const TextSpan(
+                                                    text: "가 차감됩니다.\n\n",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                      )
+                                                  ),
+                                                  const TextSpan(
+                                                      text: "즉시 입찰 시 자동으로 결제가 진행되며 이는 되돌릴 수 없습니다.",
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                      )
+                                                  ),
+                                                  const TextSpan(
+                                                      text: "\n\n즉시 입찰 하시겠습니까?",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                      )
+                                                  ),
+                                                ],
+                                              )
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: const Text('Cancel'),
+                                              onPressed: () => Navigator.pop(context, false),
+                                            ),
+                                            TextButton(
+                                              child: const Text('OK'),
+                                              onPressed: () => Navigator.pop(context, true),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+
                                       if (immidiate_purchase) {
                                         final kas_address_data = await getKasAddress(); // jwt token으로부터 kas_address 가져오기
                                         final owner = widget.owner!;
