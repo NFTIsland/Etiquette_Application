@@ -1,27 +1,26 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
-import 'Account.dart';
-import 'Bid.dart';
-import 'package:Etiquette/Screens/Drawer/Hold.dart';
-import 'package:Etiquette/Screens/Interest.dart';
 import 'package:Etiquette/Screens/Search.dart';
-import 'package:Etiquette/Screens/Drawer/Selling.dart';
 import 'package:Etiquette/Screens/Setting.dart';
-import 'package:Etiquette/Screens/Drawer/Used.dart';
-import 'package:Etiquette/Screens/Wallet/Wallet.dart';
+import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/widgets/appbar.dart';
+import 'package:Etiquette/widgets/drawer.dart';
 
 class More extends StatefulWidget {
-  //More에서 구현할 화면
+  const More({Key? key}) : super(key: key);
+
+  @override
   State createState() => _More();
 }
 
 class _More extends State<More> {
+  bool ala = true;
+  late bool theme;
+  var img = Icon(Icons.notifications);
+  String? nickname = "";
+
   List<String> Option = [
     'Application Guide',
     'Notice',
@@ -29,9 +28,6 @@ class _More extends State<More> {
     'FAQ',
     'Setting'
   ];
-  bool ala = true;
-  late bool theme;
-  var img = Icon(Icons.notifications);
 
   getTheme() async {
     var key = 'theme';
@@ -62,28 +58,37 @@ class _More extends State<More> {
     });
   }
 
+  Future<void> getNickname() async {
+    nickname = await storage.read(key: "nickname");
+  }
+
+  @override
   void initState() {
     super.initState();
+    getTheme();
     _loadData();
   }
 
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getTheme(),
+        future: getNickname(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Center(
-              child: Text('Error'),
+            return Scaffold(
+              appBar: appbarWithArrowBackButton("Home"),
+              body: const Center(
+                child: Text("통신 에러가 발생했습니다."),
+              ),
             );
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
                 appBar: AppBar(
-                    title: Text("Etiquette"),
+                    title: const Text("Etiquette"),
                     backgroundColor: Colors.white24,
                     foregroundColor: Colors.black,
                     elevation: 0,
-                    //elevation은 떠보이는 느낌 설정하는 것, 0이면 뜨는 느낌 없음, foreground는 글자 색 변경
                     actions: <Widget>[
                       Container(
                           child: IconButton(
@@ -105,9 +110,10 @@ class _More extends State<More> {
                                 _setData(ala);
                               }
                             },
-                          )),
+                          )
+                      ),
                       IconButton(
-                        icon: Icon(Icons.search),
+                        icon: const Icon(Icons.search),
                         onPressed: () {
                           Get.to(Search());
                           /*
@@ -118,129 +124,9 @@ class _More extends State<More> {
                            */
                         },
                       )
-                    ]),
-                // 왼쪽 위 부가 메뉴버튼을 단순 ListView에서 Drawer 사용하여 슬라이드로
-                drawer: SafeArea(
-                  child: Drawer(
-                    child: ListView(padding: EdgeInsets.zero, children: [
-                      GestureDetector(
-                        onTap: () {
-                          Get.to(Account());
-                          /*
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Account()));
-                          */
-                        },
-                        child: UserAccountsDrawerHeader(
-                          currentAccountPicture: CircleAvatar(
-                            backgroundColor: Colors.white24,
-                            backgroundImage: AssetImage(
-                              'assets/image/mainlogo.png',
-                            ),
-                          ),
-                          accountName: Text(
-                            'guest1',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          accountEmail: Text(
-                            'a1234@naver.com',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          decoration: BoxDecoration(
-                              color: (theme
-                                  ? const Color(0xffe8e8e8)
-                                  : const Color(0xff7b9acc)),
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(40),
-                                bottomRight: Radius.circular(40),
-                              )),
-                        ),
-                      ),
-                      ListTile(
-                        title: Text('Wallet'),
-                        onTap: () {
-                          Get.to(Wallet());
-                          /*
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Wallet())); // 네비게이션 필요
-
-                           */
-                        },
-                        //trailing: Icon(Icons.add),
-                      ),
-                      ListTile(
-                        title: Text('List of holding tickets'),
-                        onTap: () {
-                          Get.to(Hold());
-                          /*
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Hold())); // 네비게이션 필요
-
-                           */
-                        },
-                        //trailing: Icon(Icons.add),
-                      ),
-                      ListTile(
-                        title: Text('Interest Tickets'),
-                        onTap: () {
-                          Get.to(Interest());
-                          /*
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Interest()));
-
-                           */
-                        },
-                        //trailing: Icon(Icons.add),
-                      ),
-                      ListTile(
-                        title: Text('Bid Tickets'),
-                        onTap: () {
-                          Get.to(Bid());
-                          /*
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => Bid()));
-
-                           */
-                        },
-                        //trailing: Icon(Icons.add),
-                      ),
-                      ListTile(
-                        title: Text('Selling Tickets'),
-                        onTap: () {
-                          Get.to(Selling());
-                          /*
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Selling()));
-
-                           */
-                        },
-                        //trailing: Icon(Icons.add),
-                      ),
-                      ListTile(
-                        title: Text('List of used tickets'),
-                        onTap: () {
-                          Get.to(Used());
-                          /*
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => Used()));
-
-                           */
-                        },
-                        //trailing: Icon(Icons.add),
-                      ),
-                    ]),
-                  ),
+                    ]
                 ),
+                drawer: drawer(context, true, nickname),
                 body: ListView(padding: EdgeInsets.only(left: 10), children: <
                     Widget>[
                   ListTile(
@@ -268,7 +154,7 @@ class _More extends State<More> {
                       }),
                 ]));
           }
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         });
