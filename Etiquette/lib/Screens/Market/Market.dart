@@ -1,12 +1,17 @@
-import 'package:Etiquette/Screens/Market/search_market_ticket.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:Etiquette/widgets/drawer.dart';
+import 'package:http/http.dart' as http;
 import 'package:Etiquette/Screens/Search.dart';
-import 'package:Etiquette/Screens/SellTicket.dart';
 import 'package:Etiquette/Screens/Market/upload_ticket.dart';
+import 'package:Etiquette/Screens/Market/search_market_ticket.dart';
+import 'package:Etiquette/Screens/Market/total_imminent_auction.dart';
+import 'package:Etiquette/widgets/drawer.dart';
+import 'package:Etiquette/widgets/appbar.dart';
+import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 
 class Market extends StatefulWidget {
   const Market({Key? key}) : super(key: key);
@@ -19,43 +24,11 @@ class _Market extends State<Market> {
   bool ala = true;
   late bool theme;
   var img = const Icon(Icons.notifications);
-  List? high;
+  List top5RankBid = [];
+  List deadline = [];
+  String? nickname = "";
 
-  Map<String, dynamic> ex1 = {
-    'name': '티켓1',
-    'category': '영화',
-    'price': 16000,
-    'img':
-    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex2 = {
-    'name': '티켓2',
-    'category': '콘서트',
-    'price': 150000,
-    'img':
-    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex3 = {
-    'name': '티켓3',
-    'category': '스포츠',
-    'price': 66000,
-    'img':
-    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex4 = {
-    'name': '티켓4',
-    'category': '뮤지컬',
-    'price': 130000,
-    'img':
-    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
-  Map<String, dynamic> ex5 = {
-    'name': '티켓5',
-    'category': '공연',
-    'price': 100000,
-    'img':
-    'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg'
-  };
+  late final Future future;
 
   void _setData(bool value) async {
     var key = 'ala';
@@ -79,17 +52,75 @@ class _Market extends State<Market> {
     });
   }
 
+  Future<void> getTop5RankBidFromDB() async {
+    const url = "$SERVER_IP/market/top5RankBid";
+    try {
+      var res = await http.get(Uri.parse(url));
+      Map<String, dynamic> data = json.decode(res.body);
+      if (data['statusCode'] == 200) {
+        List _top5RankBid = data["data"];
+        for (Map<String, dynamic> item in _top5RankBid) {
+          Map<String, dynamic> ex = {
+            'product_name': item['product_name'],
+            'place': item['place'],
+            'seat_class': item['seat_class'],
+            'seat_No': item['seat_No'],
+            'bid_count': item['bid_count']
+          };
+          top5RankBid.add(ex);
+          setState(() {});
+        }
+      } else {
+        displayDialog_checkonly(context, "Top 5 Rank Bid", "서버와의 상태가 원활하지 않습니다.");
+      }
+    } catch (ex) {
+      String msg = ex.toString();
+      displayDialog_checkonly(context, "Top 5 Rank Bid", msg);
+    }
+  }
+
+  Future<void> getImminentDeadlineFromDB() async {
+    const url = "$SERVER_IP/market/deadLineTop5Auction";
+    try {
+      var res = await http.get(Uri.parse(url));
+      Map<String, dynamic> data = json.decode(res.body);
+      if (data['statusCode'] == 200) {
+        List _deadline = data["data"];
+        for (Map<String, dynamic> item in _deadline) {
+          Map<String, dynamic> ex = {
+            'product_name': item['product_name'],
+            'place': item['place'],
+            'seat_class': item['seat_class'],
+            'seat_No': item['seat_No'],
+          };
+          deadline.add(ex);
+          setState(() {});
+        }
+      } else {
+        displayDialog_checkonly(context, "Imminent Deadline", "서버와의 상태가 원활하지 않습니다.");
+      }
+    } catch (ex) {
+      String msg = ex.toString();
+      displayDialog_checkonly(context, "Imminent Deadline", msg);
+    }
+  }
+
+  Future<void> getNickname() async {
+    nickname = await storage.read(key: "nickname");
+  }
+
+  Future<void> getTicketingDataFromDB() async {
+    getTop5RankBidFromDB();
+    getImminentDeadlineFromDB();
+  }
+
   @override
   void initState() {
     super.initState();
     _loadData();
     getTheme();
-    high = List.empty(growable: true);
-    high!.add(ex1);
-    high!.add(ex2);
-    high!.add(ex3);
-    high!.add(ex4);
-    high!.add(ex5);
+    getNickname();
+    future = getTicketingDataFromDB();
   }
 
   getTheme() async {
@@ -102,11 +133,14 @@ class _Market extends State<Market> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getTheme(),
+        future: future,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error'),
+            return Scaffold(
+              appBar: appbarWithArrowBackButton("Auction"),
+              body: const Center(
+                child: Text("통신 에러가 발생했습니다."),
+              ),
             );
           }
           if (snapshot.connectionState == ConnectionState.done) {
@@ -145,7 +179,7 @@ class _Market extends State<Market> {
                     )
                   ]
               ),
-              drawer: drawer(context, theme),
+              drawer: drawer(context, theme, nickname),
               body: Column(
                 children: <Widget> [
                   Expanded(
@@ -157,154 +191,176 @@ class _Market extends State<Market> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget> [
-                                Column(
-                                    children: <Widget> [
-                                      const SizedBox(height: 20),
-                                      const Text(
-                                        "Best Selling Tickets",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      ListView.builder(
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount: high!.length,
-                                          itemBuilder: (context, index) {
-                                            return Card(
-                                                child: SizedBox(
-                                                    width: double.infinity,
-                                                    child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: <Widget> [
-                                                          Expanded(
-                                                            child: Image.network(
-                                                                high![index]['img'],
-                                                                width: 50,
-                                                                height: 50
+                                const SizedBox(height: 20),
+                                const Text(
+                                    "Top 5 Tickets With Many Bidders",
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    )
+                                ),
+                                const Text(
+                                    "입찰자가 많은 티켓 상위 5개를 보여드립니다.",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    )
+                                ),
+                                const SizedBox(height: 20),
+                                ListView.builder(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: top5RankBid.length,
+                                    itemBuilder: (context, index) {
+                                      return Card(
+                                          child: SizedBox(
+                                              width: double.infinity,
+                                              child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                        flex: 1,
+                                                        child: Center(
+                                                          child: Text(
+                                                            (index + 1).toString(),
+                                                            style: const TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: 25,
                                                             ),
                                                           ),
-                                                          Expanded(
-                                                              child: Column(
-                                                                  children: <Widget>[
-                                                                    Text(high![index]['name']),
-                                                                    Text(high![index]['category']),
-                                                                    Text(high![index]['price'].toString()),
-                                                                  ]
-                                                              )
-                                                          )
-                                                        ]
-                                                    )
-                                                )
-                                            );
-                                          }
-                                      )
-                                    ]
-                                ),
-                                Column(
-                                    children: <Widget> [
-                                      const SizedBox(height: 20),
-                                      const Text("Deadline Imminent",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold
-                                          )
-                                      ),
-                                      const SizedBox(height: 20),
-                                      ListView.builder(
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount: high!.length,
-                                          itemBuilder: (context, index) {
-                                            return GestureDetector(
-                                                onTap: (){
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) => SellTicket()
-                                                      )
-                                                  );
-                                                },
-                                                child : Card(
-                                                    child: SizedBox(
-                                                        width: double.infinity,
-                                                        child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                            children: <Widget> [
-                                                              Expanded(
-                                                                child: Image.network(
-                                                                    high![index]['img'],
-                                                                    width: 50,
-                                                                    height: 50
+                                                        )
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Image.network(
+                                                        "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
+                                                        width: 40,
+                                                        height: 40,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                        flex: 5,
+                                                        child: Column(
+                                                            children: <Widget>[
+                                                              Text(
+                                                                top5RankBid[index]['product_name'],
+                                                                style: const TextStyle(
+                                                                  fontSize: 12,
                                                                 ),
                                                               ),
-                                                              Expanded(
-                                                                  child: Column(
-                                                                      children: <Widget>[
-                                                                        Text(high![index]['name']),
-                                                                        Text(high![index]['category']),
-                                                                        Text(high![index]['price'].toString()),
-                                                                      ]
-                                                                  )
+                                                              Text(
+                                                                top5RankBid[index]['place'].toString(),
+                                                                style: const TextStyle(
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                "${top5RankBid[index]['seat_class']}석 ${top5RankBid[index]['seat_No']}번",
+                                                                style: const TextStyle(
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
+                                                            ]
+                                                        )
+                                                    ),
+                                                    Expanded(
+                                                        flex: 1,
+                                                        child: Center(
+                                                          child: Row(
+                                                            children: <Widget> [
+                                                              Text(
+                                                                top5RankBid[index]['bid_count'].toString(),
+                                                                style: const TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 20,
+                                                                ),
+                                                              ),
+                                                              const Text(
+                                                                "명",
+                                                                style: TextStyle(
+                                                                  fontSize: 20,
+                                                                ),
                                                               )
+                                                            ],
+                                                          ),
+                                                        )
+                                                    ),
+                                                  ]
+                                              )
+                                          )
+                                      );
+                                    }
+                                ),
+                                const SizedBox(height: 40),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget> [
+                                    const Text(
+                                        "Deadline Imminent",
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold
+                                        )
+                                    ),
+                                    TextButton(
+                                      child: const Text(
+                                          "+ 더보기",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.grey,
+                                          )
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => const TotalImminentAuction()
+                                            )
+                                        );
+                                      },
+                                    )
+                                  ],
+                                ),
+                                const Text(
+                                    "마감 시각이 임박한 티켓들을 보여드립니다. (24시간 이내)",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    )
+                                ),
+                                const SizedBox(height: 10),
+                                ListView.builder(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: deadline.length,
+                                    itemBuilder: (context, index) {
+                                      return Card(
+                                          child: SizedBox(
+                                              width: double.infinity,
+                                              child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  children: <Widget> [
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Image.network(
+                                                          "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
+                                                          width: 40,
+                                                          height: 40
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                        flex: 2,
+                                                        child: Column(
+                                                            children: <Widget>[
+                                                              Text(deadline[index]['product_name']),
+                                                              Text(deadline[index]['place']),
+                                                              Text("${deadline[index]['seat_class']}석 ${deadline[index]['seat_No']}번",),
                                                             ]
                                                         )
                                                     )
-                                                )
-                                            );
-                                          }
-                                      )
-                                    ]
-                                ),
-                                Column(
-                                    children: <Widget> [
-                                      const SizedBox(height: 20),
-                                      const Text(
-                                          "Ranking",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold
+                                                  ]
+                                              )
                                           )
-                                      ),
-                                      const SizedBox(height: 20),
-                                      ListView.builder(
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount: high!.length,
-                                          itemBuilder: (context, index) {
-                                            return Card(
-                                                child: SizedBox(
-                                                    width: double.infinity,
-                                                    child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: <Widget>[
-                                                          Expanded(
-                                                            child: Image.network(
-                                                                high![index]['img'],
-                                                                width: 50,
-                                                                height: 50
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                              child:
-                                                              Column(
-                                                                  children: <Widget>[
-                                                                    Text(high![index]['name']),
-                                                                    Text(high![index]['category']),
-                                                                    Text(high![index]['price'].toString()),
-                                                                  ]
-                                                              )
-                                                          )
-                                                        ]
-                                                    )
-                                                )
-                                            );
-                                          }
-                                      ),
-                                      const SizedBox(height: 80),
-                                    ]
+                                      );
+                                    }
                                 ),
                               ]
                           ),
