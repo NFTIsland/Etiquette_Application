@@ -66,22 +66,22 @@ class _Login extends State<Login> {
                                   children: <Widget> [
                                     const SizedBox(height: 30), // Login/Sign up과 공간 확보를 위한 위젯
                                     TextFormField(
-                                      maxLines: 1,
-                                      maxLength: 11,
-                                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                                      keyboardType: TextInputType.number, // 기본으로 숫자 모양의 키보드 호출되도록 설정
-                                      controller: idController,
-                                      decoration: const InputDecoration(
-                                        labelText: "HP(ID)", // 입력칸에 ID 표시되도록
-                                        hintText: "Please Enter Your HP(ID)",
-                                        counterText: "",
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "ID is null now";
+                                        maxLines: 1,
+                                        maxLength: 11,
+                                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                                        keyboardType: TextInputType.number, // 기본으로 숫자 모양의 키보드 호출되도록 설정
+                                        controller: idController,
+                                        decoration: const InputDecoration(
+                                          labelText: "HP(ID)", // 입력칸에 ID 표시되도록
+                                          hintText: "Please Enter Your HP(ID)",
+                                          counterText: "",
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "ID is null now";
+                                          }
+                                          return null;
                                         }
-                                        return null;
-                                      }
                                     ),
                                     TextFormField(
                                         maxLines: 1,
@@ -119,8 +119,9 @@ class _Login extends State<Login> {
                                                       displayDialog(context, "An Error Occurred", jwt);
                                                     } else {
                                                       var _JWT = jwt.split(':')[0];
-                                                      storage.write(key: "jwt", value: _JWT);
                                                       var _nickname = jwt.split(':')[1];
+                                                      storage.write(key: "jwt", value: _JWT);
+                                                      storage.write(key: "nickname", value: _nickname);
                                                       Get.off(Tabb(idx:0));
                                                       ScaffoldMessenger.of(context).showSnackBar(
                                                           SnackBar(
@@ -134,7 +135,8 @@ class _Login extends State<Login> {
                                                       primary: const Color(0xff7795FF),
                                                       shape: RoundedRectangleBorder(
                                                           borderRadius:
-                                                          BorderRadius.circular(12)) //둥글게 설정
+                                                          BorderRadius.circular(12)
+                                                      ) //둥글게 설정
                                                   )
                                               ),
                                               // 회원가입 버튼
