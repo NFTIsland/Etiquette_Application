@@ -149,7 +149,7 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
                                           onTap: () async {
                                             final kas_address_data = await getKasAddress();
                                             if (kas_address_data['statusCode'] != 200) {
-                                              displayDialog_checkonly(context, "티켓 검색", "티켓 목록을 불러오는데 실패했습니다.");
+                                              displayDialog_checkonly(context, "티켓 검색", "서버와의 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.");
                                               return;
                                             }
                                             final kas_address = kas_address_data['data'][0]['kas_address'];

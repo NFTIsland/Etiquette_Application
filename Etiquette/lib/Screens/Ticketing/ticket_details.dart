@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:like_button/like_button.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 import 'package:Etiquette/Screens/Ticketing/select_ticket.dart';
+import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 
 class TicketDetails extends StatefulWidget {
   String? product_name;
@@ -24,7 +26,7 @@ class _TicketDetails extends State<TicketDetails> {
   late double width;
   late double height;
   String? remain;
-  //TabController? controller;
+  bool like = false;
 
   late final Future future;
   late Map<String, dynamic> detail;
@@ -48,6 +50,15 @@ class _TicketDetails extends State<TicketDetails> {
   }
 
   Future<void> getTicketDetailFromDB() async {
+    final kas_address_data = await getKasAddress();
+
+    if (kas_address_data['statusCode'] != 200) {
+      displayDialog_checkonly(context, "티켓명", "서버와의 연결이 원활하지 않습니다.");
+      return;
+    }
+
+    final kas_address = kas_address_data['data'][0]['kas_address'];
+
     final url_priceInfo = "$SERVER_IP/ticketPriceInfo/${widget.product_name!}";
     price_description = "";
     try {
@@ -83,6 +94,84 @@ class _TicketDetails extends State<TicketDetails> {
       String msg = ex.toString();
       displayDialog_checkonly(context, "티켓팅", "statusCode: $statusCode\n\nmessage: $msg");
     }
+
+    const url_isInterested = "$SERVER_IP/isInterestedTicketing";
+    try {
+      var res = await http.post(Uri.parse(url_isInterested), body: {
+        "product_name": widget.product_name!,
+        "place": widget.place!,
+        "kas_address": kas_address
+      });
+      Map<String, dynamic> data = json.decode(res.body);
+      if (data['statusCode'] == 200) {
+        if (data['data']) {
+          like = true;
+        } else {
+          like = false;
+        }
+        setState(() {});
+      } else {
+        String msg = data['msg'];
+        displayDialog_checkonly(context, "티켓팅", msg);
+      }
+    } catch (ex) {
+      String msg = ex.toString();
+      displayDialog_checkonly(context, "티켓팅", msg);
+    }
+  }
+
+  Future<void> setInterest() async {
+    const url = "$SERVER_IP/interestTicketing";
+    Map<String, dynamic> kas_address_data = await getKasAddress();
+    if (kas_address_data['statusCode'] == 200) {
+      final kas_address = kas_address_data['data'][0]['kas_address'];
+      var res = await http.post(Uri.parse(url), body: {
+        "product_name": widget.product_name!,
+        "place": widget.place!,
+        "kas_address": kas_address
+      });
+      Map<String, dynamic> data = json.decode(res.body);
+      if (data['statusCode'] != 200) {
+        String errorMessage = "${data['msg']}";
+        displayDialog_checkonly(context, "통신 오류", errorMessage);
+      }
+    } else {
+      String errorMessage = "${kas_address_data['msg']}";
+      displayDialog_checkonly(context, "통신 오류", errorMessage);
+    }
+  }
+
+  Future<void> setUnInterest() async {
+    const url = "$SERVER_IP/uninterestTicketing";
+    Map<String, dynamic> kas_address_data = await getKasAddress();
+    if (kas_address_data['statusCode'] == 200) {
+      final kas_address = kas_address_data['data'][0]['kas_address'];
+      var res = await http.delete(Uri.parse(url), body: {
+        "product_name": widget.product_name!,
+        "place": widget.place!,
+        "kas_address": kas_address
+      });
+      Map<String, dynamic> data = json.decode(res.body);
+      if (data['statusCode'] != 200) {
+        String errorMessage = "${data['msg']}";
+        displayDialog_checkonly(context, "통신 오류", errorMessage);
+      }
+    } else {
+      String errorMessage = "${kas_address_data['msg']}";
+      displayDialog_checkonly(context, "통신 오류", errorMessage);
+    }
+  }
+
+  Future<bool> onLikeButtonTapped(bool like) async {
+    if (like) {
+      setUnInterest();
+    } else {
+      setInterest();
+    }
+
+    /// if failed, you can do nothing
+    // return success? !isLiked:isLiked;
+    return !like;
   }
 
   @override
@@ -121,15 +210,19 @@ class _TicketDetails extends State<TicketDetails> {
                                     0: FixedColumnWidth(140.0),
                                   },
                                   children: <TableRow>[
+                                    tableRow("카테고리", detail['category']),
+                                    tableRow("티켓 이름", widget.product_name!),
+                                    tableRow("가격", price_description),
+                                    tableRow("장소", widget.place!),
                                     TableRow(
                                       children: <Widget> [
                                         TableCell(
                                           verticalAlignment: TableCellVerticalAlignment.middle,
                                           child: Container(
-                                              height: 50,
+                                              padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
                                               alignment: Alignment.center,
                                               child: const Text(
-                                                  " 카테고리",
+                                                  "관심 티켓 등록",
                                                   style: TextStyle(
                                                     fontFamily: 'FiraBold',
                                                     fontSize: 20,
@@ -140,115 +233,158 @@ class _TicketDetails extends State<TicketDetails> {
                                         TableCell(
                                           verticalAlignment: TableCellVerticalAlignment.middle,
                                           child: Container(
-                                              height: 50,
+                                              padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
                                               alignment: Alignment.center,
-                                              child : Text(
-                                                  detail['category'],
-                                                  style : const TextStyle(
-                                                    fontFamily: 'FiraRegular',
-                                                    fontSize: 15,
-                                                  )
-                                              )
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    TableRow(
-                                        children: <Widget> [
-                                          TableCell(
-                                            verticalAlignment: TableCellVerticalAlignment.middle,
-                                            child: Container(
-                                              height: 50,
-                                              alignment: Alignment.center,
-                                              child: const Text(
-                                                  "티켓 이름",
-                                                  style : TextStyle(
-                                                    fontFamily: 'FiraBold',
-                                                    fontSize: 20,
-                                                  )
-                                              ),
-                                            ),
-                                          ),
-                                          TableCell(
-                                              verticalAlignment: TableCellVerticalAlignment.middle,
-                                              child: Container(
-                                                height: 50,
-                                                alignment: Alignment.center,
-                                                child : Text(
-                                                    widget.product_name!,
-                                                    style : const TextStyle(
-                                                      fontFamily: 'FiraRegular',
-                                                      fontSize: 15,
-                                                    )
+                                              child: LikeButton(
+                                                circleColor: const CircleColor(
+                                                    start: Color(0xff00ddff),
+                                                    end: Color(0xff0099cc)
                                                 ),
-                                              )
-                                          ),
-                                        ]
-                                    ),
-                                    TableRow(
-                                      children: <Widget> [
-                                        TableCell(
-                                          verticalAlignment: TableCellVerticalAlignment.middle,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(12.0),
-                                            alignment: Alignment.center,
-                                            child: const Text(
-                                                "가격",
-                                                style: TextStyle(
-                                                  fontFamily: 'FiraBold',
-                                                  fontSize: 20,
-                                                )
-                                            ),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          verticalAlignment: TableCellVerticalAlignment.middle,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(12.0),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                                price_description,
-                                                style: const TextStyle(
-                                                  fontFamily: 'FiraBold',
-                                                  fontSize: 15,
-                                                )
-                                            ),
+                                                bubblesColor: const BubblesColor(
+                                                  dotPrimaryColor: Color(0xff33b5e5),
+                                                  dotSecondaryColor: Color(0xff0099cc),
+                                                ),
+                                                likeBuilder: (like) {
+                                                  return Icon(
+                                                    Icons.favorite,
+                                                    color: like ? Colors.deepPurpleAccent : Colors.grey,
+                                                  );
+                                                },
+                                                isLiked: like,
+                                                onTap: onLikeButtonTapped,
+                                              ),
                                           ),
                                         ),
                                       ],
                                     ),
-                                    TableRow(
-                                      children: <Widget> [
-                                        TableCell(
-                                          verticalAlignment: TableCellVerticalAlignment.middle,
-                                          child: Container(
-                                              padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                              alignment: Alignment.center,
-                                              child: const Text(
-                                                  "장소",
-                                                  style: TextStyle(
-                                                    fontFamily: 'FiraBold',
-                                                    fontSize: 20,
-                                                  )
-                                              )
-                                          ),
-                                        ),
-                                        TableCell(
-                                          verticalAlignment: TableCellVerticalAlignment.middle,
-                                          child: Container(
-                                              padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                  widget.place!,
-                                                  style: const TextStyle(
-                                                    fontFamily: 'FiraRegular',
-                                                    fontSize: 15,
-                                                  )
-                                              )
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                    // TableRow(
+                                    //   children: <Widget> [
+                                    //     TableCell(
+                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
+                                    //       child: Container(
+                                    //           height: 50,
+                                    //           alignment: Alignment.center,
+                                    //           child: const Text(
+                                    //               " 카테고리",
+                                    //               style: TextStyle(
+                                    //                 fontFamily: 'FiraBold',
+                                    //                 fontSize: 20,
+                                    //               )
+                                    //           )
+                                    //       ),
+                                    //     ),
+                                    //     TableCell(
+                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
+                                    //       child: Container(
+                                    //           height: 50,
+                                    //           alignment: Alignment.center,
+                                    //           child : Text(
+                                    //               detail['category'],
+                                    //               style : const TextStyle(
+                                    //                 fontFamily: 'FiraRegular',
+                                    //                 fontSize: 15,
+                                    //               )
+                                    //           )
+                                    //       ),
+                                    //     )
+                                    //   ],
+                                    // ),
+                                    // TableRow(
+                                    //     children: <Widget> [
+                                    //       TableCell(
+                                    //         verticalAlignment: TableCellVerticalAlignment.middle,
+                                    //         child: Container(
+                                    //           height: 50,
+                                    //           alignment: Alignment.center,
+                                    //           child: const Text(
+                                    //               "티켓 이름",
+                                    //               style : TextStyle(
+                                    //                 fontFamily: 'FiraBold',
+                                    //                 fontSize: 20,
+                                    //               )
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //       TableCell(
+                                    //           verticalAlignment: TableCellVerticalAlignment.middle,
+                                    //           child: Container(
+                                    //             height: 50,
+                                    //             alignment: Alignment.center,
+                                    //             child : Text(
+                                    //                 widget.product_name!,
+                                    //                 style : const TextStyle(
+                                    //                   fontFamily: 'FiraRegular',
+                                    //                   fontSize: 15,
+                                    //                 )
+                                    //             ),
+                                    //           )
+                                    //       ),
+                                    //     ]
+                                    // ),
+                                    // TableRow(
+                                    //   children: <Widget> [
+                                    //     TableCell(
+                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
+                                    //       child: Container(
+                                    //         padding: const EdgeInsets.all(12.0),
+                                    //         alignment: Alignment.center,
+                                    //         child: const Text(
+                                    //             "가격",
+                                    //             style: TextStyle(
+                                    //               fontFamily: 'FiraBold',
+                                    //               fontSize: 20,
+                                    //             )
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //     TableCell(
+                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
+                                    //       child: Container(
+                                    //         padding: const EdgeInsets.all(12.0),
+                                    //         alignment: Alignment.center,
+                                    //         child: Text(
+                                    //             price_description,
+                                    //             style: const TextStyle(
+                                    //               fontFamily: 'FiraBold',
+                                    //               fontSize: 15,
+                                    //             )
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                    // TableRow(
+                                    //   children: <Widget> [
+                                    //     TableCell(
+                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
+                                    //       child: Container(
+                                    //           padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
+                                    //           alignment: Alignment.center,
+                                    //           child: const Text(
+                                    //               "장소",
+                                    //               style: TextStyle(
+                                    //                 fontFamily: 'FiraBold',
+                                    //                 fontSize: 20,
+                                    //               )
+                                    //           )
+                                    //       ),
+                                    //     ),
+                                    //     TableCell(
+                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
+                                    //       child: Container(
+                                    //           padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
+                                    //           alignment: Alignment.center,
+                                    //           child: Text(
+                                    //               widget.place!,
+                                    //               style: const TextStyle(
+                                    //                 fontFamily: 'FiraRegular',
+                                    //                 fontSize: 15,
+                                    //               )
+                                    //           )
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // ),
                                   ]
                               ),
                               Padding(
@@ -293,4 +429,39 @@ class _TicketDetails extends State<TicketDetails> {
           );
         });
   }
+}
+
+TableRow tableRow(String title, String value) {
+  return TableRow(
+    children: <Widget> [
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Container(
+            padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
+            alignment: Alignment.center,
+            child: Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'FiraBold',
+                  fontSize: 20,
+                )
+            )
+        ),
+      ),
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Container(
+            padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
+            alignment: Alignment.center,
+            child: Text(
+                value,
+                style: const TextStyle(
+                  fontFamily: 'FiraRegular',
+                  fontSize: 15,
+                )
+            )
+        ),
+      ),
+    ],
+  );
 }
