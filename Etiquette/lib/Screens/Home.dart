@@ -32,6 +32,7 @@ class _Home extends State<Home> {
 
   String currentTime = "Loading...";
   String klayCurrency = "Loading...";
+  String? nickname = "";
 
   List home_posters = [];
   List notices = [];
@@ -108,12 +109,16 @@ class _Home extends State<Home> {
     }
   }
 
+  Future<void> getNickname() async {
+    nickname = await storage.read(key: "nickname");
+  }
+
   _fetchData() async {
     return this._memoizer.runOnce(() async {
-      getTheme();
       _loadData();
       loadHomePosters();
       getHomeNotices();
+      getNickname();
       await Future.delayed(
           const Duration(milliseconds: 1000)
       );
@@ -142,6 +147,7 @@ class _Home extends State<Home> {
   @override
   void initState() {
     super.initState();
+    getTheme();
   }
 
   @override
@@ -206,7 +212,7 @@ class _Home extends State<Home> {
                       )
                     ]
                 ),
-                drawer: drawer(context, true),
+                drawer: drawer(context, true, nickname),
                 body: SingleChildScrollView(
                   child: Column(
                     children: <Widget> [
