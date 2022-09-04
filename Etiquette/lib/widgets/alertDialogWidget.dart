@@ -10,22 +10,6 @@ Future<void> displayDialog(context, title, text) async {
   );
 }
 
-// Future<void> displayDialog_register(context, title, text) async {
-//   return await showDialog(
-//     context: context,
-//     builder: (context) => AlertDialog(
-//       title: Text(title),
-//       content: Text(text),
-//       actions: <Widget> [
-//         TextButton(
-//           onPressed: () => Navigator.pop(context),
-//           child: const Text('OK'),
-//         ),
-//       ],
-//     ),
-//   );
-// }
-
 Future<void> displayDialog_checkonly(context, title, text) async {
   return await showDialog(
     context: context,
