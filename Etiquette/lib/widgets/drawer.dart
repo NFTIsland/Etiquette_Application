@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:Etiquette/Screens/Account.dart';
-import 'package:Etiquette/Screens/Bid.dart';
+import 'package:Etiquette/Screens/Drawer/Bid.dart';
 import 'package:Etiquette/Screens/Drawer/Hold.dart';
 import 'package:Etiquette/Screens/Drawer/Interest.dart';
 import 'package:Etiquette/Screens/Drawer/Selling.dart';
@@ -131,15 +131,19 @@ Widget drawer(BuildContext context, bool theme, String? nickname) {
             ListTile(
               title: const Text('Logout'),
               onTap: () async {
-                final selected = await displayDialog_YesOrNo(context, "로그아웃", "로그아웃 하시겠습니까?");
-                if (selected) {
-                  await storage.deleteAll();
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Login(),
-                      ), (route) => false
-                  );
+                try {
+                  final selected = await displayDialog_YesOrNo(context, "로그아웃", "로그아웃 하시겠습니까?");
+                  if (selected) {
+                    await storage.deleteAll();
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Login(),
+                        ), (route) => false
+                    );
+                  }
+                } catch (ex) {
+                  return;
                 }
               },
             ),
