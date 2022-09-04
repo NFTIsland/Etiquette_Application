@@ -25,7 +25,7 @@ class _Used extends State<Used> {
   late double height;
 
   Future<void> getUsedlistFromDB() async {
-    const url = "$SERVER_IP/usedlist";
+    const url = "$SERVER_IP/individual/usedlist";
     try {
       final kas_address_data = await getKasAddress();
       if (kas_address_data['statusCode'] == 200) {

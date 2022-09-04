@@ -6,7 +6,7 @@ import 'package:Etiquette/Utilities/jwt_decode.dart';
 Future<Map<String, dynamic>> getKasAddress() async {
   try {
     String id = await jwtDecode();
-    const url = "$SERVER_IP/kas_address";
+    const url = "$SERVER_IP/auth/kas_address";
     final res = await http.post(Uri.parse(url), body: {
       "id": id,
     });

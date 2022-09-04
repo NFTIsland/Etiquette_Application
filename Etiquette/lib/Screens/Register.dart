@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,7 +19,7 @@ class Register extends StatefulWidget {
 
 class _Register extends State<Register> {
   Future<int> attemptSignUp(String id, String pw, String nickname, String kas_address) async {
-    var res = await http.post(Uri.parse('$SERVER_IP/signup'), body: {
+    var res = await http.post(Uri.parse('$SERVER_IP/auth/signup'), body: {
       "id": id,
       "pw": pw,
       "nickname": nickname,
@@ -144,7 +143,7 @@ class _Register extends State<Register> {
       };
     }
 
-    const url = "$SERVER_IP/checkNickname";
+    const url = "$SERVER_IP/auth/checkNickname";
     try {
       final res = await http.post(Uri.parse(url), body: {
         "nickname": nicknameController.text,

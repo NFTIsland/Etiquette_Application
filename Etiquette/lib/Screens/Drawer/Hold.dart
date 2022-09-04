@@ -30,7 +30,7 @@ class _Hold extends State<Hold> {
   late double height;
 
   Future<void> getHoldlistFromDB() async {
-    const url = "$SERVER_IP/holdlist";
+    const url = "$SERVER_IP/individual/holdlist";
     try {
       final kas_address_data = await getKasAddress();
       if (kas_address_data['statusCode'] == 200) {

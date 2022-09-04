@@ -10,10 +10,13 @@ import 'package:Etiquette/Screens/TabController.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget{
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
   State createState() => _MyApp();
 }
 
@@ -34,7 +37,7 @@ class _MyApp extends State<MyApp>{
     return FutureBuilder(
         future: jwtOrEmpty,
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return CircularProgressIndicator();
+          if (!snapshot.hasData) return const CircularProgressIndicator();
           if (snapshot.data != "") {
             var str = snapshot.data;
             var jwt = str.toString().split(".");
@@ -44,8 +47,7 @@ class _MyApp extends State<MyApp>{
                   debugShowCheckedModeBanner: false,
                   title: 'Etiquette', //앱 이름 etiquette으로 설정
                   theme: (theme ? ThemeData.dark() : ThemeData.light()),
-                  //darkTheme: ThemeData.dark(),
-                  home: Login()//Login() // 최초 페이지로 Login()실행
+                  home: const Login() // 최초 페이지로 Login()실행
               );
             } else {
               var payload = json.decode(
@@ -56,7 +58,6 @@ class _MyApp extends State<MyApp>{
                     debugShowCheckedModeBanner: false,
                     title: 'Etiquette', //앱 이름 etiquette으로 설정
                     theme: (theme ? ThemeData.dark() : ThemeData.light()),
-                    //darkTheme: ThemeData.dark(),
                     home: Tabb(idx:0)//Login() // 최초 페이지로 Login()실행
                 );
               } else {
@@ -64,9 +65,8 @@ class _MyApp extends State<MyApp>{
                     debugShowCheckedModeBanner: false,
                     title: 'Etiquette', //앱 이름 etiquette으로 설정
                     theme: (theme ? ThemeData.dark() : ThemeData.light()),
-                    //darkTheme: ThemeData.dark(),
-                    home: Login() // 최초 페이지로 Login()실행
-                );;
+                    home: const Login() // 최초 페이지로 Login()실행
+                );
               }
             }
           } else {
@@ -74,8 +74,7 @@ class _MyApp extends State<MyApp>{
                 debugShowCheckedModeBanner: false,
                 title: 'Etiquette', //앱 이름 etiquette으로 설정
                 theme: (theme ? ThemeData.dark() : ThemeData.light()),
-                //darkTheme: ThemeData.dark(),
-                home: Login() // 최초 페이지로 Login()실행
+                home: const Login() // 최초 페이지로 Login()실행
             );
           }
         });

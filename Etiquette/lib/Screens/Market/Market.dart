@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Screens/Market/upload_ticket.dart';
 import 'package:Etiquette/Screens/Market/search_market_ticket.dart';
+import 'package:Etiquette/Screens/Market/market_details.dart';
 import 'package:Etiquette/Screens/Market/total_imminent_auction.dart';
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/widgets/appbar.dart';
@@ -61,8 +62,11 @@ class _Market extends State<Market> {
         List _top5RankBid = data["data"];
         for (Map<String, dynamic> item in _top5RankBid) {
           Map<String, dynamic> ex = {
+            'token_id': item['token_id'],
             'product_name': item['product_name'],
+            'owner': item['owner'],
             'place': item['place'],
+            'performance_date': item['performance_date'],
             'seat_class': item['seat_class'],
             'seat_No': item['seat_No'],
             'bid_count': item['bid_count']
@@ -187,7 +191,7 @@ class _Market extends State<Market> {
                       child: Center(
                         child: Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.only(left: 18, right: 18),
+                          padding: const EdgeInsets.only(left: 10, right: 10),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget> [
@@ -212,81 +216,99 @@ class _Market extends State<Market> {
                                     itemCount: top5RankBid.length,
                                     itemBuilder: (context, index) {
                                       return Card(
-                                          child: SizedBox(
-                                              width: double.infinity,
-                                              child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                        flex: 1,
-                                                        child: Center(
-                                                          child: Text(
-                                                            (index + 1).toString(),
-                                                            style: const TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 25,
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => MarketDetails(
+                                                    token_id: top5RankBid[index]['token_id'],
+                                                    product_name: top5RankBid[index]['product_name'],
+                                                    owner: top5RankBid[index]['owner'],
+                                                    place: top5RankBid[index]['place'],
+                                                    performance_date: top5RankBid[index]['performance_date'],
+                                                    seat_class: top5RankBid[index]['seat_class'],
+                                                    seat_No: top5RankBid[index]['seat_No'],
+                                                  )
+                                                )
+                                              );
+                                            },
+                                            child: SizedBox(
+                                                width: double.infinity,
+                                                child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                          flex: 1,
+                                                          child: Center(
+                                                            child: Text(
+                                                              (index + 1).toString(),
+                                                              style: const TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 25,
+                                                              ),
                                                             ),
-                                                          ),
-                                                        )
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Image.network(
-                                                        "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
-                                                        width: 40,
-                                                        height: 40,
+                                                          )
                                                       ),
-                                                    ),
-                                                    Expanded(
-                                                        flex: 5,
-                                                        child: Column(
-                                                            children: <Widget>[
-                                                              Text(
-                                                                top5RankBid[index]['product_name'],
-                                                                style: const TextStyle(
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                top5RankBid[index]['place'].toString(),
-                                                                style: const TextStyle(
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                "${top5RankBid[index]['seat_class']}석 ${top5RankBid[index]['seat_No']}번",
-                                                                style: const TextStyle(
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                            ]
-                                                        )
-                                                    ),
-                                                    Expanded(
+                                                      Expanded(
                                                         flex: 1,
-                                                        child: Center(
-                                                          child: Row(
-                                                            children: <Widget> [
-                                                              Text(
-                                                                top5RankBid[index]['bid_count'].toString(),
-                                                                style: const TextStyle(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  fontSize: 20,
+                                                        child: Image.network(
+                                                          "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
+                                                          width: 40,
+                                                          height: 40,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                          flex: 5,
+                                                          child: Column(
+                                                              children: <Widget>[
+                                                                Text(
+                                                                  top5RankBid[index]['product_name'],
+                                                                  style: const TextStyle(
+                                                                    fontSize: 12,
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                              const Text(
-                                                                "명",
-                                                                style: TextStyle(
-                                                                  fontSize: 20,
+                                                                Text(
+                                                                  top5RankBid[index]['place'].toString(),
+                                                                  style: const TextStyle(
+                                                                    fontSize: 12,
+                                                                  ),
                                                                 ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        )
-                                                    ),
-                                                  ]
-                                              )
-                                          )
+                                                                Text(
+                                                                  "${top5RankBid[index]['seat_class']}석 ${top5RankBid[index]['seat_No']}번",
+                                                                  style: const TextStyle(
+                                                                    fontSize: 12,
+                                                                  ),
+                                                                ),
+                                                              ]
+                                                          )
+                                                      ),
+                                                      Expanded(
+                                                          flex: 1,
+                                                          child: Center(
+                                                            child: Row(
+                                                              children: <Widget> [
+                                                                Text(
+                                                                  top5RankBid[index]['bid_count'].toString(),
+                                                                  style: const TextStyle(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 20,
+                                                                  ),
+                                                                ),
+                                                                const Text(
+                                                                  "명",
+                                                                  style: TextStyle(
+                                                                    fontSize: 20,
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          )
+                                                      ),
+                                                    ]
+                                                )
+                                            ),
+                                          ),
                                       );
                                     }
                                 ),

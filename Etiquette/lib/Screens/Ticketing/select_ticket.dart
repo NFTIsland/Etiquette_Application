@@ -118,7 +118,7 @@ class _SelectTicket extends State<SelectTicket> {
   }
 
   Future<void> init_PerformanceDate() async {
-    final url = "$SERVER_IP/ticketPerformanceDate/${widget.product_name!}/${widget.place!}";
+    final url = "$SERVER_IP/ticket/ticketPerformanceDate/${widget.product_name!}/${widget.place!}";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
@@ -145,7 +145,7 @@ class _SelectTicket extends State<SelectTicket> {
 
   Future<void> load_performance_time(String date_value) async {
     if (date_value != "예매 일자 선택") {
-      final url = "$SERVER_IP/ticketPerformanceTime/${widget.product_name!}/${widget.place!}/${date_value}";
+      final url = "$SERVER_IP/ticket/ticketPerformanceTime/${widget.product_name!}/${widget.place!}/${date_value}";
       try {
         await init_performanceTimeItems();
         var res = await http.get(Uri.parse(url));
@@ -174,7 +174,7 @@ class _SelectTicket extends State<SelectTicket> {
 
   Future<void> load_seat_class(String date_value, String time_value) async {
     if (time_value != "예매 시각 선택") {
-      final url = "$SERVER_IP/ticketSeatClass/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}";
+      final url = "$SERVER_IP/ticket/ticketSeatClass/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}";
       try {
         await init_seatClassItems();
         var res = await http.get(Uri.parse(url));
@@ -203,7 +203,7 @@ class _SelectTicket extends State<SelectTicket> {
 
   Future<void> load_seat_no(String date_value, String time_value, String seat_class_value) async {
     if (seat_class_value != "좌석 등급 선택") {
-      final url = "$SERVER_IP/ticketSeatNo/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}/${seat_class_value}";
+      final url = "$SERVER_IP/ticket/ticketSeatNo/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}/${seat_class_value}";
       try {
         await init_seatNoItems();
         var res = await http.get(Uri.parse(url));
@@ -232,7 +232,7 @@ class _SelectTicket extends State<SelectTicket> {
 
   Future<void> load_price() async {
     if (date_value != "예매 일자 선택" && time_value != "예매 시각 선택" && seat_class_value != "좌석 등급 선택") {
-      final url = "$SERVER_IP/ticketPrice/${widget.product_name!}/${seat_class_value}";
+      final url = "$SERVER_IP/ticket/ticketPrice/${widget.product_name!}/${seat_class_value}";
       try {
         var res = await http.get(Uri.parse(url));
         Map<String, dynamic> data = json.decode(res.body);
@@ -278,7 +278,7 @@ class _SelectTicket extends State<SelectTicket> {
   }
 
   Future<Map<String, dynamic>> loadTicketTokenIdAndOwner(String date_value, String time_value, String seat_class_value, String seat_no_value) async {
-    final url = "$SERVER_IP/ticketTokenIdAndOwner/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}/${seat_class_value}/${seat_no_value}";
+    final url = "$SERVER_IP/ticket/ticketTokenIdAndOwner/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}/${seat_class_value}/${seat_no_value}";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);

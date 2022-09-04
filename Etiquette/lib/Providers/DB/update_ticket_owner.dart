@@ -4,7 +4,7 @@ import 'package:Etiquette/Models/serverset.dart';
 
 Future<Map<String, dynamic>> updateTicketOwner(String owner, String token_id) async {
   try {
-    const url = "$SERVER_IP/updateTicketOwner";
+    const url = "$SERVER_IP/ticket/updateTicketOwner";
     final res = await http.post(Uri.parse(url), body: {
       "owner": owner,
       "token_id": token_id,

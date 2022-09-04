@@ -58,8 +58,7 @@ class _TicketDetails extends State<TicketDetails> {
     }
 
     final kas_address = kas_address_data['data'][0]['kas_address'];
-
-    final url_priceInfo = "$SERVER_IP/ticketPriceInfo/${widget.product_name!}";
+    final url_priceInfo = "$SERVER_IP/ticket/ticketPriceInfo/${widget.product_name!}";
     price_description = "";
     try {
       var res = await http.get(Uri.parse(url_priceInfo));
@@ -84,7 +83,7 @@ class _TicketDetails extends State<TicketDetails> {
       print("티켓팅 --> ${ex.toString()}");
     }
 
-    final url_description = "$SERVER_IP/ticketDescription/${widget.product_name!}";
+    final url_description = "$SERVER_IP/ticket/ticketDescription/${widget.product_name!}";
     try {
       var res = await http.get(Uri.parse(url_description));
       Map<String, dynamic> data = json.decode(res.body);
@@ -95,7 +94,7 @@ class _TicketDetails extends State<TicketDetails> {
       displayDialog_checkonly(context, "티켓팅", "statusCode: $statusCode\n\nmessage: $msg");
     }
 
-    const url_isInterested = "$SERVER_IP/isInterestedTicketing";
+    const url_isInterested = "$SERVER_IP/individual/isInterestedTicketing";
     try {
       var res = await http.post(Uri.parse(url_isInterested), body: {
         "product_name": widget.product_name!,
@@ -121,7 +120,7 @@ class _TicketDetails extends State<TicketDetails> {
   }
 
   Future<void> setInterest() async {
-    const url = "$SERVER_IP/interestTicketing";
+    const url = "$SERVER_IP/individual/interestTicketing";
     Map<String, dynamic> kas_address_data = await getKasAddress();
     if (kas_address_data['statusCode'] == 200) {
       final kas_address = kas_address_data['data'][0]['kas_address'];
@@ -142,7 +141,7 @@ class _TicketDetails extends State<TicketDetails> {
   }
 
   Future<void> setUnInterest() async {
-    const url = "$SERVER_IP/uninterestTicketing";
+    const url = "$SERVER_IP/individual/uninterestTicketing";
     Map<String, dynamic> kas_address_data = await getKasAddress();
     if (kas_address_data['statusCode'] == 200) {
       final kas_address = kas_address_data['data'][0]['kas_address'];

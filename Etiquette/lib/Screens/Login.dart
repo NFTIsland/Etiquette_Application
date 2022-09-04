@@ -22,7 +22,7 @@ class _Login extends State<Login> {
 
   Future<String> attemptLogIn(String id, String pw) async {
     try {
-      final res = await http.post(Uri.parse("$SERVER_IP/login"), body: {
+      final res = await http.post(Uri.parse("$SERVER_IP/auth/login"), body: {
         "id": id,
         "pw": pw
       });

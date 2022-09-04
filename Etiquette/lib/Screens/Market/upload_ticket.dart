@@ -106,7 +106,7 @@ class _UploadTicket extends State<UploadTicket> {
   final comments_controller = TextEditingController();
 
   Future<void> upload_ticket() async {
-    const url = "$SERVER_IP/setTicketToBid";
+    const url = "$SERVER_IP/market/setTicketToBid";
     try {
       var res = await http.post(Uri.parse(url), body: {
         "token_id": token_id,

@@ -25,7 +25,7 @@ class _Interest extends State<Interest> {
   late double height;
 
   Future<void> getInterestFromDB() async {
-    const url_ticketing = "$SERVER_IP/interestTicketinglist";
+    const url_ticketing = "$SERVER_IP/individual/interestTicketinglist";
     final kas_address_data = await getKasAddress();
 
     if (kas_address_data['statusCode'] != 200) {
@@ -60,7 +60,7 @@ class _Interest extends State<Interest> {
       return;
     }
 
-    const url_auction = "$SERVER_IP/interestAuctionlist";
+    const url_auction = "$SERVER_IP/individual/interestAuctionlist";
     try {
       var res = await http.post(Uri.parse(url_auction), body: {
         'kas_address': kas_address,

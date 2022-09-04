@@ -65,7 +65,7 @@ class _MarketDetails extends State<MarketDetails> {
 
     final kas_address = kas_address_data['data'][0]['kas_address'];
 
-    final url = "$SERVER_IP/ticketPrice/${widget.product_name!}/${widget.seat_class!}";
+    final url = "$SERVER_IP/ticket/ticketPrice/${widget.product_name!}/${widget.seat_class!}";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
@@ -87,7 +87,7 @@ class _MarketDetails extends State<MarketDetails> {
       return;
     }
 
-    const url_isInterested = "$SERVER_IP/isInterestedAuction";
+    const url_isInterested = "$SERVER_IP/individual/isInterestedAuction";
     try {
       var res = await http.post(Uri.parse(url_isInterested), body: {
         "product_name": widget.product_name!,
@@ -115,7 +115,7 @@ class _MarketDetails extends State<MarketDetails> {
       return;
     }
 
-    final url_description = "$SERVER_IP/ticketDescription/${widget.product_name!}";
+    final url_description = "$SERVER_IP/ticket/ticketDescription/${widget.product_name!}";
     try {
       var res = await http.get(Uri.parse(url_description));
       Map<String, dynamic> data = json.decode(res.body);
@@ -259,7 +259,7 @@ class _MarketDetails extends State<MarketDetails> {
   }
 
   Future<void> setInterest() async {
-    const url = "$SERVER_IP/interestAuction";
+    const url = "$SERVER_IP/individual/interestAuction";
     Map<String, dynamic> kas_address_data = await getKasAddress();
     if (kas_address_data['statusCode'] == 200) {
       final kas_address = kas_address_data['data'][0]['kas_address'];
@@ -283,7 +283,7 @@ class _MarketDetails extends State<MarketDetails> {
   }
 
   Future<void> setUnInterest() async {
-    const url = "$SERVER_IP/uninterestAuction";
+    const url = "$SERVER_IP/individual/uninterestAuction";
     Map<String, dynamic> kas_address_data = await getKasAddress();
     if (kas_address_data['statusCode'] == 200) {
       final kas_address = kas_address_data['data'][0]['kas_address'];

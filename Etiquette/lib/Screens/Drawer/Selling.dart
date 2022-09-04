@@ -27,7 +27,7 @@ class _Selling extends State<Selling> {
   String _selected = 'All';
 
   Future<void> getSellinglistFromDB() async {
-    const url = "$SERVER_IP/sellinglist";
+    const url = "$SERVER_IP/individual/sellinglist";
     try {
       final kas_address_data = await getKasAddress();
       if (kas_address_data['statusCode'] == 200) {

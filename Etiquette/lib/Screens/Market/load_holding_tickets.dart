@@ -22,7 +22,7 @@ class _LoadHoldingTickets extends State<LoadHoldingTickets> {
   List<Map<String, dynamic>> holdlist = [];
 
   Future<void> getHoldlistFromDB() async {
-    const url = "$SERVER_IP/holdlist";
+    const url = "$SERVER_IP/individual/holdlist";
     try {
       final kas_address_data = await getKasAddress();
       if (kas_address_data['statusCode'] == 200) {
@@ -58,7 +58,7 @@ class _LoadHoldingTickets extends State<LoadHoldingTickets> {
   }
 
   Future<int> load_price(String product_name, String seat_class) async {
-    final url = "$SERVER_IP/ticketPrice/$product_name/$seat_class";
+    final url = "$SERVER_IP/ticket/ticketPrice/$product_name/$seat_class";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
