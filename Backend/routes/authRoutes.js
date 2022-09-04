@@ -5,5 +5,7 @@ const authController = require("../controller/authController");
 router.post('/login', authController.login);
 router.get('/data', authController.home);
 router.post('/signup', authController.signup);
+router.post('/checkNickname', authController.checkNickname);
+router.post('/kas_address', authController.kasAddress);
 
 module.exports = router;

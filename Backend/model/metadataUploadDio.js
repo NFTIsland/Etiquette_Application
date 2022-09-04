@@ -1,6 +1,6 @@
 require("dotenv").config()
 
-class BasicAuthDio {
+class MetadataUploadDio {
     constructor(method, url, body) {
         this.method = method;
         this.url = url;
@@ -8,7 +8,8 @@ class BasicAuthDio {
         this.headers = {
             'Content-Type': 'application/json',
             'x-chain-id': '1001',
-            'Authorization': process.env.AUTHORIZATION
+            'Authorization': process.env.AUTHORIZATION,
+            'x-krn': process.env.X-KRN,
         };
 
         if (!body) {
@@ -22,4 +23,4 @@ class BasicAuthDio {
     }
 }
 
-module.exports = BasicAuthDio;
+module.exports = MetadataUploadDio;
