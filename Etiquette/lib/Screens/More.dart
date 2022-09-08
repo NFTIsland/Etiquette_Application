@@ -76,7 +76,7 @@ class _More extends State<More> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("Home"),
+              appBar: appbarWithArrowBackButton("Home", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),
@@ -85,7 +85,8 @@ class _More extends State<More> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
                 appBar: AppBar(
-                    title: const Text("Etiquette"),
+                    iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
+                    title: Text("Etiquette", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),
                     backgroundColor: Colors.white24,
                     foregroundColor: Colors.black,
                     elevation: 0,
@@ -112,18 +113,6 @@ class _More extends State<More> {
                             },
                           )
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {
-                          Get.to(Search());
-                          /*
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Search()));
-                           */
-                        },
-                      )
                     ]
                 ),
                 drawer: drawer(context, true, nickname),

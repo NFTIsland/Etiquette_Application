@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
@@ -23,11 +24,19 @@ class _Hold extends State<Hold> {
   List<String> filter = ['All', 'High', 'Low', 'Recent', 'Old'];
   String _selected = 'All';
   late final Future future;
+  late bool theme;
 
   List<Map<String, dynamic>> holdlist = [];
 
   late double width;
   late double height;
+
+  Future<bool> getTheme() async {
+    var key = 'theme';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    theme = (pref.getBool(key) ?? false);
+    return theme;
+  }
 
   Future<void> getHoldlistFromDB() async {
     const url = "$SERVER_IP/individual/holdlist";
@@ -412,7 +421,7 @@ class _Hold extends State<Hold> {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Scaffold(
-            appBar: appbarWithArrowBackButton("보유 티켓 목록"),
+            appBar: appbarWithArrowBackButton("보유 티켓 목록", theme),
             body: const Center(
               child: Text("통신 에러가 발생했습니다."),
             ),
@@ -420,24 +429,7 @@ class _Hold extends State<Hold> {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
-              appBar: AppBar(
-                title: const Text(
-                  "보유 티켓 목록",
-                  style: TextStyle(
-                      fontSize: 25
-                  ),
-                ),
-                centerTitle: true,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-                elevation: 0,
-                backgroundColor: Colors.white24,
-                foregroundColor: Colors.black,
-              ),
+              appBar: appbarWithArrowBackButton( "보유 티켓 목록", theme),
               body: Column(
                   children: <Widget> [
                     Container(

@@ -28,6 +28,8 @@ class _Market extends State<Market> {
   List top5RankBid = [];
   List deadline = [];
   String? nickname = "";
+  late double width;
+  late double height;
 
   late final Future future;
 
@@ -141,7 +143,7 @@ class _Market extends State<Market> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("Auction"),
+              appBar: appbarWithArrowBackButton("Auction", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),
@@ -150,7 +152,8 @@ class _Market extends State<Market> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
               appBar: AppBar(
-                  title: const Text("Auction"),
+                  iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
+                  title: Text("Auction", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),
                   backgroundColor: Colors.white24,
                   foregroundColor: Colors.black,
                   elevation: 0,
@@ -178,7 +181,7 @@ class _Market extends State<Market> {
                     IconButton(
                       icon: const Icon(Icons.search),
                       onPressed: () {
-                        Get.to(Search());
+                        Get.to(const SearchMarketTicket());
                       },
                     )
                   ]
@@ -395,24 +398,6 @@ class _Market extends State<Market> {
               floatingActionButton: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget> [
-                  FloatingActionButton.extended(
-                    heroTag: null,
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SearchMarketTicket()
-                          )
-                      );
-                    },
-                    backgroundColor: (theme ? const Color(0xffe8e8e8) : const Color(0xff7b9acc)),
-                    foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
-                    label: const Text("중고 티켓 구매"),
-                    icon: const Icon(Icons.navigation),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
                   FloatingActionButton.extended(
                     heroTag: null,
                     onPressed: () {

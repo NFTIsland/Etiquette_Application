@@ -339,7 +339,7 @@ class _MarketDetails extends State<MarketDetails> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("티켓 상세 정보"),
+              appBar: appbarWithArrowBackButton("티켓 상세 정보", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),

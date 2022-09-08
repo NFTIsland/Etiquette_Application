@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Utilities/get_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
@@ -18,8 +19,16 @@ class _LoadHoldingTickets extends State<LoadHoldingTickets> {
   late double width;
   late double height;
   late final Future future;
+  late bool theme;
 
   List<Map<String, dynamic>> holdlist = [];
+
+  Future<bool> getTheme() async {
+    var key = 'theme';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    theme = (pref.getBool(key) ?? false);
+    return theme;
+  }
 
   Future<void> getHoldlistFromDB() async {
     const url = "$SERVER_IP/individual/holdlist";
@@ -89,7 +98,7 @@ class _LoadHoldingTickets extends State<LoadHoldingTickets> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("업로드 티켓 선택"),
+              appBar: appbarWithArrowBackButton("업로드 티켓 선택", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),
@@ -97,7 +106,7 @@ class _LoadHoldingTickets extends State<LoadHoldingTickets> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("업로드 티켓 선택"),
+              appBar: appbarWithArrowBackButton("업로드 티켓 선택", theme),
               body: Column(
                 children: <Widget> [
                   Visibility(

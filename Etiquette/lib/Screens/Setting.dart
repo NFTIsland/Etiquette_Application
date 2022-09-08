@@ -23,7 +23,8 @@ class _Setting extends State<Setting> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Setting", style: TextStyle()),
+          iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
+          title: Text("Setting", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),
           backgroundColor: Colors.white24,
           foregroundColor: Colors.black,
           elevation: 0,

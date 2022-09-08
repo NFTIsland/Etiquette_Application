@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
@@ -17,8 +18,16 @@ class TicketingList extends StatefulWidget {
 class _TicketingList extends State<TicketingList> {
   List list = [];
   late final Future future;
+  late bool theme;
 
   final inputTicketNameController = TextEditingController();
+
+  Future<bool> getTheme() async {
+    var key = 'theme';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    theme = (pref.getBool(key) ?? false);
+    return theme;
+  }
 
   Future<void> getMarketTicketsFromDB() async {
     if (inputTicketNameController.text == "") {
@@ -64,7 +73,7 @@ class _TicketingList extends State<TicketingList> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("Wallet"),
+              appBar: appbarWithArrowBackButton("Wallet", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),
@@ -72,7 +81,7 @@ class _TicketingList extends State<TicketingList> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-              appBar: defaultAppbar("Ticketing"),
+              appBar: AppBar(title : Text("Ticketing", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),),
               body: Column(
                 children: <Widget> [
                   Expanded(

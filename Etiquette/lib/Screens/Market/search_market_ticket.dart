@@ -7,6 +7,7 @@ import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/Screens/Market/market_details.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchMarketTicket extends StatefulWidget {
   const SearchMarketTicket({Key? key}) : super(key: key);
@@ -16,10 +17,18 @@ class SearchMarketTicket extends StatefulWidget {
 }
 
 class _SearchMarketTicket extends State<SearchMarketTicket> {
+  late bool theme;
   List list = [];
   late final Future future;
 
   final inputTicketNameController = TextEditingController();
+
+  Future<bool> getTheme() async {
+    var key = 'theme';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    theme = (pref.getBool(key) ?? false);
+    return theme;
+  }
 
   Future<void> getMarketTicketsFromDB() async {
     if (inputTicketNameController.text == "") {
@@ -70,7 +79,7 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("티켓 마켓"),
+              appBar: appbarWithArrowBackButton("Ticket Market", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),
@@ -78,7 +87,7 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-              appBar: defaultAppbar("티켓 마켓"),
+              appBar: AppBar(title : Text("Ticket Market", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),),
               body: Column(
                 children: <Widget> [
                   Expanded(

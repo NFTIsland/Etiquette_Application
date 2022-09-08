@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
@@ -23,6 +24,14 @@ class _Interest extends State<Interest> {
 
   late double width;
   late double height;
+  late bool theme;
+
+  Future<bool> getTheme() async {
+    var key = 'theme';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    theme = (pref.getBool(key) ?? false);
+    return theme;
+  }
 
   Future<void> getInterestFromDB() async {
     const url_ticketing = "$SERVER_IP/individual/interestTicketinglist";
@@ -106,7 +115,7 @@ class _Interest extends State<Interest> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("관심 티켓"),
+              appBar: appbarWithArrowBackButton("관심 티켓", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),
@@ -114,18 +123,18 @@ class _Interest extends State<Interest> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-                appBar: appbarWithArrowBackButton("관심 티켓"),
+                appBar: appbarWithArrowBackButton("관심 티켓", theme),
                 body: Container(
                     width: double.infinity,
                     alignment: Alignment.topLeft,
                     child: Column(
                         children: <Widget> [
-                          const SizedBox(
+                           SizedBox(
                             child: Text(
                               "Interesting Tickets For Ticketing",
                               style: TextStyle(
                                 fontSize: 20,
-                                color: Colors.black,
+                                color: (theme ? const Color(0xffffffff) : const Color(0xff000000)),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -225,12 +234,12 @@ class _Interest extends State<Interest> {
                               ),
                             ),
                           ),
-                          const SizedBox(
+                          SizedBox(
                             child: Text(
                               "Interesting Tickets For Auction",
                               style: TextStyle(
                                 fontSize: 20,
-                                color: Colors.black,
+                                color: (theme ? const Color(0xffffffff) : const Color(0xff000000)),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

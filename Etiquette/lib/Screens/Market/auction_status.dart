@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
@@ -19,7 +20,15 @@ class _AuctionStatus extends State<AuctionStatus> {
   late double width;
   late double height;
   late final Future future;
+  late bool theme;
   final rows = <DataRow> [];
+
+  Future<bool> getTheme() async {
+    var key = 'theme';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    theme = (pref.getBool(key) ?? false);
+    return theme;
+  }
 
   Future<void> getBidlistFromDB() async {
     const url = "$SERVER_IP/market/bidStatus";
@@ -63,7 +72,7 @@ class _AuctionStatus extends State<AuctionStatus> {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Scaffold(
-            appBar: appbarWithArrowBackButton("입찰 현황"),
+            appBar: appbarWithArrowBackButton("입찰 현황", theme),
             body: const Center(
               child: Text("통신 에러가 발생했습니다."),
             ),
@@ -71,7 +80,7 @@ class _AuctionStatus extends State<AuctionStatus> {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
-            appBar: appbarWithArrowBackButton("입찰 현황"),
+            appBar: appbarWithArrowBackButton("입찰 현황", theme),
             body: SingleChildScrollView(
               child: Column(
                 children: <Widget> [

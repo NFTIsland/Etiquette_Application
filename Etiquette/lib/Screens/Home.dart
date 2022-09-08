@@ -164,7 +164,7 @@ class _Home extends State<Home> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("Home"),
+              appBar: appbarWithArrowBackButton("Home", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),
@@ -173,7 +173,8 @@ class _Home extends State<Home> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
                 appBar: AppBar(
-                    title: const Text("Etiquette"),
+                    iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
+                    title: Text("Etiquette", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),
                     backgroundColor: Colors.white24,
                     foregroundColor: Colors.black,
                     elevation: 0, // elevation은 떠보이는 느낌 설정하는 것, 0이면 뜨는 느낌 없음, foreground는 글자 색 변경
@@ -186,6 +187,7 @@ class _Home extends State<Home> {
                             _delToken();
                             setState(() {
                               img = const Icon(Icons.notifications_none);
+
                             });
                             _setData(ala);
                           } else {
@@ -198,26 +200,16 @@ class _Home extends State<Home> {
                           }
                         },
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {
-                          Get.to(Search());
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => Search()
-                          //     )
-                          // );
-                        },
-                      )
+
                     ]
                 ),
-                drawer: drawer(context, true, nickname),
+                drawer: drawer(context, theme, nickname),
+                drawerScrimColor: (theme ? const Color(0xffe8e8e8) : Colors.black),
                 body: SingleChildScrollView(
                   child: Column(
                     children: <Widget> [
                       SizedBox(
-                        width : width * 0.91,
+                        width : width,
                         height : height * 0.4,
                         child: CarouselSlider(
                           options: CarouselOptions(
@@ -227,7 +219,7 @@ class _Home extends State<Home> {
                           items: home_posters.map((item) {
                             return Builder(builder: (BuildContext context) {
                               return Container(
-                                width : width * 0.91,
+                                width : width,
                                 height : height * 0.4,
                                 decoration: BoxDecoration(
                                   color: Colors.black,
@@ -264,11 +256,13 @@ class _Home extends State<Home> {
                                 children: <Widget> [
                                   Padding(
                                     padding: EdgeInsets.only(left: width * 0.0361),
-                                    child: const Text(
+                                    child: Text(
                                         "Klay 시세",
                                         style: TextStyle(
                                             fontSize: 20,
-                                            color: Colors.black
+                                            color: (theme
+                                                ?  const Color(0xff000000)
+                                                :  const Color(0xffffffff))
                                         )
                                     ),
                                   ),
@@ -279,9 +273,11 @@ class _Home extends State<Home> {
                                       builder: (context) {
                                         return Text(
                                           getStrKlayCurrency(),
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 15,
-                                            color: Colors.black,
+                                            color: (theme
+                                                ?  const Color(0xff000000)
+                                                :  const Color(0xffffffff)),
                                           ),
                                         );
                                       },
@@ -290,7 +286,9 @@ class _Home extends State<Home> {
                                 ]
                             ),
                             decoration: BoxDecoration(
-                                color: const Color(0xffd9d9d9),
+                                color: (theme
+                                    ? const Color(0xffe8e8e8)
+                                    : const Color(0xff8AAAE5)),
                                 borderRadius: BorderRadius.circular(9)
                             ),
                           )
@@ -308,10 +306,12 @@ class _Home extends State<Home> {
                                 children: <Widget> [
                                   Padding(
                                     padding: EdgeInsets.only(left: width * 0.0361),
-                                    child: const Text(
+                                    child: Text(
                                         "서버시간",
                                         style: TextStyle(
-                                            fontSize: 20, color: Colors.black
+                                            fontSize: 20, color: (theme
+                                            ?  const Color(0xff000000)
+                                            :  const Color(0xffffffff)),
                                         )
                                     ),
                                   ),
@@ -322,9 +322,11 @@ class _Home extends State<Home> {
                                       builder: (context) {
                                         return Text(
                                           loadCurrentTime(),
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 15,
-                                            color: Colors.black,
+                                            color: (theme
+                                              ?  const Color(0xff000000)
+                                                :  const Color(0xffffffff)),
                                           ),
                                         );
                                       },
@@ -333,7 +335,9 @@ class _Home extends State<Home> {
                                 ]
                             ),
                             decoration: BoxDecoration(
-                                color: const Color(0xffd9d9d9),
+                                color: (theme
+                                    ? const Color(0xffe8e8e8)
+                                    : const Color(0xff8AAAE5)),
                                 borderRadius: BorderRadius.circular(9)),
                           )
                       ),
@@ -344,9 +348,9 @@ class _Home extends State<Home> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                const Text(
+                                Text(
                                     "공지사항",
-                                    style: TextStyle(fontSize: 20, color: Colors.black)
+                                    style: TextStyle(fontSize: 20, color: (theme ? const Color(0xffffffff) : const Color(0xff000000)))
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -357,11 +361,11 @@ class _Home extends State<Home> {
                                     //     )
                                     // )
                                   },
-                                  child: const Text(
+                                  child: Text(
                                       "+more",
                                       style: TextStyle(
                                         fontSize: 15,
-                                        color: Colors.black,
+                                        color: (theme ? const Color(0xffffffff) : const Color(0xff000000)),
                                       )
                                   ),
                                 ),
@@ -372,7 +376,7 @@ class _Home extends State<Home> {
                           padding : EdgeInsets.fromLTRB(width*0.044, height*0.019, width*0.044, height*0.02875),
                           child : Container(
                               width : width * 0.91,
-                              decoration : BoxDecoration(borderRadius: BorderRadius.circular(9), color : Color(0xffd9d9d9),),
+                              decoration : BoxDecoration(borderRadius: BorderRadius.circular(9), color : (theme ? const Color(0xffe8e8e8) : const Color(0xffffffff)),),
                               child : ListView.separated(
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
@@ -390,7 +394,7 @@ class _Home extends State<Home> {
                                               padding : EdgeInsets.only(left : width * 0.0361),
                                               child : Text(
                                                   notices[index]['title'],
-                                                  style: const TextStyle(fontSize: 20, color: Colors.black)
+                                                  style: TextStyle(fontSize: 20, color: (theme ? const Color(0xff000000) : const Color(0xff000000)))
                                               )
                                           )
                                       )
@@ -399,7 +403,7 @@ class _Home extends State<Home> {
                                 separatorBuilder: (BuildContext context, int index) => const Divider(
                                   thickness: 1,
                                   height : 0,
-                                  color : Colors.black,
+                                  color : Color(0x55000000),
                                 ),
                               )
                           )

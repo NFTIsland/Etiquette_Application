@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:Etiquette/Screens/qr_code_scanner.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/round.dart';
@@ -18,7 +19,7 @@ class KlayWithdraw extends StatefulWidget {
 
 class _KlayWithdraw extends State<KlayWithdraw> {
   late final Future future;
-
+  late bool theme;
   final inputValueController = TextEditingController();
   final inputReceiverAddressController = TextEditingController();
   String klay = "잔액: ";
@@ -28,6 +29,14 @@ class _KlayWithdraw extends State<KlayWithdraw> {
   final warningMessage1 = "수신자의 주소가 ";
   final warningMessage2 = "Klaytn 주소";
   final warningMessage3 = "가 맞는지 다시 한번 확인해 주세요. 출금이 진행된 이후에는 되돌릴 수 없습니다.\n\n출금 시 송신자로부터 0.000525 KLAY의 수수료가 발생합니다.";
+
+  Future<bool> getTheme() async {
+    late bool theme;
+    var key = 'theme';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    theme = (pref.getBool(key) ?? false);
+    return theme;
+  }
 
   Future<void> processGetBalance() async {
     Map<String, dynamic> kas_address_data = await getKasAddress();
@@ -93,6 +102,7 @@ class _KlayWithdraw extends State<KlayWithdraw> {
   void initState() {
     super.initState();
     future = processGetBalance();
+    getTheme();
   }
 
   @override
@@ -102,7 +112,7 @@ class _KlayWithdraw extends State<KlayWithdraw> {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Scaffold(
-            appBar: appbarWithArrowBackButton("Wallet"),
+            appBar: appbarWithArrowBackButton("Wallet", theme),
             body: const Center(
               child: Text("통신 에러가 발생했습니다."),
             ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:Etiquette/widgets/appbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,12 +23,20 @@ class Wallet extends StatefulWidget {
 
 class _Wallet extends State<Wallet> {
   late final Future future;
+  late bool theme;
 
   String lastCurrencyMsg = "Loading...";
   String klayBalance = "";
   String klayCurrency = "";
   String balanceAndWonMsg = "Loading...";
   late final address;
+
+  Future<bool> getTheme() async {
+    var key = 'theme';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    theme = (pref.getBool(key) ?? false);
+    return theme;
+  }
 
   Future<void> printKlayCurrencyAndBalance() async {
     Map<String, dynamic> data = await getKlayCurrency(); // 현재 KLAY 시세 정보를 API를 통해 가져옴
@@ -71,6 +80,7 @@ class _Wallet extends State<Wallet> {
   @override
   void initState() {
     super.initState();
+    getTheme();
     future = loadKlayBalanceAndCurrency();
     timer = Timer.periodic(
       const Duration(seconds: 3), // 3초 마다 자동 갱신
@@ -155,7 +165,7 @@ class _Wallet extends State<Wallet> {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Scaffold(
-            appBar: appbarWithArrowBackButton("Wallet"),
+            appBar: appbarWithArrowBackButton("Wallet", theme),
             body: const Center(
               child: Text("통신 에러가 발생했습니다."),
             ),
@@ -163,27 +173,7 @@ class _Wallet extends State<Wallet> {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
-              appBar: AppBar(
-                title: const Text(
-                    "Wallet",
-                    style: TextStyle(
-                        fontSize: 25
-                    )
-                ),
-                backgroundColor: Colors.white24,
-                foregroundColor: Colors.black,
-                elevation: 0,
-                centerTitle: true,
-                leading: IconButton(
-                    onPressed: () {
-                      Get.back();
-                      // Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                        Icons.arrow_back_ios_new_rounded
-                    )
-                ),
-              ),
+              appBar: appbarWithArrowBackButton("Wallet", theme),
               body: Column(
                 children: <Widget> [
                   Expanded(

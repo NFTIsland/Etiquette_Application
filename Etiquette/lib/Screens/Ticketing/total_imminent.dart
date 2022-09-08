@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
@@ -19,6 +20,13 @@ class _TotalImminent extends State<TotalImminent> {
   late final Future future;
 
   List deadlineAll = [];
+
+  Future<bool> getTheme() async {
+    var key = 'theme';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    theme = (pref.getBool(key) ?? false);
+    return theme;
+  }
 
   Future<void> getImminentFromDB() async {
     const url = "$SERVER_IP/ticketing/deadLineAll";
@@ -60,7 +68,7 @@ class _TotalImminent extends State<TotalImminent> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("마감 임박 티켓 목록"),
+              appBar: appbarWithArrowBackButton("마감 임박 티켓 목록", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),
@@ -68,7 +76,7 @@ class _TotalImminent extends State<TotalImminent> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-                appBar: appbarWithArrowBackButton("마감 임박 티켓 목록"),
+                appBar: appbarWithArrowBackButton("마감 임박 티켓 목록", theme),
                 body: Column(
                     children: <Widget>[
                       Expanded(

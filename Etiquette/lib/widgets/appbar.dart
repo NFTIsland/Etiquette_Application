@@ -12,12 +12,14 @@ AppBar defaultAppbar(String title) {
 }
 
 @override
-AppBar appbarWithArrowBackButton(String title) {
+AppBar appbarWithArrowBackButton(String title, bool theme) {
   return AppBar(
+    iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
     title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 25
+        style: TextStyle(
+          fontSize: 25,
+          color: (theme ? const Color(0xffe8e8e8) : Colors.black)
         )
     ),
     backgroundColor: Colors.white24,

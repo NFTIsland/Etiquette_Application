@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Utilities/get_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:Etiquette/widgets/appbar.dart';
@@ -20,11 +21,19 @@ class _Selling extends State<Selling> {
   late double width;
   late double height;
   late final Future future;
+  late bool theme;
 
   List<Map<String, dynamic>> sellinglist = [];
 
   List<String> filter = ['All', 'High', 'Row', 'Recent', 'Old'];
   String _selected = 'All';
+
+  Future<bool> getTheme() async {
+    var key = 'theme';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    theme = (pref.getBool(key) ?? false);
+    return theme;
+  }
 
   Future<void> getSellinglistFromDB() async {
     const url = "$SERVER_IP/individual/sellinglist";
@@ -89,7 +98,7 @@ class _Selling extends State<Selling> {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Scaffold(
-            appBar: appbarWithArrowBackButton("판매 중 티켓"),
+            appBar: appbarWithArrowBackButton("판매 중 티켓", theme),
             body: const Center(
               child: Text("통신 에러가 발생했습니다."),
             ),
@@ -97,7 +106,7 @@ class _Selling extends State<Selling> {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
-            appBar: appbarWithArrowBackButton("판매 중 티켓"),
+            appBar: appbarWithArrowBackButton("판매 중 티켓", theme),
               body: Column(
                   children: <Widget> [
                     Container(
