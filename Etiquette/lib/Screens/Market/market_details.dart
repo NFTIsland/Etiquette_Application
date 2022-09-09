@@ -37,6 +37,8 @@ class _MarketDetails extends State<MarketDetails> {
   late double height;
   String? remain;
   String _price = "";
+  String previous_bid_price = "-";
+  String minimum_bid_price = "0";
   double _klayCurrency = 0.0;
   bool like = false;
 
@@ -149,9 +151,9 @@ class _MarketDetails extends State<MarketDetails> {
       }
 
     } catch (ex) {
-      int statusCode = 400;
       String msg = ex.toString();
-      displayDialog_checkonly(context, "티켓 마켓", "statusCode: $statusCode\n\nmessage: $msg");
+      displayDialog_checkonly(context, "티켓 마켓", msg);
+      print("입찰 현황 --> $msg");
       return;
     }
 
@@ -177,6 +179,33 @@ class _MarketDetails extends State<MarketDetails> {
         displayDialog_checkonly(context, "입찰 현황", msg);
         return;
       }
+
+      const url_bidlist = "$SERVER_IP/market/bidStatus";
+      try {
+        var res = await http.post(Uri.parse(url_bidlist), body: {
+          'token_id': widget.token_id!,
+        });
+        Map<String, dynamic> data = json.decode(res.body);
+        if (data['statusCode'] == 200) {
+          minimum_bid_price = auction_details['auction_start_price'].toString();
+          List bid_data = data["data"];
+          for (Map<String, dynamic> bid in bid_data) {
+            if (bid['bidder'] == kas_address) {
+              previous_bid_price = bid['bid_price'].toString();
+              minimum_bid_price = (bid['bid_price'] + auction_details['bid_unit']).toString();
+              if ((bid['bid_price'] + auction_details['bid_unit']) > auction_details['immediate_purchase_price']) {
+                minimum_bid_price = auction_details['immediate_purchase_price'].toString();
+              }
+              setState(() {});
+              break;
+            }
+          }
+        }
+      } catch (ex) {
+        String msg = data['msg'];
+        displayDialog_checkonly(context, "입찰 현황", msg);
+        return;
+      }
     } catch (ex) {
       print("입찰 현황 --> ${ex.toString()}");
       return;
@@ -198,6 +227,13 @@ class _MarketDetails extends State<MarketDetails> {
     if (bid_price < auction_details['auction_start_price']) {
       displayDialog_checkonly(context, "입찰", "입찰가는 경매 시작가보다 커야 합니다.");
       return;
+    }
+
+    if (int.tryParse(previous_bid_price) != null) {
+      if (bid_price < int.parse(previous_bid_price) + auction_details['bid_unit'] && bid_price != auction_details['immediate_purchase_price']) {
+        displayDialog_checkonly(context, "입찰", "최소 입찰가보다 큰 금액을 입력해야 합니다.");
+        return;
+      }
     }
 
     const url_bid = "$SERVER_IP/market/bid";
@@ -567,6 +603,20 @@ class _MarketDetails extends State<MarketDetails> {
                                   ),
                                 ),
                               ),
+                              Visibility(
+                                visible: rows.isNotEmpty,
+                                child: Column(
+                                  children: <Widget> [
+                                    const SizedBox(height: 15),
+                                    Text(
+                                        "이전 입찰가: ${previous_bid_price.replaceAllMapped(reg, mathFunc)} 원",
+                                        style: const TextStyle(
+                                          fontSize: 25,
+                                        )
+                                    ),
+                                  ],
+                                ),
+                              ),
                               const SizedBox(height: 15),
                               const Text(
                                   "입찰가 입력",
@@ -600,7 +650,7 @@ class _MarketDetails extends State<MarketDetails> {
                                     fontSize: 20,
                                   ),
                                   decoration: InputDecoration(
-                                    hintText: '입찰가 입력',
+                                    hintText: '입찰가 입력(최소 ${minimum_bid_price.replaceAllMapped(reg, mathFunc)} 원 이상)',
                                     counterText: "",
                                     suffix: const Padding(
                                       padding: EdgeInsets.all(2.0),
@@ -611,7 +661,10 @@ class _MarketDetails extends State<MarketDetails> {
                                         ),
                                       ),
                                     ),
-                                    hintStyle: const TextStyle(color: Colors.grey),
+                                    hintStyle: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 15,
+                                    ),
                                     focusedBorder: const OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10.0)
@@ -641,12 +694,6 @@ class _MarketDetails extends State<MarketDetails> {
                                         await displayDialog_checkonly(context, "통신 오류", "서버와의 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.");
                                         return;
                                       }
-
-                                      // final immidiate_purchase = await displayDialog_YesOrNo(context,
-                                      //     "입찰",
-                                      //     "즉시 입찰가를 입력하셨습니다. 즉시 입찰 하시겠습니까?\n\n"
-                                      //         "현재 KLAY 시세 기준 약 ${roundDouble(immediate_purchase_price / _klayCurrency, 2)} KLAY가 차감됩니다."
-                                      // );
 
                                       final immidiate_purchase = await showDialog(
                                         context: context,
