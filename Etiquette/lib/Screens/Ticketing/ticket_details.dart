@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:Etiquette/Screens/Market/upload_ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -401,8 +402,10 @@ class _TicketDetails extends State<TicketDetails> {
                   )
               ),
               floatingActionButton: Visibility(
-                visible: widget.showPurchaseButton!,
-                child: FloatingActionButton.extended(
+                //visible: widget.showPurchaseButton!,
+                child:
+                widget.showPurchaseButton! ?
+                FloatingActionButton.extended(
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(
@@ -418,7 +421,18 @@ class _TicketDetails extends State<TicketDetails> {
                   foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
                   label: const Text("구매하기"),
                   icon: const Icon(Icons.navigation),
-                ),
+                )
+                :
+                FloatingActionButton.extended(
+                  onPressed: () {
+
+                  },
+                  backgroundColor: (theme ? const Color(0xffe8e8e8) : Colors.green),
+                  foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
+                  label: const Text("판매하기"),
+                  icon: const Icon(Icons.navigation),
+                )
+                ,
               ),
               floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             );

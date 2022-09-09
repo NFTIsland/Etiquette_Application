@@ -240,7 +240,12 @@ class _Ticketing extends State<Ticketing> {
                                                 Card(
                                                 color: Colors.white24,
                                                 elevation : 0,
-                                                child:
+                                                child: InkWell(
+
+                                                  highlightColor: Colors.transparent,
+                                                  splashFactory: NoSplash.splashFactory,
+                                                  onTap:(){},
+                                                  child :
                                                 Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                 children : <Widget>[
@@ -279,6 +284,7 @@ class _Ticketing extends State<Ticketing> {
 
                                                   ]
                                                 ),
+                                            )
                                                 );
 
 
@@ -336,7 +342,12 @@ class _Ticketing extends State<Ticketing> {
                                   return Card(
                                       color: Colors.white24,
                                       elevation : 0,
-                                      child: SizedBox(
+                                      child:InkWell(
+                                          highlightColor: Colors.transparent,
+                                          splashFactory: NoSplash.splashFactory,
+                                      onTap : (){ },
+                                      child :
+                                      SizedBox(
                                           width: double.infinity,
                                           height : height*0.07,
                                           child: Row(
@@ -374,6 +385,7 @@ class _Ticketing extends State<Ticketing> {
                                                 )
                                               ]
                                           )
+                                      )
                                       )
                                   );
                                 }

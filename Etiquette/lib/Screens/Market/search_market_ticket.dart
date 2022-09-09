@@ -87,7 +87,9 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-              appBar: AppBar(title : Text("Ticket Market", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),),
+              appBar: AppBar(
+                iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
+                title : Text("Ticket Market", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))), backgroundColor: Colors.white24, elevation: 0,),
               body: Column(
                 children: <Widget> [
                   Expanded(
@@ -202,7 +204,7 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
                                                       Text(
                                                         list[index]['product_name'],
                                                         style: const TextStyle(
-                                                          fontSize: 20,
+                                                          fontSize: 17,
                                                         ),
                                                       ),
                                                       const SizedBox(height: 10),

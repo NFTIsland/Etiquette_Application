@@ -177,6 +177,8 @@ class _Selling extends State<Selling> {
                               itemCount: sellinglist.length,
                               itemBuilder: (context, index) {
                                 return Card(
+                                  elevation: 0,
+                                  color: Colors.white24,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -185,6 +187,8 @@ class _Selling extends State<Selling> {
                                     horizontal: 10,
                                   ),
                                   child: InkWell(
+                                    highlightColor: Colors.transparent,
+                                    splashFactory: NoSplash.splashFactory,
                                     onTap: () {
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
@@ -209,6 +213,7 @@ class _Selling extends State<Selling> {
                                                 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
                                                 width: 100,
                                                 height: 100,
+                                                  fit: BoxFit.fill
                                               ),
                                             ),
                                           ),

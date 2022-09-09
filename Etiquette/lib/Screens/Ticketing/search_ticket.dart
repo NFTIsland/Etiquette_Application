@@ -73,7 +73,7 @@ class _TicketingList extends State<TicketingList> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("Wallet", theme),
+              appBar: appbarWithArrowBackButton("Ticketing", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),
@@ -81,7 +81,9 @@ class _TicketingList extends State<TicketingList> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-              appBar: AppBar(title : Text("Ticketing", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),),
+              appBar: AppBar(
+                iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
+                title : Text("Ticketing", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))), backgroundColor: Colors.white24, elevation: 0,),
               body: Column(
                 children: <Widget> [
                   Expanded(
@@ -141,6 +143,8 @@ class _TicketingList extends State<TicketingList> {
                                     itemCount: list.length,
                                     itemBuilder: (context, index) {
                                       return Card(
+                                        elevation: 0,
+                                        color: Colors.white24,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8),
                                         ),
@@ -182,7 +186,7 @@ class _TicketingList extends State<TicketingList> {
                                                       Text(
                                                         list[index]['product_name'],
                                                         style: const TextStyle(
-                                                          fontSize: 20,
+                                                          fontSize: 17,
                                                         ),
                                                       ),
                                                       const SizedBox(height: 10),

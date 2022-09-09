@@ -164,6 +164,8 @@ class _Interest extends State<Interest> {
                                     itemCount: interest_ticketing_list.length,
                                     itemBuilder: (context, index) {
                                       return Card(
+                                        elevation: 0,
+                                        color: Colors.white24,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8),
                                         ),
@@ -172,6 +174,8 @@ class _Interest extends State<Interest> {
                                           horizontal: 10,
                                         ),
                                         child: InkWell(
+                                          highlightColor: Colors.transparent,
+                                          splashFactory: NoSplash.splashFactory,
                                           onTap: () {
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(
@@ -195,7 +199,8 @@ class _Interest extends State<Interest> {
                                                     child: Image.network(
                                                         'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
                                                         width: 80,
-                                                        height: 80
+                                                        height: 80,
+                                                        fit: BoxFit.fill
                                                     ),
                                                   ),
                                                 ),
@@ -209,7 +214,7 @@ class _Interest extends State<Interest> {
                                                         Text(
                                                           interest_ticketing_list[index]['product_name'],
                                                           style: const TextStyle(
-                                                            fontSize: 20,
+                                                            fontSize: 17,
                                                           ),
                                                         ),
                                                         const SizedBox(height: 10),

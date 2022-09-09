@@ -7,7 +7,7 @@ import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 
 class UploadTicket extends StatefulWidget {
-  const UploadTicket({Key? key}) : super(key: key);
+  const UploadTicket({Key? key, }) : super(key: key);
 
   @override
   State createState() => _UploadTicket();

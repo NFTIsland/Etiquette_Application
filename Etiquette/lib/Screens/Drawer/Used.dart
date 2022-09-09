@@ -167,6 +167,8 @@ class _Used extends State<Used> {
                             itemCount: usedlist.length,
                             itemBuilder: (context, index) {
                               return Card(
+                                elevation: 0,
+                                color: Colors.white24,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -175,6 +177,8 @@ class _Used extends State<Used> {
                                   horizontal: 10,
                                 ),
                                 child: InkWell(
+                                  highlightColor: Colors.transparent,
+                                  splashFactory: NoSplash.splashFactory,
                                   child: SizedBox(
                                     width: double.infinity,
                                     child: Row(
@@ -187,7 +191,8 @@ class _Used extends State<Used> {
                                             child: Image.network(
                                                 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
                                                 width: 80,
-                                                height: 80
+                                                height: 80,
+                                                fit: BoxFit.fill
                                             ),
                                           ),
                                         ),

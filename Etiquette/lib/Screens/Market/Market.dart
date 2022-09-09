@@ -138,6 +138,8 @@ class _Market extends State<Market> {
 
   @override
   Widget build(BuildContext context) {
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
     return FutureBuilder(
         future: future,
         builder: (context, snapshot) {
@@ -180,6 +182,7 @@ class _Market extends State<Market> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.search),
+                      highlightColor: Colors.transparent,
                       onPressed: () {
                         Get.to(const SearchMarketTicket());
                       },
@@ -187,18 +190,14 @@ class _Market extends State<Market> {
                   ]
               ),
               drawer: drawer(context, theme, nickname),
-              body: Column(
-                children: <Widget> [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Center(
-                        child: Container(
+              body: SingleChildScrollView(
+                      child: Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          padding: EdgeInsets.only(left: width *0.05, right: width*0.05),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget> [
-                                const SizedBox(height: 20),
+                                SizedBox(height: height*0.025),
                                 const Text(
                                     "Top 5 Tickets With Many Bidders",
                                     style: TextStyle(
@@ -212,14 +211,18 @@ class _Market extends State<Market> {
                                       fontSize: 15,
                                     )
                                 ),
-                                const SizedBox(height: 20),
+                                SizedBox(height: height*0.025),
                                 ListView.builder(
                                     physics: const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     itemCount: top5RankBid.length,
                                     itemBuilder: (context, index) {
                                       return Card(
+                                        color: Colors.white24,
+                                        elevation : 0,
                                           child: InkWell(
+                                            highlightColor: Colors.transparent,
+                                            splashFactory: NoSplash.splashFactory,
                                             onTap: () {
                                               Navigator.push(
                                                 context,
@@ -238,58 +241,66 @@ class _Market extends State<Market> {
                                             },
                                             child: SizedBox(
                                                 width: double.infinity,
+                                                height : height*0.07,
                                                 child: Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
                                                     children: <Widget>[
-                                                      Expanded(
-                                                          flex: 1,
-                                                          child: Center(
-                                                            child: Text(
-                                                              (index + 1).toString(),
-                                                              style: const TextStyle(
-                                                                fontWeight: FontWeight.bold,
-                                                                fontSize: 25,
-                                                              ),
-                                                            ),
-                                                          )
-                                                      ),
-                                                      Expanded(
-                                                        flex: 1,
-                                                        child: Image.network(
+                                                      Image.network(
                                                           "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
-                                                          width: 40,
-                                                          height: 40,
+                                                          width: height*0.07,
+                                                          height: height*0.07,
+                                                        fit: BoxFit.fill
+                                                        ),
+
+                                                      Container(
+                                                        width: height*0.07,
+                                                        height: height*0.07,
+                                                        alignment: Alignment.center,
+                                                        child : Text(
+                                                          (index + 1).toString(),
+                                                          style: const TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: 25,
+                                                          ),
                                                         ),
                                                       ),
-                                                      Expanded(
-                                                          flex: 5,
+
+                                                      SizedBox(
+                                                          width : width*0.5,
                                                           child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                              mainAxisAlignment: MainAxisAlignment.center,
                                                               children: <Widget>[
                                                                 Text(
                                                                   top5RankBid[index]['product_name'],
                                                                   style: const TextStyle(
                                                                     fontSize: 12,
+                                                                    overflow: TextOverflow.ellipsis,
                                                                   ),
                                                                 ),
                                                                 Text(
                                                                   top5RankBid[index]['place'].toString(),
                                                                   style: const TextStyle(
                                                                     fontSize: 12,
+                                                                    overflow: TextOverflow.ellipsis,
                                                                   ),
                                                                 ),
                                                                 Text(
                                                                   "${top5RankBid[index]['seat_class']}석 ${top5RankBid[index]['seat_No']}번",
                                                                   style: const TextStyle(
                                                                     fontSize: 12,
+                                                                    overflow: TextOverflow.ellipsis,
                                                                   ),
                                                                 ),
                                                               ]
                                                           )
                                                       ),
                                                       Expanded(
-                                                          flex: 1,
                                                           child: Center(
                                                             child: Row(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              crossAxisAlignment: CrossAxisAlignment.center,
                                                               children: <Widget> [
                                                                 Text(
                                                                   top5RankBid[index]['bid_count'].toString(),
@@ -315,7 +326,7 @@ class _Market extends State<Market> {
                                       );
                                     }
                                 ),
-                                const SizedBox(height: 40),
+                                SizedBox(height: height*0.05),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget> [
@@ -351,17 +362,41 @@ class _Market extends State<Market> {
                                       fontSize: 15,
                                     )
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: height*0.025),
                                 ListView.builder(
                                     physics: const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     itemCount: deadline.length,
                                     itemBuilder: (context, index) {
                                       return Card(
-                                          child: SizedBox(
+                                          color: Colors.white24,
+                                          elevation : 0,
+                                          child: InkWell
+                                          (
+                                            highlightColor: Colors.transparent,
+                                            splashFactory: NoSplash.splashFactory,
+                                            onTap :(){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => MarketDetails(
+                                                        token_id: deadline[index]['token_id'],
+                                                        product_name: deadline[index]['product_name'],
+                                                        owner: deadline[index]['owner'],
+                                                        place: deadline[index]['place'],
+                                                        performance_date: deadline[index]['performance_date'],
+                                                        seat_class: deadline[index]['seat_class'],
+                                                        seat_No: deadline[index]['seat_No'],
+                                                      )
+                                                  )
+                                              );
+                                            },
+                                          child : SizedBox(
                                               width: double.infinity,
+                                              height : height*0.07,
                                               child: Row(
                                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
                                                   children: <Widget> [
                                                     Expanded(
                                                       flex: 1,
@@ -383,18 +418,15 @@ class _Market extends State<Market> {
                                                     )
                                                   ]
                                               )
-                                          )
+                                          ),
+                                      )
                                       );
                                     }
                                 ),
                               ]
                           ),
                         ),
-                      ),
                     ),
-                  ),
-                ],
-              ),
               floatingActionButton: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget> [
