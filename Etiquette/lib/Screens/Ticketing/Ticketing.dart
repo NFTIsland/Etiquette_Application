@@ -202,32 +202,32 @@ class _Ticketing extends State<Ticketing> {
               ),
               drawer: drawer(context, theme, nickname),
               body: SingleChildScrollView(
-                child : Column(
-                    children : <Widget> [
-                Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.only(left: width*0.05, right: width*0.05),
-                                child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽에 딱 붙도록 설정
-                                    children: <Widget> [
-                                      SizedBox(height: height*0.025),
-                                      const Text(
-                                        "Comming soon",
-                                          style: TextStyle(
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold
-                                          )
-                                      ),
-                                      const Text(
-                                          "곧 티켓팅이 시작됩니다!",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                          )
-                                      ),
-                                      SizedBox(height: height*0.025),
-                                      (deadline.length! == 0) ?
-                                      (
-                                          Container(
+                  child : Column(
+                      children : <Widget> [
+                        Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.only(left: width*0.05, right: width*0.05),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽에 딱 붙도록 설정
+                                children: <Widget> [
+                                  SizedBox(height: height*0.025),
+                                  const Text(
+                                      "Comming soon",
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold
+                                      )
+                                  ),
+                                  const Text(
+                                      "곧 티켓팅이 시작됩니다!",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                      )
+                                  ),
+                                  SizedBox(height: height*0.025),
+                                  (deadline.length! == 0) ?
+                                  (
+                                      Container(
                                           padding : EdgeInsets.fromLTRB(width*0.05, 0, width*0.05, 0),
                                           width : width*0.9,
                                           height : width*0.5,
@@ -235,7 +235,7 @@ class _Ticketing extends State<Ticketing> {
                                           child : const Text("예정된 티켓팅이 없습니다!", style : TextStyle(fontSize : 15))
                                       ))
                                       :
-                                      (
+                                  (
                                       GridView.builder(
                                           physics: const NeverScrollableScrollPhysics(),
                                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -248,163 +248,163 @@ class _Ticketing extends State<Ticketing> {
                                           itemCount: deadline.length,
                                           itemBuilder: (context, index) {
                                             return
-                                                Card(
-                                                color: Colors.white24,
-                                                elevation : 0,
-                                                child: InkWell(
+                                              Card(
+                                                  color: Colors.white24,
+                                                  elevation : 0,
+                                                  child: InkWell(
 
-                                                  highlightColor: Colors.transparent,
-                                                  splashFactory: NoSplash.splashFactory,
-                                                  onTap:(){},
-                                                  child :
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                children : <Widget>[
-                                                  Expanded(flex : 4,child: Image.network(
-                                                    "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
-                                                    fit: BoxFit.fill,
-                                                    //color: Colors.blue,
-                                                  ),),
-                                                  Expanded(
-                                                    flex: 1,
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children : <Widget> [
-                                                            Row(
-                                                              children : const <Widget>[
-                                                                Text("14:00", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold, ),),
-                                                                Text(" | 12.31", style : TextStyle(fontSize: 12, ))
-                                                              ]
-                                                            ),
-                                                            Text(deadline[index]['product_name'], style: const TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.bold,
-                                                              overflow: TextOverflow.ellipsis,
-                                                            )
-                                                            ),
-                                                            Text(deadline[index]['place'].toString(), style : const TextStyle(
-                                                              fontSize: 12,
-                                                              color: Colors.grey,
-                                                              overflow: TextOverflow.ellipsis,
-                                                            )
-                                                            ),
-                                                          ]
-                                                      )
+                                                    highlightColor: Colors.transparent,
+                                                    splashFactory: NoSplash.splashFactory,
+                                                    onTap:(){},
+                                                    child :
+                                                    Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children : <Widget>[
+                                                          Expanded(flex : 4,child: Image.network(
+                                                            "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
+                                                            fit: BoxFit.fill,
+                                                            //color: Colors.blue,
+                                                          ),),
+                                                          Expanded(
+                                                              flex: 1,
+                                                              child: Column(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  children : <Widget> [
+                                                                    Row(
+                                                                        children : const <Widget>[
+                                                                          Text("14:00", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold, ),),
+                                                                          Text(" | 12.31", style : TextStyle(fontSize: 12, ))
+                                                                        ]
+                                                                    ),
+                                                                    Text(deadline[index]['product_name'], style: const TextStyle(
+                                                                      fontSize: 13,
+                                                                      fontWeight: FontWeight.bold,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                    )
+                                                                    ),
+                                                                    Text(deadline[index]['place'].toString(), style : const TextStyle(
+                                                                      fontSize: 12,
+                                                                      color: Colors.grey,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                    )
+                                                                    ),
+                                                                  ]
+                                                              )
+                                                          )
+
+                                                        ]
+                                                    ),
                                                   )
-
-                                                  ]
-                                                ),
-                                            )
-                                                );
+                                              );
 
 
                                           }
                                       )
-                                      ),
-                                      SizedBox(height: height*0.05),
+                                  ),
+                                  SizedBox(height: height*0.05),
 
-                                    ]
-                                )
-                            ),
-                      CarouselSlider(
-                        options: CarouselOptions(
-                          viewportFraction: 1,
-                          height: height * 0.125,
-                          autoPlay: true, //자동재생 여부
+                                ]
+                            )
                         ),
-                        items: banner_posters.map((item) {
-                          return Builder(builder: (BuildContext context) {
-                            return SizedBox(
-                              width : width,
-                              child: Image.network(
+                        CarouselSlider(
+                          options: CarouselOptions(
+                            viewportFraction: 1,
+                            height: height * 0.125,
+                            autoPlay: true, //자동재생 여부
+                          ),
+                          items: banner_posters.map((item) {
+                            return Builder(builder: (BuildContext context) {
+                              return SizedBox(
+                                width : width,
+                                child: Image.network(
                                   item,
                                   fit: BoxFit.fill,
-                              ),
-                            );
-                          });
-                        }).toList(),
-                      ),
+                                ),
+                              );
+                            });
+                          }).toList(),
+                        ),
 
-                      SizedBox(height: height*0.05),
-                      Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.only(left: width*0.05, right: width*0.05),
-                        child : Column(
-                          children : <Widget>[
-                            const Text(
-                                "Hot Pick",
-                                style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold
-                                )
-                            ),
-                            const Text(
-                                "사람들의 관심도가 높은 티켓을 보여드립니다.",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                )
-                            ),
-                            SizedBox(height: height*0.025),
-                            ListView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: hotpick.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                      color: Colors.white24,
-                                      elevation : 0,
-                                      child:InkWell(
-                                          highlightColor: Colors.transparent,
-                                          splashFactory: NoSplash.splashFactory,
-                                      onTap : (){ },
-                                      child :
-                                      SizedBox(
-                                          width: double.infinity,
-                                          height : height*0.07,
-                                          child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Image.network(
-                                                  "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
-                                                  width: height*0.07,
-                                                  height: height*0.07,
-                                                  fit: BoxFit.fill,
-                                                ),
-
-                                                Container(
-                                                  width: height*0.07,
-                                                  height: height*0.07,
-                                                  alignment: Alignment.center,
-                                                  child : Text(
-                                                    (index + 1).toString(),
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 25,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                    child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisAlignment: MainAxisAlignment.center,
+                        SizedBox(height: height*0.05),
+                        Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.only(left: width*0.05, right: width*0.05),
+                            child : Column(
+                                children : <Widget>[
+                                  const Text(
+                                      "Hot Pick",
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold
+                                      )
+                                  ),
+                                  const Text(
+                                      "사람들의 관심도가 높은 티켓을 보여드립니다.",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                      )
+                                  ),
+                                  SizedBox(height: height*0.025),
+                                  ListView.builder(
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: hotpick.length,
+                                      itemBuilder: (context, index) {
+                                        return Card(
+                                            color: Colors.white24,
+                                            elevation : 0,
+                                            child:InkWell(
+                                                highlightColor: Colors.transparent,
+                                                splashFactory: NoSplash.splashFactory,
+                                                onTap : (){ },
+                                                child :
+                                                SizedBox(
+                                                    width: double.infinity,
+                                                    height : height*0.07,
+                                                    child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
                                                         children: <Widget>[
-                                                          Text(hotpick[index]['product_name'], overflow: TextOverflow.ellipsis),
-                                                          Text(hotpick[index]['place'].toString(), overflow: TextOverflow.ellipsis),
+                                                          Image.network(
+                                                            "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
+                                                            width: height*0.07,
+                                                            height: height*0.07,
+                                                            fit: BoxFit.fill,
+                                                          ),
+
+                                                          Container(
+                                                            width: height*0.07,
+                                                            height: height*0.07,
+                                                            alignment: Alignment.center,
+                                                            child : Text(
+                                                              (index + 1).toString(),
+                                                              style: const TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 25,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                              child: Column(
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                  children: <Widget>[
+                                                                    Text(hotpick[index]['product_name'], overflow: TextOverflow.ellipsis),
+                                                                    Text(hotpick[index]['place'].toString(), overflow: TextOverflow.ellipsis),
+                                                                  ]
+                                                              )
+                                                          )
                                                         ]
                                                     )
                                                 )
-                                              ]
-                                          )
-                                      )
-                                      )
-                                  );
-                                }
-                            ),
+                                            )
+                                        );
+                                      }
+                                  ),
 
-                            SizedBox(height: height*0.05),
-                            /*
+                                  SizedBox(height: height*0.05),
+                                  /*
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget> [
@@ -476,12 +476,12 @@ class _Ticketing extends State<Ticketing> {
                                 }
                             ),
                             */
-                          ]
+                                ]
+                            )
                         )
-                      )
-                ]
-            )
-            ),
+                      ]
+                  )
+              ),
 
             );
           }
