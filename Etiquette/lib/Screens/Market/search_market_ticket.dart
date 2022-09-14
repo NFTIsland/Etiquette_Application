@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
-import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/Screens/Market/market_details.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:shared_preferences/shared_preferences.dart';
