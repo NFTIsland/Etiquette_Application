@@ -6,9 +6,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:Etiquette/Models/serverset.dart';
-import 'package:Etiquette/Screens/Search.dart';
-import 'package:Etiquette/Screens/Ticketing/total_imminent.dart';
 import 'package:Etiquette/Screens/Ticketing/search_ticket.dart';
+import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
@@ -164,7 +163,6 @@ class _Ticketing extends State<Ticketing> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-
               appBar: AppBar(
                   iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
                   title: Text("Ticketing", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),
@@ -202,99 +200,101 @@ class _Ticketing extends State<Ticketing> {
               ),
               drawer: drawer(context, theme, nickname),
               body: SingleChildScrollView(
-                child : Column(
-                    children : <Widget> [
-                Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.only(left: width*0.05, right: width*0.05),
-                                child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽에 딱 붙도록 설정
-                                    children: <Widget> [
-                                      SizedBox(height: height*0.025),
-                                      const Text(
-                                        "Comming soon",
-                                          style: TextStyle(
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold
-                                          )
-                                      ),
-                                      const Text(
-                                          "곧 티켓팅이 시작됩니다!",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                          )
-                                      ),
-                                      SizedBox(height: height*0.025),
-                                      GridView.builder(
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
-                                            childAspectRatio: 3/5,
-                                            mainAxisSpacing: height*0.01, //수평 Padding
-                                            crossAxisSpacing: width*0.05, //수직 Padding
-                                          ),
-                                          shrinkWrap: true,
-                                          itemCount: deadline.length,
-                                          itemBuilder: (context, index) {
-                                            return
-                                                Card(
-                                                color: Colors.white24,
-                                                elevation : 0,
-                                                child: InkWell(
+                child: Column(
+                    children: <Widget> [
+                      Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.only(left: width*0.05, right: width*0.05),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽에 딱 붙도록 설정
+                              children: <Widget> [
+                                SizedBox(height: height*0.025),
+                                const Text(
+                                    "Comming soon",
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold
+                                    )
+                                ),
+                                const Text(
+                                    "곧 티켓팅이 시작됩니다!",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    )
+                                ),
+                                SizedBox(height: height * 0.025),
+                                GridView.builder(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2, // 1 개의 행에 보여줄 item 개수
+                                      childAspectRatio: 3/5,
+                                      mainAxisSpacing: height*0.01, // 수평 Padding
+                                      crossAxisSpacing: width*0.05, // 수직 Padding
+                                    ),
+                                    shrinkWrap: true,
+                                    itemCount: deadline.length,
+                                    itemBuilder: (context, index) {
+                                      return Card(
+                                          color: Colors.white24,
+                                          elevation : 0,
+                                          child: InkWell(
+                                            highlightColor: Colors.transparent,
+                                            splashFactory: NoSplash.splashFactory,
+                                            onTap: () {
 
-                                                  highlightColor: Colors.transparent,
-                                                  splashFactory: NoSplash.splashFactory,
-                                                  onTap:(){},
-                                                  child :
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                children : <Widget>[
-                                                  Expanded(flex : 4,child: Image.network(
-                                                    "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
-                                                    fit: BoxFit.fill,
-                                                    //color: Colors.blue,
-                                                  ),),
+                                            },
+                                            child :
+                                            Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget> [
                                                   Expanded(
-                                                    flex: 1,
+                                                    flex : 4,
+                                                    child: Image.network(
+                                                      "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                      flex: 1,
                                                       child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
+                                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
                                                           crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children : <Widget> [
+                                                          children: <Widget> [
                                                             Row(
-                                                              children : const <Widget>[
-                                                                Text("14:00", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold, ),),
-                                                                Text(" | 12.31", style : TextStyle(fontSize: 12, ))
-                                                              ]
+                                                                children : const <Widget> [
+                                                                  Text("14:00", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold, ),),
+                                                                  Text(" | 12.31", style : TextStyle(fontSize: 12, ))
+                                                                ]
                                                             ),
-                                                            Text(deadline[index]['product_name'], style: const TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.bold,
-                                                              overflow: TextOverflow.ellipsis,
-                                                            )
+                                                            Text(
+                                                                deadline[index]['product_name'],
+                                                                style: const TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                )
                                                             ),
-                                                            Text(deadline[index]['place'].toString(), style : const TextStyle(
-                                                              fontSize: 12,
-                                                              color: Colors.grey,
-                                                              overflow: TextOverflow.ellipsis,
-                                                            )
+                                                            Text(
+                                                                deadline[index]['place'].toString(),
+                                                                style: const TextStyle(
+                                                                  fontSize: 12,
+                                                                  color: Colors.grey,
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                )
                                                             ),
                                                           ]
                                                       )
                                                   )
-
-                                                  ]
-                                                ),
-                                            )
-                                                );
-
-
-                                          }
-                                      ),
-                                      SizedBox(height: height*0.05),
-
-                                    ]
-                                )
-                            ),
+                                                ]
+                                            ),
+                                          )
+                                      );
+                                    }
+                                ),
+                                SizedBox(height: height*0.05),
+                              ]
+                          )
+                      ),
                       CarouselSlider(
                         options: CarouselOptions(
                           viewportFraction: 1,
@@ -313,13 +313,12 @@ class _Ticketing extends State<Ticketing> {
                           });
                         }).toList(),
                       ),
-
                       SizedBox(height: height*0.05),
                       Container(
                           width: double.infinity,
-                          padding: EdgeInsets.only(left: width*0.05, right: width*0.05),
+                          padding: EdgeInsets.only(left: width * 0.05, right: width * 0.05),
                         child : Column(
-                          children : <Widget>[
+                          children : <Widget> [
                             const Text(
                                 "Hot Pick",
                                 style: TextStyle(
@@ -341,57 +340,64 @@ class _Ticketing extends State<Ticketing> {
                                 itemBuilder: (context, index) {
                                   return Card(
                                       color: Colors.white24,
-                                      elevation : 0,
-                                      child:InkWell(
+                                      elevation: 0,
+                                      child: InkWell(
                                           highlightColor: Colors.transparent,
                                           splashFactory: NoSplash.splashFactory,
-                                      onTap : (){ },
-                                      child :
-                                      SizedBox(
-                                          width: double.infinity,
-                                          height : height*0.07,
-                                          child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Image.network(
-                                                  "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
-                                                  width: height*0.07,
-                                                  height: height*0.07,
-                                                  fit: BoxFit.fill,
-                                                ),
-
-                                                Container(
-                                                  width: height*0.07,
-                                                  height: height*0.07,
-                                                  alignment: Alignment.center,
-                                                  child : Text(
-                                                    (index + 1).toString(),
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 25,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                    child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        children: <Widget>[
-                                                          Text(hotpick[index]['product_name'], overflow: TextOverflow.ellipsis),
-                                                          Text(hotpick[index]['place'].toString(), overflow: TextOverflow.ellipsis),
-                                                        ]
-                                                    )
+                                          onTap : () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) => TicketDetails(
+                                                  product_name: hotpick[index]['product_name'],
+                                                  place: hotpick[index]['place'],
+                                                  showPurchaseButton: true,
                                                 )
-                                              ]
+                                              )
+                                            );
+                                          },
+                                          child : SizedBox(
+                                              width: double.infinity,
+                                              height: height * 0.07,
+                                              child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Image.network(
+                                                      "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
+                                                      width: height * 0.07,
+                                                      height: height * 0.07,
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                    Container(
+                                                      width: height * 0.07,
+                                                      height: height * 0.07,
+                                                      alignment: Alignment.center,
+                                                      child : Text(
+                                                        (index + 1).toString(),
+                                                        style: const TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 25,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                        child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: <Widget>[
+                                                              Text(hotpick[index]['product_name'], overflow: TextOverflow.ellipsis),
+                                                              Text(hotpick[index]['place'], overflow: TextOverflow.ellipsis),
+                                                            ]
+                                                        )
+                                                    )
+                                                  ]
+                                              )
                                           )
-                                      )
                                       )
                                   );
                                 }
                             ),
-
-                            SizedBox(height: height*0.05),
+                            SizedBox(height: height * 0.05),
                             /*
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
