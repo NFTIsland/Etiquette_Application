@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:async';
-import 'package:Etiquette/Screens/Market/upload_ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -54,7 +53,8 @@ class _TicketDetails extends State<TicketDetails> {
     final kas_address_data = await getKasAddress();
 
     if (kas_address_data['statusCode'] != 200) {
-      displayDialog_checkonly(context, "티켓명", "서버와의 연결이 원활하지 않습니다.");
+      await displayDialog_checkonly(context, "티켓명", "서버와의 연결이 원활하지 않습니다.");
+      Navigator.of(context).pop();
       return;
     }
 
@@ -76,9 +76,10 @@ class _TicketDetails extends State<TicketDetails> {
           price_description = price_description + buildPriceDescription(price_info[len - 1]['seat_class'], price_info[len - 1]['price']);
         }
       } else {
-        int statusCode = res.statusCode;
         String msg = data['msg'];
-        displayDialog_checkonly(context, "티켓팅", "statusCode: $statusCode\n\nmessage: $msg");
+        await displayDialog_checkonly(context, "티켓팅", msg);
+        Navigator.of(context).pop();
+        return;
       }
     } catch (ex) {
       print("티켓팅 --> ${ex.toString()}");
@@ -90,9 +91,10 @@ class _TicketDetails extends State<TicketDetails> {
       Map<String, dynamic> data = json.decode(res.body);
       detail = data["data"][0];
     } catch (ex) {
-      int statusCode = 400;
       String msg = ex.toString();
-      displayDialog_checkonly(context, "티켓팅", "statusCode: $statusCode\n\nmessage: $msg");
+      await displayDialog_checkonly(context, "티켓팅", msg);
+      Navigator.of(context).pop();
+      return;
     }
 
     const url_isInterested = "$SERVER_IP/individual/isInterestedTicketing";
@@ -112,11 +114,15 @@ class _TicketDetails extends State<TicketDetails> {
         setState(() {});
       } else {
         String msg = data['msg'];
-        displayDialog_checkonly(context, "티켓팅", msg);
+        await displayDialog_checkonly(context, "티켓팅", msg);
+        Navigator.of(context).pop();
+        return;
       }
     } catch (ex) {
       String msg = ex.toString();
-      displayDialog_checkonly(context, "티켓팅", msg);
+      await displayDialog_checkonly(context, "티켓팅", msg);
+      Navigator.of(context).pop();
+      return;
     }
   }
 
@@ -189,8 +195,11 @@ class _TicketDetails extends State<TicketDetails> {
         future: future,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(
-                child: Text("Error")
+            return Scaffold(
+              appBar: appbarWithArrowBackButton("Ticketing", theme),
+              body: const Center(
+                child: Text("통신 에러가 발생했습니다."),
+              ),
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
