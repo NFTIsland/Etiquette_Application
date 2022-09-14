@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
-import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 
@@ -50,10 +49,13 @@ class _TicketingList extends State<TicketingList> {
           list.add(ex);
           setState(() {});
         }
+
+        if (list.isEmpty) {
+          displayDialog_checkonly(context, "티켓 검색", "검색 결과가 없습니다.");
+        }
       } else {
-        int statusCode = res.statusCode;
         String msg = data['msg'];
-        displayDialog_checkonly(context, "티켓팅", "statusCode: $statusCode\n\nmessage: $msg");
+        displayDialog_checkonly(context, "티켓팅", msg);
       }
     } catch (ex) {
       print("티켓팅 --> ${ex.toString()}");
