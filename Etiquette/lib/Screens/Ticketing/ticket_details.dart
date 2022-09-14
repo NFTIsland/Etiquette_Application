@@ -22,20 +22,23 @@ class TicketDetails extends StatefulWidget {
   State createState() => _TicketDetails();
 }
 
-class _TicketDetails extends State<TicketDetails> {
+class _TicketDetails extends State<TicketDetails> with SingleTickerProviderStateMixin {
   late bool theme;
   late double width;
   late double height;
   String? remain;
   bool like = false;
-
+  List tab = ["내용 요약", "가격 정보"];
   late final Future future;
   late Map<String, dynamic> detail;
   List price_list = [];
   String price_description = "";
 
+  TabController? tabcontroller;
+
   @override
   void dispose(){
+    tabcontroller!.dispose();
     super.dispose();
   }
 
@@ -177,6 +180,7 @@ class _TicketDetails extends State<TicketDetails> {
   @override
   void initState() {
     super.initState();
+    tabcontroller = TabController(length : 2, vsync: this, animationDuration: Duration.zero);
     getTheme();
     future = getTicketDetailFromDB();
   }
@@ -195,212 +199,150 @@ class _TicketDetails extends State<TicketDetails> {
           } else if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
               appBar: defaultAppbar("티켓 상세 정보"),
-              body: SafeArea(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                        padding : const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                        child : Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+              body: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children : <Widget>[
+                        Stack(
+                          children: <Widget>[
+                            Image(image:AssetImage("assets/image/mainlogo.png"),width: width, height : width*0.45,fit: BoxFit.fill),
+                            Positioned(
+                              left: width*0.08,
+                              top : width*0.1,
+                              child : Image.network("https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",width: width*0.36, height : width*0.45,fit: BoxFit.fill)
+                            )
+                          ],
+                          clipBehavior: Clip.none,
+                        ),
+                        Padding(
+                          padding : EdgeInsets.fromLTRB(width*0.08, width*0.15, width*0.08, 0),
+                          child : Text("${widget.product_name!}", style : TextStyle(fontSize: 20)),
+                        ),
+                        Padding(
+                          padding : EdgeInsets.fromLTRB(width*0.07, width*0.05, width*0.07, 0),
+                          child : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              // Image.network(img, width : double.infinity, height : width/2),
-                              const SizedBox(height : 10),
-                              Table(
-                                  border: TableBorder.all(),
-                                  columnWidths: const {
-                                    0: FixedColumnWidth(140.0),
-                                  },
-                                  children: <TableRow>[
-                                    tableRow("카테고리", detail['category']),
-                                    tableRow("티켓 이름", widget.product_name!),
-                                    tableRow("가격", price_description),
-                                    tableRow("장소", widget.place!),
-                                    TableRow(
-                                      children: <Widget> [
-                                        TableCell(
-                                          verticalAlignment: TableCellVerticalAlignment.middle,
-                                          child: Container(
-                                              padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                              alignment: Alignment.center,
-                                              child: const Text(
-                                                  "관심 티켓 등록",
-                                                  style: TextStyle(
-                                                    fontFamily: 'FiraBold',
-                                                    fontSize: 20,
-                                                  )
-                                              )
-                                          ),
-                                        ),
-                                        TableCell(
-                                          verticalAlignment: TableCellVerticalAlignment.middle,
-                                          child: Container(
-                                              padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                              alignment: Alignment.center,
-                                              child: LikeButton(
-                                                circleColor: const CircleColor(
-                                                    start: Color(0xff00ddff),
-                                                    end: Color(0xff0099cc)
-                                                ),
-                                                bubblesColor: const BubblesColor(
-                                                  dotPrimaryColor: Color(0xff33b5e5),
-                                                  dotSecondaryColor: Color(0xff0099cc),
-                                                ),
-                                                likeBuilder: (like) {
-                                                  return Icon(
-                                                    Icons.favorite,
-                                                    color: like ? Colors.deepPurpleAccent : Colors.grey,
-                                                  );
-                                                },
-                                                isLiked: like,
-                                                onTap: onLikeButtonTapped,
-                                              ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    // TableRow(
-                                    //   children: <Widget> [
-                                    //     TableCell(
-                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
-                                    //       child: Container(
-                                    //           height: 50,
-                                    //           alignment: Alignment.center,
-                                    //           child: const Text(
-                                    //               " 카테고리",
-                                    //               style: TextStyle(
-                                    //                 fontFamily: 'FiraBold',
-                                    //                 fontSize: 20,
-                                    //               )
-                                    //           )
-                                    //       ),
-                                    //     ),
-                                    //     TableCell(
-                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
-                                    //       child: Container(
-                                    //           height: 50,
-                                    //           alignment: Alignment.center,
-                                    //           child : Text(
-                                    //               detail['category'],
-                                    //               style : const TextStyle(
-                                    //                 fontFamily: 'FiraRegular',
-                                    //                 fontSize: 15,
-                                    //               )
-                                    //           )
-                                    //       ),
-                                    //     )
-                                    //   ],
-                                    // ),
-                                    // TableRow(
-                                    //     children: <Widget> [
-                                    //       TableCell(
-                                    //         verticalAlignment: TableCellVerticalAlignment.middle,
-                                    //         child: Container(
-                                    //           height: 50,
-                                    //           alignment: Alignment.center,
-                                    //           child: const Text(
-                                    //               "티켓 이름",
-                                    //               style : TextStyle(
-                                    //                 fontFamily: 'FiraBold',
-                                    //                 fontSize: 20,
-                                    //               )
-                                    //           ),
-                                    //         ),
-                                    //       ),
-                                    //       TableCell(
-                                    //           verticalAlignment: TableCellVerticalAlignment.middle,
-                                    //           child: Container(
-                                    //             height: 50,
-                                    //             alignment: Alignment.center,
-                                    //             child : Text(
-                                    //                 widget.product_name!,
-                                    //                 style : const TextStyle(
-                                    //                   fontFamily: 'FiraRegular',
-                                    //                   fontSize: 15,
-                                    //                 )
-                                    //             ),
-                                    //           )
-                                    //       ),
-                                    //     ]
-                                    // ),
-                                    // TableRow(
-                                    //   children: <Widget> [
-                                    //     TableCell(
-                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
-                                    //       child: Container(
-                                    //         padding: const EdgeInsets.all(12.0),
-                                    //         alignment: Alignment.center,
-                                    //         child: const Text(
-                                    //             "가격",
-                                    //             style: TextStyle(
-                                    //               fontFamily: 'FiraBold',
-                                    //               fontSize: 20,
-                                    //             )
-                                    //         ),
-                                    //       ),
-                                    //     ),
-                                    //     TableCell(
-                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
-                                    //       child: Container(
-                                    //         padding: const EdgeInsets.all(12.0),
-                                    //         alignment: Alignment.center,
-                                    //         child: Text(
-                                    //             price_description,
-                                    //             style: const TextStyle(
-                                    //               fontFamily: 'FiraBold',
-                                    //               fontSize: 15,
-                                    //             )
-                                    //         ),
-                                    //       ),
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                    // TableRow(
-                                    //   children: <Widget> [
-                                    //     TableCell(
-                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
-                                    //       child: Container(
-                                    //           padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                    //           alignment: Alignment.center,
-                                    //           child: const Text(
-                                    //               "장소",
-                                    //               style: TextStyle(
-                                    //                 fontFamily: 'FiraBold',
-                                    //                 fontSize: 20,
-                                    //               )
-                                    //           )
-                                    //       ),
-                                    //     ),
-                                    //     TableCell(
-                                    //       verticalAlignment: TableCellVerticalAlignment.middle,
-                                    //       child: Container(
-                                    //           padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                    //           alignment: Alignment.center,
-                                    //           child: Text(
-                                    //               widget.place!,
-                                    //               style: const TextStyle(
-                                    //                 fontFamily: 'FiraRegular',
-                                    //                 fontSize: 15,
-                                    //               )
-                                    //           )
-                                    //       ),
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                  ]
+                              Row(
+                              children : <Widget>[
+                              Icon(Icons.location_on_outlined),
+                              Text("${widget.place!}", style : TextStyle(fontSize: 17))
+                              ]
                               ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-                                child: Text(
-                                  detail['description'].replaceAll('\\n', '\n\n'),
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                  ),
+                              LikeButton(
+                                circleColor: const CircleColor(
+                                    start: Color(0xff00ddff),
+                                    end: Color(0xff0099cc)
+                                ),
+                                bubblesColor: const BubblesColor(
+                                  dotPrimaryColor: Color(0xff33b5e5),
+                                  dotSecondaryColor: Color(0xff0099cc),
+                                ),
+                                likeBuilder: (like) {
+                                  return Icon(
+                                    Icons.favorite,
+                                    color: like ? Colors.red : Colors.grey,
+                                  );
+                                  },
+                                isLiked: like,
+                                onTap: onLikeButtonTapped,
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(height : height *0.02),
+                        Center(
+                          child :
+                        Container(
+                          alignment: Alignment.topCenter,
+                          width : width*0.84,
+                          height : width*0.1,
+                          decoration: BoxDecoration(border: Border.all(color : Colors.grey, width : 1),borderRadius: BorderRadius.circular(10), color : (theme ? const Color(0xffe8e8e8) : const Color(0xffffffff)),),
+                          child : TabBar(
+
+                            indicator : (tabcontroller!.index == 0) ?
+                            BoxDecoration(
+                              borderRadius: BorderRadius.only(bottomLeft : Radius.circular(9), topLeft: Radius.circular(9)),
+                                color : Color(0xff333333)
+                            )
+                            :
+                            BoxDecoration(
+                                borderRadius: BorderRadius.only(bottomRight : Radius.circular(9), topRight: Radius.circular(9)),
+                                color : Color(0xff333333)
+                            ),
+
+                            indicatorPadding: EdgeInsets.zero,
+                            labelPadding: EdgeInsets.zero,
+                            labelColor: Colors.black,
+                            controller: tabcontroller,
+                            tabs: [
+                              Tab(
+                                //text : '내용 요약',
+                                child: Container(
+                                  width : double.infinity,
+                                  alignment: Alignment.center,
+                                    decoration : const BoxDecoration(
+                                      border: Border(
+                                        right: BorderSide(
+                                          color: Colors.grey,
+                                          width: 1,
+                                          //style: BorderStyle.solid,
+                                        ),
+                                      ),
+                                    ),
+                                  child : Text("내용 요약", style : TextStyle(color : (tabcontroller!.index == 0) ? Colors.white : Colors.black))
                                 ),
                               ),
-                            ]
+                              Tab(
+                                  //text : '가격 정보',
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    child : Center(
+                                        child : Text("가격 정보",  style : TextStyle(color : (tabcontroller!.index == 0) ? Colors.black : Colors.white))
+                                    )
+                                ),
+                              )
+                            ],
+                            onTap : (int idx){setState(() {
+                              tabcontroller!.index = idx;
+                            });},
+                          ),
+                          ),
+                        ),
+                        SizedBox(height : height *0.02),
+                        Container(
+                          height : height,
+                          padding : EdgeInsets.fromLTRB(width*0.08, 0, width*0.08, 0),
+                          child: TabBarView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: tabcontroller,
+                            children: [
+                              Wrap(
+                                  direction: Axis.horizontal,
+                                  children : [
+                                    Text(detail['description'].replaceAll('\\n', '\n\n'))
+                                  ]
+                              ),
+                              /*
+                              Container(
+                                height : height,
+                                child: Center(child: Text(detail['description'].replaceAll('\\n', '\n\n'))),
+                              ),
+
+                               */
+                              Wrap(
+                                  direction: Axis.horizontal,
+                                  children : [
+                                    Text(price_description)
+                                  ]
+                              ),
+                            ],
+                          ),
                         )
-                    ),
+                      ],
+                    )
                   )
-              ),
+              ,
               floatingActionButton: Visibility(
                 //visible: widget.showPurchaseButton!,
                 child:
@@ -478,3 +420,32 @@ TableRow tableRow(String title, String value) {
     ],
   );
 }
+// tableRow("카테고리", detail['category']),
+//                                     tableRow("티켓 이름", widget.product_name!),
+//                                     tableRow("가격", price_description),
+//                                     tableRow("장소", widget.place!),
+//Text(
+//                                   detail['description'].replaceAll('\\n', '\n\n'),
+//                                   style: const TextStyle(
+//                                     fontSize: 13,
+//                                   ),
+//                                 ),
+//LikeButton(
+//                                                 circleColor: const CircleColor(
+//                                                     start: Color(0xff00ddff),
+//                                                     end: Color(0xff0099cc)
+//                                                 ),
+//                                                 bubblesColor: const BubblesColor(
+//                                                   dotPrimaryColor: Color(0xff33b5e5),
+//                                                   dotSecondaryColor: Color(0xff0099cc),
+//                                                 ),
+//                                                 likeBuilder: (like) {
+//                                                   return Icon(
+//                                                     Icons.favorite,
+//                                                     color: like ? Colors.red : Colors.grey,
+//                                                   );
+//                                                 },
+//                                                 isLiked: like,
+//                                                 onTap: onLikeButtonTapped,
+//                                               )
+

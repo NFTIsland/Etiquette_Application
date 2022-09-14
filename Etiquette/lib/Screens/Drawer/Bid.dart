@@ -248,12 +248,15 @@ class _Bid extends State<Bid> {
                                                       ),
                                                     ),
                                                     const SizedBox(height: 4),
-                                                    Text(
-                                                      bidlist[index]['product_name'],
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                      ),
+                                                    Flexible(
+                                                        child : RichText(
+                                                          overflow: TextOverflow.ellipsis,
+                                                          maxLines: 2,
+                                                          text : TextSpan(text :bidlist[index]['product_name'], style: const TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 12,
+                                                          ),),
+                                                        )
                                                     ),
                                                   ],
                                                 ),
@@ -268,13 +271,16 @@ class _Bid extends State<Bid> {
                                                       ),
                                                     ),
                                                     const SizedBox(height: 4),
-                                                    Text(
-                                                      bidlist[index]['place'],
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                      ),
-                                                    )
+                                                    Flexible(
+                                                        child : RichText(
+                                                          overflow: TextOverflow.ellipsis,
+                                                          maxLines: 2,
+                                                          text : TextSpan(text :bidlist[index]['place'], style: const TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 12,
+                                                          ),),
+                                                        )
+                                                    ),
                                                   ],
                                                 ),
                                                 Column(

@@ -236,12 +236,15 @@ class _Selling extends State<Selling> {
                                                       ),
                                                     ),
                                                     const SizedBox(height: 4),
-                                                    Text(
-                                                      sellinglist[index]['product_name'],
-                                                      style: const TextStyle(
+                                                    Flexible(
+                                                        child : RichText(
+                                                          overflow: TextOverflow.ellipsis,
+                                                      maxLines: 2,
+                                                      text : TextSpan(text :sellinglist[index]['product_name'], style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 12,
-                                                      ),
+                                                      ),),
+                                                    )
                                                     ),
                                                   ],
                                                 ),
@@ -256,13 +259,16 @@ class _Selling extends State<Selling> {
                                                       ),
                                                     ),
                                                     const SizedBox(height: 4),
-                                                    Text(
-                                                      sellinglist[index]['place'],
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                      ),
-                                                    )
+                                                    Flexible(
+                                                        child : RichText(
+                                                          overflow: TextOverflow.ellipsis,
+                                                          maxLines: 2,
+                                                          text : TextSpan(text :sellinglist[index]['place'], style: const TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 12,
+                                                          ),),
+                                                        )
+                                                    ),
                                                   ],
                                                 ),
                                                 Column(

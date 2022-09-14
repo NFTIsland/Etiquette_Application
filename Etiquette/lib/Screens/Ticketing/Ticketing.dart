@@ -191,7 +191,7 @@ class _Ticketing extends State<Ticketing> {
                           _setData(ala);
                         }
                       },
-                    color: (theme ? Colors.white : Colors.white)),
+                    ),
                     IconButton(
                       icon: const Icon(Icons.search),
                       onPressed: () {
@@ -225,6 +225,17 @@ class _Ticketing extends State<Ticketing> {
                                           )
                                       ),
                                       SizedBox(height: height*0.025),
+                                      (deadline.length! == 0) ?
+                                      (
+                                          Container(
+                                          padding : EdgeInsets.fromLTRB(width*0.05, 0, width*0.05, 0),
+                                          width : width*0.9,
+                                          height : width*0.5,
+                                          alignment: Alignment.center,
+                                          child : const Text("예정된 티켓팅이 없습니다!", style : TextStyle(fontSize : 15))
+                                      ))
+                                      :
+                                      (
                                       GridView.builder(
                                           physics: const NeverScrollableScrollPhysics(),
                                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -289,6 +300,7 @@ class _Ticketing extends State<Ticketing> {
 
 
                                           }
+                                      )
                                       ),
                                       SizedBox(height: height*0.05),
 
