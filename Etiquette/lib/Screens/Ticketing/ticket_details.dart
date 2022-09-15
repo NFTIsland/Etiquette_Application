@@ -34,10 +34,11 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
   String price_description = "";
 
   TabController? tabcontroller;
-
+  ScrollController? scrollController;
   @override
   void dispose(){
     tabcontroller!.dispose();
+    scrollController!.dispose();
     super.dispose();
   }
 
@@ -183,10 +184,14 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
     return !like;
   }
 
+  void _scrollDown(){
+    scrollController!.animateTo(width*0.77, duration: Duration(milliseconds: 500,), curve: Curves.ease);
+  }
   @override
   void initState() {
     super.initState();
     tabcontroller = TabController(length : 2, vsync: this, animationDuration: Duration.zero);
+    scrollController = ScrollController(initialScrollOffset: 0);
     getTheme();
     future = getTicketDetailFromDB();
   }
@@ -209,6 +214,7 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
             return Scaffold(
               appBar: defaultAppbar("티켓 상세 정보"),
               body: SingleChildScrollView(
+                controller: scrollController,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children : <Widget>[
@@ -263,6 +269,7 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
                         Center(
                           child :
                         Container(
+
                           alignment: Alignment.topCenter,
                           width : width*0.84,
                           height : width*0.1,
@@ -314,6 +321,7 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
                             ],
                             onTap : (int idx){setState(() {
                               tabcontroller!.index = idx;
+                              _scrollDown();
                             });},
                           ),
                           ),
