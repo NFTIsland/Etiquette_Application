@@ -549,8 +549,11 @@ class _Hold extends State<Hold> {
                                                   const SizedBox(height: 10),
                                                   Text(
                                                     holdlist[index]['product_name'],
+                                                    textAlign: TextAlign.center,
                                                     style: const TextStyle(
-                                                      fontSize: 17,
+                                                      fontFamily: 'NotoSans',
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 16,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 10),
@@ -558,12 +561,16 @@ class _Hold extends State<Hold> {
                                                     holdlist[index]['place'],
                                                     style: const TextStyle(
                                                       fontSize: 13,
+                                                      fontFamily: 'Pretendard',
+                                                      fontWeight: FontWeight.w400,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 10),
                                                   Text(
                                                     "${holdlist[index]['seat_class']}석 ${holdlist[index]['seat_No']}번",
                                                     style: const TextStyle(
+                                                      fontFamily: 'Pretendard',
+                                                      fontWeight: FontWeight.w400,
                                                       fontSize: 13,
                                                     ),
                                                   ),
@@ -571,6 +578,8 @@ class _Hold extends State<Hold> {
                                                   Text(
                                                     holdlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + holdlist[index]['performance_date'].substring(11, 16),
                                                     style: const TextStyle(
+                                                      fontFamily: 'Pretendard',
+                                                      fontWeight: FontWeight.w400,
                                                       fontSize: 13,
                                                     ),
                                                   ),

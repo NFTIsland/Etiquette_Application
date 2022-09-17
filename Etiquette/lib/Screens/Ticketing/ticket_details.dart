@@ -1,27 +1,32 @@
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
+
+import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:Etiquette/Screens/Ticketing/select_ticket.dart';
+import 'package:Etiquette/Utilities/add_comma_to_number.dart';
+import 'package:Etiquette/widgets/alertDialogWidget.dart';
+import 'package:Etiquette/widgets/appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:like_button/like_button.dart';
-import 'package:Etiquette/widgets/appbar.dart';
-import 'package:Etiquette/Models/serverset.dart';
-import 'package:Etiquette/widgets/alertDialogWidget.dart';
-import 'package:Etiquette/Utilities/add_comma_to_number.dart';
-import 'package:Etiquette/Screens/Ticketing/select_ticket.dart';
-import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TicketDetails extends StatefulWidget {
   String? product_name;
   String? place;
   bool? showPurchaseButton;
-  TicketDetails({Key? key, this.product_name, this.place, this.showPurchaseButton}) : super(key: key);
+
+  TicketDetails(
+      {Key? key, this.product_name, this.place, this.showPurchaseButton})
+      : super(key: key);
 
   @override
   State createState() => _TicketDetails();
 }
 
-class _TicketDetails extends State<TicketDetails> with SingleTickerProviderStateMixin {
+class _TicketDetails extends State<TicketDetails>
+    with SingleTickerProviderStateMixin {
   late bool theme;
   late double width;
   late double height;
@@ -32,11 +37,14 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
   late Map<String, dynamic> detail;
   List price_list = [];
   String price_description = "";
+  GlobalKey _tabbar = GlobalKey();
+  GlobalKey _tabbarview = GlobalKey();
 
   TabController? tabcontroller;
   ScrollController? scrollController;
+
   @override
-  void dispose(){
+  void dispose() {
     tabcontroller!.dispose();
     scrollController!.dispose();
     super.dispose();
@@ -63,7 +71,8 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
     }
 
     final kas_address = kas_address_data['data'][0]['kas_address'];
-    final url_priceInfo = "$SERVER_IP/ticket/ticketPriceInfo/${widget.product_name!}";
+    final url_priceInfo =
+        "$SERVER_IP/ticket/ticketPriceInfo/${widget.product_name!}";
     price_description = "";
     try {
       var res = await http.get(Uri.parse(url_priceInfo));
@@ -72,12 +81,18 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
         List price_info = data["data"];
         int len = price_info.length;
         if (len == 1) {
-          price_description = buildPriceDescription(price_info[0]['seat_class'], price_info[0]['price']);
+          price_description = buildPriceDescription(
+              price_info[0]['seat_class'], price_info[0]['price']);
         } else {
           for (int i = 0; i < len - 1; i++) {
-            price_description = price_description + buildPriceDescription(price_info[i]['seat_class'], price_info[i]['price']) + "\n";
+            price_description = price_description +
+                buildPriceDescription(
+                    price_info[i]['seat_class'], price_info[i]['price']) +
+                "\n";
           }
-          price_description = price_description + buildPriceDescription(price_info[len - 1]['seat_class'], price_info[len - 1]['price']);
+          price_description = price_description +
+              buildPriceDescription(price_info[len - 1]['seat_class'],
+                  price_info[len - 1]['price']);
         }
       } else {
         String msg = data['msg'];
@@ -89,7 +104,8 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
       print("티켓팅 --> ${ex.toString()}");
     }
 
-    final url_description = "$SERVER_IP/ticket/ticketDescription/${widget.product_name!}";
+    final url_description =
+        "$SERVER_IP/ticket/ticketDescription/${widget.product_name!}";
     try {
       var res = await http.get(Uri.parse(url_description));
       Map<String, dynamic> data = json.decode(res.body);
@@ -184,13 +200,19 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
     return !like;
   }
 
-  void _scrollDown(){
-    scrollController!.animateTo(width*0.77, duration: Duration(milliseconds: 500,), curve: Curves.ease);
+  void _scrollDown() {
+    Scrollable.ensureVisible(_tabbar.currentContext!,
+        duration: Duration(
+          milliseconds: 500,
+        ),
+        curve: Curves.ease);
   }
+
   @override
   void initState() {
     super.initState();
-    tabcontroller = TabController(length : 2, vsync: this, animationDuration: Duration.zero);
+    tabcontroller =
+        TabController(length: 2, vsync: this, animationDuration: Duration.zero);
     scrollController = ScrollController(initialScrollOffset: 0);
     getTheme();
     future = getTicketDetailFromDB();
@@ -212,209 +234,390 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-              appBar: defaultAppbar("티켓 상세 정보"),
-              body: SingleChildScrollView(
-                controller: scrollController,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children : <Widget>[
-                        Stack(
-                          children: <Widget>[
-                            Image(image:AssetImage("assets/image/mainlogo.png"),width: width, height : width*0.45,fit: BoxFit.fill),
-                            Positioned(
-                              left: width*0.08,
-                              top : width*0.1,
-                              child : Image.network("https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",width: width*0.36, height : width*0.45,fit: BoxFit.fill)
-                            )
-                          ],
-                          clipBehavior: Clip.none,
-                        ),
-                        Padding(
-                          padding : EdgeInsets.fromLTRB(width*0.08, width*0.15, width*0.08, 0),
-                          child : Text("${widget.product_name!}", style : TextStyle(fontSize: 20)),
-                        ),
-                        Padding(
-                          padding : EdgeInsets.fromLTRB(width*0.07, width*0.05, width*0.07, 0),
-                          child : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Row(
-                              children : <Widget>[
-                              Icon(Icons.location_on_outlined),
-                              Text("${widget.place!}", style : TextStyle(fontSize: 17))
-                              ]
-                              ),
-                              LikeButton(
-                                circleColor: const CircleColor(
-                                    start: Color(0xff00ddff),
-                                    end: Color(0xff0099cc)
-                                ),
-                                bubblesColor: const BubblesColor(
-                                  dotPrimaryColor: Color(0xff33b5e5),
-                                  dotSecondaryColor: Color(0xff0099cc),
-                                ),
-                                likeBuilder: (like) {
-                                  return Icon(
-                                    Icons.favorite,
-                                    color: like ? Colors.red : Colors.grey,
-                                  );
-                                  },
-                                isLiked: like,
-                                onTap: onLikeButtonTapped,
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(height : height *0.02),
-                        Center(
-                          child :
-                        Container(
-
-                          alignment: Alignment.topCenter,
-                          width : width*0.84,
-                          height : width*0.1,
-                          decoration: BoxDecoration(border: Border.all(color : Colors.grey, width : 1),borderRadius: BorderRadius.circular(10), color : (theme ? const Color(0xffe8e8e8) : const Color(0xffffffff)),),
-                          child : TabBar(
-
-                            indicator : (tabcontroller!.index == 0) ?
-                            BoxDecoration(
-                              borderRadius: BorderRadius.only(bottomLeft : Radius.circular(9), topLeft: Radius.circular(9)),
-                                color : Color(0xff333333)
-                            )
-                            :
-                            BoxDecoration(
-                                borderRadius: BorderRadius.only(bottomRight : Radius.circular(9), topRight: Radius.circular(9)),
-                                color : Color(0xff333333)
-                            ),
-
-                            indicatorPadding: EdgeInsets.zero,
-                            labelPadding: EdgeInsets.zero,
-                            labelColor: Colors.black,
-                            controller: tabcontroller,
-                            tabs: [
-                              Tab(
-                                //text : '내용 요약',
-                                child: Container(
-                                  width : double.infinity,
-                                  alignment: Alignment.center,
-                                    decoration : const BoxDecoration(
-                                      border: Border(
-                                        right: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1,
-                                          //style: BorderStyle.solid,
+                appBar: defaultAppbar("티켓 상세 정보"),
+                body: Column(children: <Widget>[
+                  Flexible(
+                      fit: FlexFit.tight,
+                      child: Container(
+                          child: NestedScrollView(
+                              headerSliverBuilder: (context, value) {
+                                return [
+                                  SliverToBoxAdapter(
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                        Stack(
+                                          children: <Widget>[
+                                            Image(
+                                                image: AssetImage(
+                                                    "assets/image/mainlogo.png"
+                                                ),
+                                                width: width,
+                                                height: width * 0.33,
+                                                fit: BoxFit.fill
+                                            ),
+                                            Positioned(
+                                                left: width * 0.05,
+                                                top: width * 0.05,
+                                                child: Image.network(
+                                                    "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
+                                                    width: width * 0.25,
+                                                    height: width * 0.38,
+                                                    fit: BoxFit.fill
+                                                )
+                                            )
+                                          ],
+                                          clipBehavior: Clip.none,
                                         ),
-                                      ),
+                                        Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              width * 0.05,
+                                              width * 0.15,
+                                              width * 0.05,
+                                              0
+                                          ),
+                                          child: Text("${widget.product_name!}",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontFamily: 'NotoSans',
+                                                  fontWeight: FontWeight.w800
+                                              )
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              width * 0.04,
+                                              width * 0.01,
+                                              width * 0.04,
+                                              0),
+                                          child:
+                                          Column(
+                                          children : [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Row(children: <Widget>[
+                                                Icon(
+                                                    Icons.location_on_outlined,
+                                                    size: 20
+                                                ),
+                                                SizedBox(width: width * 0.01),
+                                                Text("${widget.place!}",
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontFamily:
+                                                            'Pretendard',
+                                                        fontWeight:
+                                                            FontWeight.w400)
+                                                )
+                                              ]
+                                              ),
+                                              LikeButton(
+                                                circleColor: const CircleColor(
+                                                    start: Color(0xff00ddff),
+                                                    end: Color(0xff0099cc)
+                                                ),
+                                                bubblesColor:
+                                                    const BubblesColor(
+                                                  dotPrimaryColor:
+                                                      Color(0xff33b5e5),
+                                                  dotSecondaryColor:
+                                                      Color(0xff0099cc),
+                                                ),
+                                                likeBuilder: (like) {
+                                                  return Icon(
+                                                    Icons.favorite,
+                                                    color: like
+                                                        ? Colors.red
+                                                        : Colors.grey,
+                                                    size: 30,
+                                                  );
+                                                },
+                                                isLiked: like,
+                                                onTap: onLikeButtonTapped,
+                                              )
+                                            ],
+                                          ),
+                                            Visibility(
+                                              visible: !widget.showPurchaseButton!,
+                                                child:
+                                            Row(children : [
+                                              Icon(Icons.event_seat_outlined, size : 20),
+                                              SizedBox(width: width * 0.01),
+                                              Text("외야그린석 410번",
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'Pretendard',
+                                                      fontWeight:
+                                                      FontWeight.w400)
+                                              )
+                                            ])
+                                            )
+                                            ]
+                                            )
+
+                                        ),
+                                        SizedBox(height: height * 0.015),
+                                        Center(
+                                          child: Container(
+                                            key: _tabbar,
+                                            alignment: Alignment.topCenter,
+                                            width: width * 0.9,
+                                            height: width * 0.09,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey, width: 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: (theme
+                                                  ? const Color(0xffe8e8e8)
+                                                  : const Color(0xffffffff)
+                                              ),
+                                            ),
+                                            child: TabBar(
+                                              indicator: (tabcontroller!.index == 0)
+                                                  ? BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                              bottomLeft: Radius
+                                                                  .circular(9),
+                                                              topLeft: Radius
+                                                                  .circular(9)
+                                                          ),
+                                                      color: Color(0xff333333)
+                                              )
+                                                  : BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                              bottomRight: Radius
+                                                                  .circular(9),
+                                                              topRight: Radius
+                                                                  .circular(9)
+                                                          ),
+                                                      color: Color(0xff333333)
+                                              ),
+
+                                              indicatorPadding: EdgeInsets.zero,
+                                              labelPadding: EdgeInsets.zero,
+                                              controller: tabcontroller,
+                                              unselectedLabelStyle:
+                                                  const TextStyle(
+                                                      fontFamily: 'NotoSans',
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                              unselectedLabelColor:
+                                                  Colors.black,
+                                              labelColor: Colors.white,
+                                              labelStyle: TextStyle(
+                                                  fontFamily: 'NotoSans',
+                                                  fontWeight: FontWeight.w700),
+                                              tabs: [
+                                                Tab(
+                                                  text: "내용 요약",
+                                                ),
+                                                Tab(
+                                                  text: "가격 정보",
+                                                )
+                                              ],
+                                              onTap: (int idx) {
+                                                setState(() {
+                                                  tabcontroller!.index = idx;
+                                                  _scrollDown();
+                                                }
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ]
+                                      )
+                                  ),
+                                ];
+                              },
+                              body: Container(
+                                padding: EdgeInsets.fromLTRB(
+                                    width * 0.05, 0, width * 0.05, 0),
+                                child: TabBarView(
+                                  key: _tabbarview,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  controller: tabcontroller,
+                                  children: [
+                                    ListView(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        children: [
+                                          Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "\n상세 설명\n",
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontFamily: "NotoSans",
+                                                      fontWeight:
+                                                          FontWeight.w600
+                                                  ),
+                                                  overflow: TextOverflow.clip,
+                                                ),
+                                                Text(
+                                                    detail['description']
+                                                        .replaceAll(
+                                                            '\\n', '\n'),
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontFamily:
+                                                            "Pretendard",
+                                                        fontWeight:
+                                                            FontWeight.w400
+                                                    ),
+                                                    overflow: TextOverflow.clip
+                                                )
+                                              ]
+                                          ),
+                                        ]
                                     ),
-                                  child : Text("내용 요약", style : TextStyle(color : (tabcontroller!.index == 0) ? Colors.white : Colors.black))
+                                    ListView(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        children: [
+                                          Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text("\n좌석 별 가격",
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontFamily: "NotoSans",
+                                                        fontWeight:
+                                                            FontWeight.w600)
+                                                ),
+                                                Text(
+                                                    "\n${price_description.replaceAll("\n", "\n\n")}",
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontFamily:
+                                                            "Pretendard",
+                                                        fontWeight:
+                                                            FontWeight.w400)
+                                                )
+                                              ]
+                                          ),
+                                        ]
+                                    )
+                                  ],
                                 ),
-                              ),
-                              Tab(
-                                  //text : '가격 정보',
-                                child: Container(
-                                    alignment: Alignment.center,
-                                    child : Center(
-                                        child : Text("가격 정보",  style : TextStyle(color : (tabcontroller!.index == 0) ? Colors.black : Colors.white))
+                              )
+                          )
+                      )
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(width * 0.03, height * 0.01,
+                        width * 0.03, height * 0.011),
+                    color: Colors.white24,
+                    child: Visibility(
+                        child: widget.showPurchaseButton!
+                            ? ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    shadowColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(9.5)),
+                                    minimumSize:
+                                    Size.fromHeight(height * 0.062),
+                                    primary: (theme
+                                        ? const Color(0xffe8e8e8)
+                                        : Color(0xffEE3D43))
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SelectTicket(
+                                                product_name:
+                                                    widget.product_name!,
+                                                place: widget.place!,
+                                                category: detail['category'],
+                                              )
+                                      )
+                                  );
+                                },
+                                child: Text("예매하기",
+                                    style: TextStyle(
+                                      color: (theme
+                                          ? Color(0xff000000)
+                                          : Color(0xffffffff)
+                                      ),
                                     )
                                 ),
                               )
-                            ],
-                            onTap : (int idx){setState(() {
-                              tabcontroller!.index = idx;
-                              _scrollDown();
-                            });},
-                          ),
-                          ),
-                        ),
-                        SizedBox(height : height *0.02),
-                        Container(
-                          height : height,
-                          padding : EdgeInsets.fromLTRB(width*0.08, 0, width*0.08, 0),
-                          child: TabBarView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            controller: tabcontroller,
-                            children: [
-                              Wrap(
-                                  direction: Axis.horizontal,
-                                  children : [
-                                    Text(detail['description'].replaceAll('\\n', '\n\n'))
-                                  ]
-                              ),
-                              /*
-                              Container(
-                                height : height,
-                                child: Center(child: Text(detail['description'].replaceAll('\\n', '\n\n'))),
-                              ),
-
-                               */
-                              Wrap(
-                                  direction: Axis.horizontal,
-                                  children : [
-                                    Text(price_description)
-                                  ]
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    )
-                  )
-              ,
-              floatingActionButton: Visibility(
-                //visible: widget.showPurchaseButton!,
-                child:
-                widget.showPurchaseButton! ?
-                FloatingActionButton.extended(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(
-                            builder: (context) => SelectTicket(
-                              product_name: widget.product_name!,
-                              place: widget.place!,
-                              category: detail['category'],
-                            )
-                        )
-                    );
-                  },
-                  backgroundColor: (theme ? const Color(0xffe8e8e8) : Colors.green),
-                  foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
-                  label: const Text("구매하기"),
-                  icon: const Icon(Icons.navigation),
+                            : ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    shadowColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(9.5)),
+                                    minimumSize:
+                                        Size.fromHeight(height * 0.062),
+                                    primary: (theme
+                                        ? const Color(0xffe8e8e8)
+                                        : Color(0xffEE3D43))
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SelectTicket(
+                                                product_name:
+                                                    widget.product_name!,
+                                                place: widget.place!,
+                                                category: detail['category'],
+                                              )
+                                      )
+                                  );
+                                },
+                                child: Text("판매하기",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'NotoSans',
+                                      fontWeight: FontWeight.w600,
+                                      color: (theme
+                                          ? const Color(0xff000000)
+                                          : const Color(0xffffffff)
+                                      ),
+                                    )
+                                ),
+                              )
+                    ),
+                  ),
+                ]
                 )
-                :
-                FloatingActionButton.extended(
-                  onPressed: () {
-
-                  },
-                  backgroundColor: (theme ? const Color(0xffe8e8e8) : Colors.green),
-                  foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
-                  label: const Text("판매하기"),
-                  icon: const Icon(Icons.navigation),
-                )
-                ,
-              ),
-              floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             );
           }
           return const Center(
             child: CircularProgressIndicator(),
           );
-        });
+        }
+        );
   }
 }
 
 TableRow tableRow(String title, String value) {
   return TableRow(
-    children: <Widget> [
+    children: <Widget>[
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Container(
             padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
             alignment: Alignment.center,
-            child: Text(
-                title,
+            child: Text(title,
                 style: const TextStyle(
-                  fontFamily: 'FiraBold',
+                  fontFamily: '',
                   fontSize: 20,
                 )
             )
@@ -425,10 +628,9 @@ TableRow tableRow(String title, String value) {
         child: Container(
             padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
             alignment: Alignment.center,
-            child: Text(
-                value,
+            child: Text(value,
                 style: const TextStyle(
-                  fontFamily: 'FiraRegular',
+                  fontFamily: '',
                   fontSize: 15,
                 )
             )
@@ -437,32 +639,3 @@ TableRow tableRow(String title, String value) {
     ],
   );
 }
-// tableRow("카테고리", detail['category']),
-//                                     tableRow("티켓 이름", widget.product_name!),
-//                                     tableRow("가격", price_description),
-//                                     tableRow("장소", widget.place!),
-//Text(
-//                                   detail['description'].replaceAll('\\n', '\n\n'),
-//                                   style: const TextStyle(
-//                                     fontSize: 13,
-//                                   ),
-//                                 ),
-//LikeButton(
-//                                                 circleColor: const CircleColor(
-//                                                     start: Color(0xff00ddff),
-//                                                     end: Color(0xff0099cc)
-//                                                 ),
-//                                                 bubblesColor: const BubblesColor(
-//                                                   dotPrimaryColor: Color(0xff33b5e5),
-//                                                   dotSecondaryColor: Color(0xff0099cc),
-//                                                 ),
-//                                                 likeBuilder: (like) {
-//                                                   return Icon(
-//                                                     Icons.favorite,
-//                                                     color: like ? Colors.red : Colors.grey,
-//                                                   );
-//                                                 },
-//                                                 isLiked: like,
-//                                                 onTap: onLikeButtonTapped,
-//                                               )
-

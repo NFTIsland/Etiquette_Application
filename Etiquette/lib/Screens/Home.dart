@@ -213,6 +213,7 @@ class _Home extends State<Home> {
                         height : height * 0.4,
                         child: CarouselSlider(
                           options: CarouselOptions(
+                            viewportFraction: 0.9,
                             height: height * 0.4,
                             autoPlay: true, //자동재생 여부
                           ),
@@ -225,7 +226,7 @@ class _Home extends State<Home> {
                                   color: Colors.black,
                                   //border 를 주기 위해 decoration 사용
                                   border: Border.all(
-                                    width: 3,
+                                    width: 0,
                                     color: Colors.grey,
                                   ),
                                   borderRadius: BorderRadius.circular(16.0),
@@ -259,6 +260,8 @@ class _Home extends State<Home> {
                                     child: Text(
                                         "Klay 시세",
                                         style: TextStyle(
+                                            fontFamily: "Pretendard",
+                                            fontWeight: FontWeight.w400,
                                             fontSize: 20,
                                             color: (theme
                                                 ?  const Color(0xff000000)
@@ -274,10 +277,12 @@ class _Home extends State<Home> {
                                         return Text(
                                           getStrKlayCurrency(),
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            color: (theme
-                                                ?  const Color(0xff000000)
-                                                :  const Color(0xffffffff)),
+                                              fontFamily: "Pretendard",
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 20,
+                                              color: (theme
+                                                  ?  const Color(0xff000000)
+                                                  :  const Color(0xffffffff))
                                           ),
                                         );
                                       },
@@ -308,11 +313,14 @@ class _Home extends State<Home> {
                                     padding: EdgeInsets.only(left: width * 0.0361),
                                     child: Text(
                                         "서버시간",
-                                        style: TextStyle(
-                                            fontSize: 20, color: (theme
-                                            ?  const Color(0xff000000)
-                                            :  const Color(0xffffffff)),
-                                        )
+                                      style: TextStyle(
+                                          fontFamily: "Pretendard",
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 20,
+                                          color: (theme
+                                              ?  const Color(0xff000000)
+                                              :  const Color(0xffffffff))
+                                      ),
                                     ),
                                   ),
                                   Padding(
@@ -323,10 +331,12 @@ class _Home extends State<Home> {
                                         return Text(
                                           loadCurrentTime(),
                                           style: TextStyle(
-                                            fontSize: 15,
-                                            color: (theme
-                                              ?  const Color(0xff000000)
-                                                :  const Color(0xffffffff)),
+                                              fontFamily: "Pretendard",
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 15,
+                                              color: (theme
+                                                  ?  const Color(0xff000000)
+                                                  :  const Color(0xffffffff))
                                           ),
                                         );
                                       },
@@ -350,7 +360,7 @@ class _Home extends State<Home> {
                               children: <Widget>[
                                 Text(
                                     "공지사항",
-                                    style: TextStyle(fontSize: 20, color: (theme ? const Color(0xffffffff) : const Color(0xff000000)))
+                                    style: TextStyle( fontFamily : "Pretendard",fontWeight: FontWeight.w500, fontSize: 20, color: (theme ? const Color(0xffffffff) : const Color(0xff000000)))
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -365,7 +375,7 @@ class _Home extends State<Home> {
                                       "+more",
                                       style: TextStyle(
                                         fontSize: 15,
-                                        color: (theme ? const Color(0xffffffff) : const Color(0xff000000)),
+                                        color: Color(0xff5D5D5D),
                                       )
                                   ),
                                 ),
@@ -394,7 +404,7 @@ class _Home extends State<Home> {
                                               padding : EdgeInsets.only(left : width * 0.0361),
                                               child : Text(
                                                   notices[index]['title'],
-                                                  style: TextStyle(fontSize: 20, color: (theme ? const Color(0xff000000) : const Color(0xff000000)))
+                                                  style: TextStyle(fontFamily : "NotoSans", fontWeight : FontWeight.w400,fontSize: 20, color: (theme ? const Color(0xff000000) : const Color(0xff000000)))
                                               )
                                           )
                                       )

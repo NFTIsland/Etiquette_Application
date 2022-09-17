@@ -98,6 +98,7 @@ class _Market extends State<Market> {
             'place': item['place'],
             'seat_class': item['seat_class'],
             'seat_No': item['seat_No'],
+            'performance_date': item['performance_date'],
           };
           deadline.add(ex);
           setState(() {});
@@ -201,13 +202,16 @@ class _Market extends State<Market> {
                                 const Text(
                                     "Top 5 Tickets With Many Bidders",
                                     style: TextStyle(
-                                      fontSize: 22,
+                                      fontFamily: "Pretendard",
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                     )
                                 ),
                                 const Text(
                                     "입찰자가 많은 티켓 상위 5개를 보여드립니다.",
                                     style: TextStyle(
+                                      fontFamily: "Pretendard",
+                                      fontWeight: FontWeight.w500,
                                       fontSize: 15,
                                     )
                                 ),
@@ -260,8 +264,9 @@ class _Market extends State<Market> {
                                                         child : Text(
                                                           (index + 1).toString(),
                                                           style: const TextStyle(
-                                                            fontWeight: FontWeight.bold,
-                                                            fontSize: 25,
+                                                            fontFamily: "Pretendard",
+                                                            fontWeight: FontWeight.w400,
+                                                            fontSize: 15,
                                                           ),
                                                         ),
                                                       ),
@@ -269,12 +274,14 @@ class _Market extends State<Market> {
                                                       SizedBox(
                                                           width : width*0.5,
                                                           child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                               children: <Widget>[
                                                                 Text(
                                                                   top5RankBid[index]['product_name'],
                                                                   style: const TextStyle(
+                                                                    fontFamily: 'NotoSans',
+                                                                    fontWeight: FontWeight.w500,
                                                                     fontSize: 12,
                                                                     overflow: TextOverflow.ellipsis,
                                                                   ),
@@ -282,14 +289,20 @@ class _Market extends State<Market> {
                                                                 Text(
                                                                   top5RankBid[index]['place'].toString(),
                                                                   style: const TextStyle(
-                                                                    fontSize: 12,
+                                                                    color: Color(0xff7E7E7E),
+                                                                    fontFamily: 'NotoSans',
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: 9,
                                                                     overflow: TextOverflow.ellipsis,
                                                                   ),
                                                                 ),
                                                                 Text(
                                                                   "${top5RankBid[index]['seat_class']}석 ${top5RankBid[index]['seat_No']}번",
                                                                   style: const TextStyle(
-                                                                    fontSize: 12,
+                                                                    color: Color(0xff7E7E7E),
+                                                                    fontFamily: 'NotoSans',
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: 10,
                                                                     overflow: TextOverflow.ellipsis,
                                                                   ),
                                                                 ),
@@ -305,14 +318,17 @@ class _Market extends State<Market> {
                                                                 Text(
                                                                   top5RankBid[index]['bid_count'].toString(),
                                                                   style: const TextStyle(
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 20,
+                                                                    fontFamily: "Pretendard",
+                                                                    fontWeight: FontWeight.w400,
+                                                                    fontSize: 15,
                                                                   ),
                                                                 ),
                                                                 const Text(
                                                                   "명",
                                                                   style: TextStyle(
-                                                                    fontSize: 20,
+                                                                    fontFamily: "Pretendard",
+                                                                    fontWeight: FontWeight.w400,
+                                                                    fontSize: 15,
                                                                   ),
                                                                 )
                                                               ],
@@ -329,12 +345,144 @@ class _Market extends State<Market> {
                                 SizedBox(height: height*0.05),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children : <Widget>[
+                                    const Text(
+                                        "Deadline Imminent",
+                                        style: TextStyle(
+                                          fontSize: 25,
+                                          fontFamily: "Pretendard",
+                                          fontWeight: FontWeight.bold,
+                                        )
+                                    ),
+                                    TextButton(
+                                      child: const Text(
+                                          "+ 더보기",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Color(0xff5D5D5D),
+                                          )
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => const TotalImminentAuction()
+                                            )
+                                        );
+                                      },
+                                    )
+                                  ]
+                                ),
+                                const Text(
+                                    "마감 시각이 임박한 티켓들을 보여드립니다.",
+                                    style: TextStyle(
+                                      fontFamily: "Pretendard",
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15,
+                                    )
+                                ),
+                                SizedBox(height: height*0.025),
+                                (deadline.length! == 0) ?
+                                (
+                                    Container(
+                                        padding : EdgeInsets.fromLTRB(width*0.05, 0, width*0.05, 0),
+                                        width : width*0.9,
+                                        height : width*0.5,
+                                        alignment: Alignment.center,
+                                        child : const Text("마감이 임박한 티켓이 없습니다!",
+                                            style : TextStyle(
+                                              fontFamily: "Pretendard",
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 15,
+                                        ))
+                                    ))
+                                    :
+                                (
+                                    GridView.builder(
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
+                                          childAspectRatio: 3/5.5,
+                                          mainAxisSpacing: height*0.01, //수평 Padding
+                                          crossAxisSpacing: width*0.05, //수직 Padding
+                                        ),
+                                        shrinkWrap: true,
+                                        itemCount: deadline.length,
+                                        itemBuilder: (context, index) {
+                                          return
+                                            Card(
+                                                color: Colors.white24,
+                                                elevation : 0,
+                                                child: InkWell(
+
+                                                  highlightColor: Colors.transparent,
+                                                  splashFactory: NoSplash.splashFactory,
+                                                  onTap:(){},
+                                                  child :
+                                                  Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children : <Widget>[
+                                                        Expanded(flex : 3,child: Image.network(
+                                                          "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
+                                                          fit: BoxFit.fill,
+                                                          //color: Colors.blue,
+                                                        ),),
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Column(
+                                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children : <Widget> [
+                                                                  Row(
+                                                                      children : <Widget>[
+                                                                        //Text(deadline[index]['performance_date'])
+                                                                        Text("14:00", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold, ),),
+                                                                        Text(" | 12.31", style : TextStyle(fontSize: 12, ))
+                                                                      ]
+                                                                  ),
+                                                                  Text(deadline[index]['product_name'], style: const TextStyle(
+                                                                    fontFamily: "NotoSans",
+                                                                    fontSize: 13,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                  )
+                                                                  ),
+                                                                  Text(deadline[index]['place'].toString(), style : const TextStyle(
+                                                                    fontSize: 10,
+                                                                    fontFamily: "NotoSans",
+                                                                    color: Colors.grey,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                  ),
+                                                                  ),
+                                                                  Text("${deadline[index]['seat_class']}석 ${deadline[index]['seat_No']}번",style : const TextStyle(
+                                                                    fontFamily: "NotoSans",
+                                                                    fontSize: 10,
+                                                                    color: Colors.grey,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                  ),)
+                                                                ]
+                                                            )
+                                                        )
+
+                                                      ]
+                                                  ),
+                                                )
+                                            );
+                                        }
+                                    )
+                                ),
+                                SizedBox(height: height*0.05),
+                                /*
+                                                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget> [
                                     const Text(
                                         "Deadline Imminent",
                                         style: TextStyle(
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.bold
+                                            fontSize: 20,
+                                          fontFamily: "Pretendard",
+                                          fontWeight: FontWeight.bold,
                                         )
                                     ),
                                     TextButton(
@@ -357,8 +505,10 @@ class _Market extends State<Market> {
                                   ],
                                 ),
                                 const Text(
-                                    "마감 시각이 임박한 티켓들을 보여드립니다. (24시간 이내)",
+                                    "마감 시각이 임박한 티켓들을 보여드립니다.",
                                     style: TextStyle(
+                                      fontFamily: "Pretendard",
+                                      fontWeight: FontWeight.w500,
                                       fontSize: 15,
                                     )
                                 ),
@@ -395,20 +545,20 @@ class _Market extends State<Market> {
                                               width: double.infinity,
                                               height : height*0.07,
                                               child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   crossAxisAlignment: CrossAxisAlignment.center,
                                                   children: <Widget> [
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Image.network(
-                                                          "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
-                                                          width: 40,
-                                                          height: 40
-                                                      ),
+                                                    Image.network(
+                                                      "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
+                                                      width: height*0.07,
+                                                      height: height*0.07,
+                                                      fit: BoxFit.fill,
                                                     ),
+                                                    SizedBox(width : height*0.07),
                                                     Expanded(
-                                                        flex: 2,
                                                         child: Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: <Widget>[
                                                               Text(deadline[index]['product_name']),
                                                               Text(deadline[index]['place']),
@@ -423,10 +573,14 @@ class _Market extends State<Market> {
                                       );
                                     }
                                 ),
+                                SizedBox(height: height*0.025),
+                                 */
                               ]
                           ),
                         ),
                     ),
+
+              /*
               floatingActionButton: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget> [
@@ -447,6 +601,7 @@ class _Market extends State<Market> {
                 ],
               ),
               floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+              */
             );
           }
           return const Center(

@@ -90,7 +90,57 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
+  fonts:
+    - family: NotoSans
+      fonts :
+        - asset : assets/Font/NotoSans/NotoSansKR-Black.otf
+          weight : 800
+        - asset : assets/Font/NotoSans/NotoSansKR-Bold.otf
+          weight : 700
+        - asset : assets/Font/NotoSans/NotoSansKR-Light.otf
+          weight : 600
+        - asset : assets/Font/NotoSans/NotoSansKR-Medium.otf
+          weight : 500
+        - asset : assets/Font/NotoSans/NotoSansKR-Regular.otf
+          weight : 400
+        - asset : assets/Font/NotoSans/NotoSansKR-Thin.otf
+          weight : 300
+
+    - family: Pretendard
+      fonts :
+        - asset: assets/Font/Pretendard/Pretendard-Black.otf
+          weight: 900
+        - asset: assets/Font/Pretendard/Pretendard-ExtraBold.otf
+          weight: 800
+        - asset: assets/Font/Pretendard/Pretendard-Bold.otf
+          weight: 700
+        - asset: assets/Font/Pretendard/Pretendard-SemiBold.otf
+          weight: 600
+        - asset: assets/Font/Pretendard/Pretendard-Medium.otf
+          weight: 500
+        - asset: assets/Font/Pretendard/Pretendard-Regular.otf
+          weight: 400
+        - asset: assets/Font/Pretendard/Pretendard-Light.otf
+          weight: 300
+        - asset: assets/Font/Pretendard/Pretendard-ExtraLight.otf
+          weight: 200
+        - asset: assets/Font/Pretendard/Pretendard-Thin.otf
+          weight: 100
+
+    - family: HanSans
+      fonts :
+        - asset: assets/Font/HanSans/SpoqaHanSansNeo-Bold.ttf
+          weight: 800
+        - asset: assets/Font/HanSans/SpoqaHanSansNeo-Medium.ttf
+          weight: 700
+        - asset: assets/Font/HanSans/SpoqaHanSansNeo-Regular.ttf
+          weight: 600
+        - asset: assets/Font/HanSans/SpoqaHanSansNeo-Light.ttf
+          weight: 500
+        - asset: assets/Font/HanSans/SpoqaHanSansNeo-Thin.ttf
+          weight: 400
+
+
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

@@ -18,6 +18,8 @@ class _TotalImminentAuction extends State<TotalImminentAuction> {
   bool ala = true;
   late bool theme;
   late final Future future;
+  late double width;
+  late double height;
 
   List deadlineAll = [];
 
@@ -65,12 +67,14 @@ class _TotalImminentAuction extends State<TotalImminentAuction> {
 
   @override
   Widget build(BuildContext context) {
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
     return FutureBuilder(
         future: future,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("옥션 마감 임박 티켓 목록", theme),
+              appBar: appbarWithArrowBackButton("Imminent List", theme),
               body: const Center(
                 child: Text("통신 에러가 발생했습니다."),
               ),
@@ -78,7 +82,7 @@ class _TotalImminentAuction extends State<TotalImminentAuction> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-                appBar: appbarWithArrowBackButton("옥션 마감 임박 티켓 목록", theme),
+                appBar: appbarWithArrowBackButton("Imminent List", theme),
                 body: Column(
                     children: <Widget>[
                       Expanded(
@@ -96,12 +100,16 @@ class _TotalImminentAuction extends State<TotalImminentAuction> {
                                               Text(
                                                   "마감 시각이 임박한 옥션 티켓의 전체 목록을 보여드립니다.",
                                                   style: TextStyle(
-                                                    fontSize: 14,
+                                                    fontFamily: "Pretendard",
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 15,
                                                   )
                                               ),
                                               Text(
                                                   "(24시간 이내)",
                                                   style: TextStyle(
+                                                    fontFamily: "Pretendard",
+                                                    fontWeight: FontWeight.w500,
                                                     fontSize: 15,
                                                   )
                                               ),
@@ -115,31 +123,99 @@ class _TotalImminentAuction extends State<TotalImminentAuction> {
                                             itemCount: deadlineAll.length,
                                             itemBuilder: (context, index) {
                                               return Card(
+                                                elevation: 0,
+                                                  color: Colors.white24,
                                                   child: SizedBox(
                                                       width: double.infinity,
-                                                      child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                          children: <Widget>[
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Image.network(
-                                                                  "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
-                                                                  width: 40,
-                                                                  height: 40
+                                                      child: (deadlineAll.length! == 0) ?
+                                                      (
+                                                          Container(
+                                                              padding : EdgeInsets.fromLTRB(width*0.05, 0, width*0.05, 0),
+                                                              width : width*0.9,
+                                                              height : width*0.5,
+                                                              alignment: Alignment.center,
+                                                              child : const Text("마감이 임박한 티켓이 없습니다!",
+                                                                  style : TextStyle(
+                                                                    fontFamily: "Pretendard",
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: 15,
+                                                                  ))
+                                                          ))
+                                                          :
+                                                      (
+                                                          GridView.builder(
+                                                              physics: const NeverScrollableScrollPhysics(),
+                                                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                                crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
+                                                                childAspectRatio: 3/5.5,
+                                                                mainAxisSpacing: height*0.01, //수평 Padding
+                                                                crossAxisSpacing: width*0.05, //수직 Padding
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                                flex: 2,
-                                                                child: Column(
-                                                                    children: <Widget>[
-                                                                      Text(deadlineAll[index]['product_name']),
-                                                                      Text(deadlineAll[index]['place'].toString()),
-                                                                      Text("${deadlineAll[index]['seat_class']}석 ${deadlineAll[index]['seat_No']}번",),
-                                                                    ]
-                                                                )
-                                                            )
-                                                          ]
-                                                      )
+                                                              shrinkWrap: true,
+                                                              itemCount: deadlineAll.length,
+                                                              itemBuilder: (context, index) {
+                                                                return
+                                                                  Card(
+                                                                      color: Colors.white24,
+                                                                      elevation : 0,
+                                                                      child: InkWell(
+
+                                                                        highlightColor: Colors.transparent,
+                                                                        splashFactory: NoSplash.splashFactory,
+                                                                        onTap:(){},
+                                                                        child :
+                                                                        Column(
+                                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                                            children : <Widget>[
+                                                                              Expanded(flex : 3,child: Image.network(
+                                                                                "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
+                                                                                fit: BoxFit.fill,
+                                                                                //color: Colors.blue,
+                                                                              ),),
+                                                                              Expanded(
+                                                                                  flex: 1,
+                                                                                  child: Column(
+                                                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children : <Widget> [
+                                                                                        Row(
+                                                                                            children : <Widget>[
+                                                                                              //Text(deadlineAll[index]['performance_date'])
+                                                                                              Text("14:00", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold, ),),
+                                                                                              Text(" | 12.31", style : TextStyle(fontSize: 12, ))
+                                                                                            ]
+                                                                                        ),
+                                                                                        Text(deadlineAll[index]['product_name'], style: const TextStyle(
+                                                                                          fontFamily: "NotoSans",
+                                                                                          fontSize: 13,
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        )
+                                                                                        ),
+                                                                                        Text(deadlineAll[index]['place'].toString(), style : const TextStyle(
+                                                                                          fontSize: 10,
+                                                                                          fontFamily: "NotoSans",
+                                                                                          color: Colors.grey,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        ),
+                                                                                        ),
+                                                                                        Text("${deadlineAll[index]['seat_class']}석 ${deadlineAll[index]['seat_No']}번",style : const TextStyle(
+                                                                                          fontFamily: "NotoSans",
+                                                                                          fontSize: 10,
+                                                                                          color: Colors.grey,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        ),)
+                                                                                      ]
+                                                                                  )
+                                                                              )
+
+                                                                            ]
+                                                                        ),
+                                                                      )
+                                                                  );
+                                                              }
+                                                          )
+                                                      ),
                                                   )
                                               );
                                             }

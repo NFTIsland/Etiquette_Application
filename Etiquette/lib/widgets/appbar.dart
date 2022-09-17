@@ -18,7 +18,6 @@ AppBar appbarWithArrowBackButton(String title, bool theme) {
     title: Text(
         title,
         style: TextStyle(
-          fontSize: 25,
           color: (theme ? const Color(0xffe8e8e8) : Colors.black)
         )
     ),

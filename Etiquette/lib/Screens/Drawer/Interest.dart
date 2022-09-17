@@ -133,9 +133,10 @@ class _Interest extends State<Interest> {
                             child: Text(
                               "Interesting Tickets For Ticketing",
                               style: TextStyle(
+                                fontFamily: "HanSans",
                                 fontSize: 20,
                                 color: (theme ? const Color(0xffffffff) : const Color(0xff000000)),
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -213,18 +214,30 @@ class _Interest extends State<Interest> {
                                                         const SizedBox(height: 10),
                                                         Text(
                                                           interest_ticketing_list[index]['product_name'],
+                                                          textAlign: TextAlign.center,
                                                           style: const TextStyle(
-                                                            fontSize: 17,
+                                                            fontFamily: 'NotoSans',
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 15,
                                                           ),
                                                         ),
                                                         const SizedBox(height: 10),
                                                         Text(
                                                           interest_ticketing_list[index]['place'],
                                                           style: const TextStyle(
+                                                            fontFamily: 'NotoSans',
+                                                            fontWeight: FontWeight.w500,
                                                             fontSize: 13,
                                                           ),
                                                         ),
                                                         const SizedBox(height: 10),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                            children : const <Widget>[
+                                                              Text("14:00", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold, ),),
+                                                              Text(" | 12.31", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold,))
+                                                            ]
+                                                        ),
                                                       ],
                                                     ),
                                                   ),
@@ -243,9 +256,10 @@ class _Interest extends State<Interest> {
                             child: Text(
                               "Interesting Tickets For Auction",
                               style: TextStyle(
+                                fontFamily: "HanSans",
                                 fontSize: 20,
                                 color: (theme ? const Color(0xffffffff) : const Color(0xff000000)),
-                                fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -274,6 +288,8 @@ class _Interest extends State<Interest> {
                                     itemCount: interest_auction_list.length,
                                     itemBuilder: (context, index) {
                                       return Card(
+                                        elevation: 0,
+                                        color: Colors.white24,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8),
                                         ),
@@ -309,7 +325,8 @@ class _Interest extends State<Interest> {
                                                     child: Image.network(
                                                         'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
                                                         width: 80,
-                                                        height: 80
+                                                        height: 80,
+                                                        fit : BoxFit.fill
                                                     ),
                                                   ),
                                                 ),
@@ -323,6 +340,8 @@ class _Interest extends State<Interest> {
                                                         Text(
                                                           interest_auction_list[index]['product_name'],
                                                           style: const TextStyle(
+                                                            fontFamily: 'NotoSans',
+                                                            fontWeight: FontWeight.w500,
                                                             fontSize: 20,
                                                           ),
                                                         ),
@@ -330,13 +349,25 @@ class _Interest extends State<Interest> {
                                                         Text(
                                                           interest_auction_list[index]['place'],
                                                           style: const TextStyle(
+                                                            fontFamily: 'NotoSans',
+                                                            fontWeight: FontWeight.w500,
                                                             fontSize: 13,
                                                           ),
+                                                        ),
+                                                        const SizedBox(height: 10),
+                                                        Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children : const <Widget>[
+                                                              Text("14:00", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold, ),),
+                                                              Text(" | 12.31", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold,))
+                                                            ]
                                                         ),
                                                         const SizedBox(height: 10),
                                                         Text(
                                                           "${interest_auction_list[index]['seat_class']}석 ${interest_auction_list[index]['seat_No']}번",
                                                           style: const TextStyle(
+                                                            fontFamily: 'NotoSans',
+                                                            fontWeight: FontWeight.w500,
                                                             fontSize: 13,
                                                           ),
                                                         ),

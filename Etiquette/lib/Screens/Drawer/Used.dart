@@ -97,7 +97,7 @@ class _Used extends State<Used> {
                   Container(
                       width: double.infinity,
                       alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.only(left: 20),
+                      padding:  EdgeInsets.only(left: width*0.05),
                       child: Column(
                           children: <Widget>[
                             const SizedBox(height: 20),
@@ -160,7 +160,8 @@ class _Used extends State<Used> {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
-                      child: Center(
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(width*0.05,0,width*0.05,0),
                         child: ListView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
@@ -182,11 +183,10 @@ class _Used extends State<Used> {
                                   child: SizedBox(
                                     width: double.infinity,
                                     child: Row(
-                                      mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: <Widget> [
                                         Expanded(
-                                          flex: 2,
+                                          flex: 1,
                                           child: Center(
                                             child: Image.network(
                                                 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
@@ -196,6 +196,7 @@ class _Used extends State<Used> {
                                             ),
                                           ),
                                         ),
+                                        SizedBox(width : height *0.03),
                                         Expanded(
                                           flex: 3,
                                           child: Center(
@@ -205,29 +206,39 @@ class _Used extends State<Used> {
                                                 const SizedBox(height: 10),
                                                 Text(
                                                   usedlist[index]['product_name'],
+                                                  textAlign: TextAlign.center,
+
                                                   style: const TextStyle(
-                                                    fontSize: 25,
+                                                    fontFamily: 'NotoSans',
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 17,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 10),
                                                 Text(
                                                   usedlist[index]['place'],
                                                   style: const TextStyle(
-                                                    fontSize: 15,
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 13,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 10),
                                                 Text(
                                                   "${usedlist[index]['seat_class']}석 ${usedlist[index]['seat_No']}번",
                                                   style: const TextStyle(
-                                                    fontSize: 15,
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 13,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 10),
                                                 Text(
                                                   usedlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + usedlist[index]['performance_date'].substring(11, 16),
                                                   style: const TextStyle(
-                                                    fontSize: 15,
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 13,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 10),

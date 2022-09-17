@@ -214,13 +214,16 @@ class _Ticketing extends State<Ticketing> {
                                   const Text(
                                       "Comming soon",
                                       style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold
+                                        fontSize: 25,
+                                        fontFamily: "Pretendard",
+                                        fontWeight: FontWeight.bold,
                                       )
                                   ),
                                   const Text(
                                       "곧 티켓팅이 시작됩니다!",
                                       style: TextStyle(
+                                        fontFamily: "Pretendard",
+                                        fontWeight: FontWeight.w500,
                                         fontSize: 15,
                                       )
                                   ),
@@ -232,7 +235,12 @@ class _Ticketing extends State<Ticketing> {
                                           width : width*0.9,
                                           height : width*0.5,
                                           alignment: Alignment.center,
-                                          child : const Text("예정된 티켓팅이 없습니다!", style : TextStyle(fontSize : 15))
+                                          child : const Text("예정된 티켓팅이 없습니다!",
+                                              style : TextStyle(
+                                                fontFamily: "Pretendard",
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 15,
+                                          ))
                                       ))
                                       :
                                   (
@@ -278,16 +286,18 @@ class _Ticketing extends State<Ticketing> {
                                                                         ]
                                                                     ),
                                                                     Text(deadline[index]['product_name'], style: const TextStyle(
+                                                                      fontFamily: "NotoSans",
                                                                       fontSize: 13,
                                                                       fontWeight: FontWeight.bold,
                                                                       overflow: TextOverflow.ellipsis,
                                                                     )
                                                                     ),
                                                                     Text(deadline[index]['place'].toString(), style : const TextStyle(
-                                                                      fontSize: 12,
+                                                                      fontSize: 10,
+                                                                      fontFamily: "NotoSans",
                                                                       color: Colors.grey,
                                                                       overflow: TextOverflow.ellipsis,
-                                                                    )
+                                                                    ),
                                                                     ),
                                                                   ]
                                                               )
@@ -335,13 +345,16 @@ class _Ticketing extends State<Ticketing> {
                                   const Text(
                                       "Hot Pick",
                                       style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold
+                                        fontSize: 25,
+                                        fontFamily: "Pretendard",
+                                        fontWeight: FontWeight.bold,
                                       )
                                   ),
                                   const Text(
                                       "사람들의 관심도가 높은 티켓을 보여드립니다.",
                                       style: TextStyle(
+                                        fontFamily: "Pretendard",
+                                        fontWeight: FontWeight.w500,
                                         fontSize: 15,
                                       )
                                   ),
@@ -380,8 +393,9 @@ class _Ticketing extends State<Ticketing> {
                                                             child : Text(
                                                               (index + 1).toString(),
                                                               style: const TextStyle(
-                                                                fontWeight: FontWeight.bold,
-                                                                fontSize: 25,
+                                                                fontFamily: "Pretendard",
+                                                                fontWeight: FontWeight.w400,
+                                                                fontSize: 15,
                                                               ),
                                                             ),
                                                           ),
@@ -390,8 +404,19 @@ class _Ticketing extends State<Ticketing> {
                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                                   children: <Widget>[
-                                                                    Text(hotpick[index]['product_name'], overflow: TextOverflow.ellipsis),
-                                                                    Text(hotpick[index]['place'].toString(), overflow: TextOverflow.ellipsis),
+                                                                    Text(hotpick[index]['product_name'], overflow: TextOverflow.ellipsis, style: const TextStyle(
+                                                                      fontFamily: 'NotoSans',
+                                                                      fontWeight: FontWeight.w500,
+                                                                      fontSize: 12,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                    ),),
+                                                                    Text(hotpick[index]['place'].toString(), overflow: TextOverflow.ellipsis, style : const TextStyle(
+                                                                      color: Color(0xff7E7E7E),
+                                                                      fontFamily: 'NotoSans',
+                                                                      fontWeight: FontWeight.w500,
+                                                                      fontSize: 10,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                    ),),
                                                                   ]
                                                               )
                                                           )
