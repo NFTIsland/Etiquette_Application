@@ -7,18 +7,22 @@ import 'package:Etiquette/Screens/Ticketing/select_ticket.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
+import 'package:Etiquette/Screens/Market/upload_ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:like_button/like_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class TicketDetails extends StatefulWidget {
   String? product_name;
   String? place;
   bool? showPurchaseButton;
+  String? seat_class;
+  String? seat_No;
 
   TicketDetails(
-      {Key? key, this.product_name, this.place, this.showPurchaseButton})
+      {Key? key, this.product_name, this.place, this.showPurchaseButton, this.seat_class, this.seat_No})
       : super(key: key);
 
   @override
@@ -346,7 +350,7 @@ class _TicketDetails extends State<TicketDetails>
                                             Row(children : [
                                               Icon(Icons.event_seat_outlined, size : 20),
                                               SizedBox(width: width * 0.01),
-                                              Text("외야그린석 410번",
+                                              Text("${widget.seat_class}석 ${widget.seat_No}번",
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       fontFamily:
@@ -572,12 +576,7 @@ class _TicketDetails extends State<TicketDetails>
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => SelectTicket(
-                                                product_name:
-                                                    widget.product_name!,
-                                                place: widget.place!,
-                                                category: detail['category'],
-                                              )
+                                          builder: (context) => UploadTicket()
                                       )
                                   );
                                 },

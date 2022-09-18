@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
@@ -14,6 +16,7 @@ import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:Etiquette/Providers/DB/update_ticket_owner.dart';
 import 'package:Etiquette/Providers/KAS/Kip17/kip17_token_transfer.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/klay_transaction.dart';
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 
 class SelectTicket extends StatefulWidget {
   String? product_name;
@@ -327,6 +330,7 @@ class _SelectTicket extends State<SelectTicket> {
     timer?.cancel();
   }
 
+
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -342,7 +346,34 @@ class _SelectTicket extends State<SelectTicket> {
             return Scaffold(
               appBar: defaultAppbar("티켓 선택"),
               body: SingleChildScrollView(
-                child: Padding(
+                child: Column(
+                  children : <Widget>[
+                    CalendarDatePicker2(
+
+                      config: CalendarDatePicker2Config(
+
+                        //controlsHeight: 0
+                      ),
+                      initialValue: [],
+                    )
+                    //showDatePicker(context: context, initialDate: DateTime(2022,09,01), firstDate: DateTime(2022,09,01), lastDate: DateTime(2022,10,)),
+                  ]
+                )
+              ),
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+    );
+  }
+}
+
+
+
+/*
+Padding(
                   padding : const EdgeInsets.fromLTRB(15, 0, 15, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -781,13 +812,4 @@ class _SelectTicket extends State<SelectTicket> {
                     ],
                   ),
                 ),
-              ),
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-    );
-  }
-}
+ */

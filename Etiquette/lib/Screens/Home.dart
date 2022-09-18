@@ -14,6 +14,7 @@ import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -312,7 +313,7 @@ class _Home extends State<Home> {
                                   Padding(
                                     padding: EdgeInsets.only(left: width * 0.0361),
                                     child: Text(
-                                        "서버시간",
+                                      "서버시간",
                                       style: TextStyle(
                                           fontFamily: "Pretendard",
                                           fontWeight: FontWeight.w400,

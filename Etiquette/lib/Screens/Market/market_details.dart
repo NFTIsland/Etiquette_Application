@@ -470,7 +470,9 @@ class _MarketDetails extends State<MarketDetails>
                                             width * 0.01,
                                             width * 0.04,
                                             0),
-                                        child: Row(
+                                        child: Column(
+                                        children : <Widget>[
+                                        Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
@@ -509,6 +511,20 @@ class _MarketDetails extends State<MarketDetails>
                                             )
                                           ],
                                         ),
+                                          Row(children : [
+                                            Icon(Icons.event_seat_outlined, size : 20),
+                                            SizedBox(width: width * 0.01),
+                                            Text("${widget.seat_class}석 ${widget.seat_No}번",
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontFamily:
+                                                    'Pretendard',
+                                                    fontWeight:
+                                                    FontWeight.w400)
+                                            )
+                                          ])
+                                          ]
+                                          )
                                       ),
                                       SizedBox(height: height * 0.015),
                                       Center(

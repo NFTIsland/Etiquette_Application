@@ -519,6 +519,8 @@ class _Hold extends State<Hold> {
                                                 product_name: holdlist[index]['product_name'],
                                                 place: holdlist[index]['place'],
                                                 showPurchaseButton: false,
+                                                seat_class: holdlist[index]['seat_class'],
+                                                seat_No: holdlist[index]['seat_No']
                                               )
                                           )
                                       );
