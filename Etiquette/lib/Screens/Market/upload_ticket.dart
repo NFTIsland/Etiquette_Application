@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -91,6 +92,7 @@ class _UploadTicket extends State<UploadTicket> {
   String token_id = "";
   String product_name = "";
   String place = "";
+  String category = "";
   String original_price = "";
   int end_year = 0;
   int end_month = 0;
@@ -105,6 +107,20 @@ class _UploadTicket extends State<UploadTicket> {
   final immediate_purchase_price_controller = TextEditingController();
   final comments_controller = TextEditingController();
 
+  Future<void> send_data_for_schedule() async {
+    const url = "$SERVER_IP/scheduler/auctionSchedule";
+    try {
+      await http.post(Uri.parse(url), body: {
+        "token_id": token_id,
+        "alias": category,
+        "auction_end_date": auction_end_date,
+      });
+    } catch (ex) {
+      print("티켓 업로드 --> ${ex.toString()}");
+      displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드에 실패했습니다.");
+    }
+  }
+
   Future<void> upload_ticket() async {
     const url = "$SERVER_IP/market/setTicketToBid";
     try {
@@ -116,10 +132,13 @@ class _UploadTicket extends State<UploadTicket> {
         "auction_end_date": auction_end_date,
         "auction_comments": comments_controller.text
       });
+      final data = json.decode(res.body);
       if (res.statusCode == 200) {
         await displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드가 성공적으로 완료되었습니다.");
         Navigator.of(context).pop();
+        send_data_for_schedule();
       } else {
+        print("티켓 업로드 --> ${data['msg']}");
         displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드에 실패했습니다.");
       }
     } catch (ex) {
@@ -169,6 +188,7 @@ class _UploadTicket extends State<UploadTicket> {
                                 token_id = data["token_id"];
                                 product_name = data["product_name"];
                                 place = data["place"];
+                                category = data["category"];
                                 original_price = data["original_price"].toString();
                                 end_year = int.parse(data["end_year"]);
                                 end_month = int.parse(data["end_month"]);
