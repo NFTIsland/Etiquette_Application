@@ -132,13 +132,11 @@ class _UploadTicket extends State<UploadTicket> {
         "auction_end_date": auction_end_date,
         "auction_comments": comments_controller.text
       });
-      final data = json.decode(res.body);
       if (res.statusCode == 200) {
         await displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드가 성공적으로 완료되었습니다.");
         Navigator.of(context).pop();
         send_data_for_schedule();
       } else {
-        print("티켓 업로드 --> ${data['msg']}");
         displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드에 실패했습니다.");
       }
     } catch (ex) {
