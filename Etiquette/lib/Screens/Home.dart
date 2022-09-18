@@ -204,7 +204,7 @@ class _Home extends State<Home> {
                     ]
                 ),
                 drawer: drawer(context, theme, nickname),
-                drawerScrimColor: (theme ? const Color(0xffe8e8e8) : Colors.black),
+
                 body: SingleChildScrollView(
                   child: Column(
                     children: <Widget> [
