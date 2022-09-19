@@ -10,7 +10,7 @@ module.exports = {
 
     getHomeNotices: function (callback) {
         const sql = "\
-        SELECT title \
+        SELECT title, contents, upload_time \
         FROM user_db.notice \
         ORDER BY upload_time DESC \
         LIMIT 0, 5;";
