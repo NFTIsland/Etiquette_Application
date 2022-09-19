@@ -120,13 +120,13 @@ class _Ticketing extends State<Ticketing> {
   }
 
   Future<void> loadBannerPosters() async {
-    const url = "$SERVER_IP/screen/homePosters";
+    const url = "$SERVER_IP/screen/backdropImages";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
         for (var _image in data['data']) {
-          banner_posters.add(_image['poster_url']);
+          banner_posters.add(_image['backdrop_url']);
         }
       } else {
         String msg = data['msg'];
@@ -320,7 +320,8 @@ class _Ticketing extends State<Ticketing> {
                         CarouselSlider(
                           options: CarouselOptions(
                             viewportFraction: 1,
-                            height: height * 0.125,
+                            // height: height * 0.125,
+                            height: height * 0.2,
                             autoPlay: true, //자동재생 여부
                           ),
                           items: banner_posters.map((item) {
