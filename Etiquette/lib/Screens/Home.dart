@@ -75,7 +75,7 @@ class _Home extends State<Home> {
   String loadCurrentTime() {
     final now = DateTime.now();
     // currentTime = "${now.year}년 ${now.month}월 ${now.day}일 ${now.hour}시 ${now.minute}분 ${now.second}초";
-    return "${now.year}년 ${now.month}월 ${now.day}일 ${now.hour}시 ${now.minute}분 ${now.second}초";
+    return "${now.year}.${now.month.toString().padLeft(2, "0")}.${now.day.toString().padLeft(2, "0")}. ${now.hour.toString().padLeft(2, "0")}:${now.minute.toString().padLeft(2, "0")}:${now.second.toString().padLeft(2, "0")}";
   }
 
   Future<void> getKlayCurrency() async {
@@ -298,7 +298,7 @@ class _Home extends State<Home> {
                       Container(
                         width: width * 0.91,
                         height: height * 0.08,
-                        margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 21.0),
+                        margin: const EdgeInsets.fromLTRB(21, 20, 21, 10),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
@@ -316,7 +316,7 @@ class _Home extends State<Home> {
                             children: <Widget> [
                               Padding(
                                 padding: EdgeInsets.only(left: width * 0.0361),
-                                child: Image.asset('assets/image/KlaytnLogo.png', width : width * 0.09, height : height * 0.18),
+                                child: Image.asset('assets/image/KlaytnLogo.png', width: width * 0.09, height: height * 0.18),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
@@ -334,7 +334,6 @@ class _Home extends State<Home> {
                                                 style: TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.w700,
-                                                    // color: (theme ? const Color(0xff000000) : const Color(0xffffffff))
                                                     color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
                                                 )
                                             )
@@ -390,62 +389,101 @@ class _Home extends State<Home> {
                             ]
                         ),
                       ),
-                      Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              width * 0.044, height * 0.02, width * 0.044, 0
-                          ),
-                          child: Container(
-                            width: width * 0.91,
-                            height: height * 0.06125,
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget> [
-                                  Padding(
-                                    padding: EdgeInsets.only(left: width * 0.0361),
-                                    child: Text(
+                      Container(
+                        width: width * 0.91,
+                        height: height * 0.08,
+                        margin: const EdgeInsets.fromLTRB(21, 0, 21, 0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black87.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 1,
+                              offset: const Offset(1, 1), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: width * 0.0290),
+                          child: Row(
+                            children: <Widget> [
+                              Icon(
+                                Icons.access_time_filled_outlined,
+                                size: width * 0.09,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget> [
+                                    const Text(
                                       "서버시간",
                                       style: TextStyle(
-                                          fontFamily: "Pretendard",
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 20,
-                                          color: (theme
-                                              ?  const Color(0xff000000)
-                                              :  const Color(0xffffffff))
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 1.3
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(right: width * 0.0361),
-                                    child: TimerBuilder.periodic(
+                                    TimerBuilder.periodic(
                                       const Duration(seconds: 1),
                                       builder: (context) {
                                         return Text(
                                           loadCurrentTime(),
                                           style: TextStyle(
                                               fontFamily: "Pretendard",
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 15,
-                                              color: (theme
-                                                  ?  const Color(0xff000000)
-                                                  :  const Color(0xffffffff))
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 16,
+                                              color: (theme ? const Color(0xff000000) : const Color(0xff2d386b))
                                           ),
                                         );
                                       },
                                     ),
-                                  )
-                                ]
-                            ),
-                            decoration: BoxDecoration(
-                                color: (theme
-                                    ? const Color(0xffe8e8e8)
-                                    : const Color(0xff8AAAE5)),
-                                borderRadius: BorderRadius.circular(9)),
-                          )
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(right: width * 0.0361),
+                              )
+                            ],
+                          ),
+                          // child: Column(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: <Widget> [
+                          //     const SizedBox(height: 5),
+                          //     const Text(
+                          //       "서버시간",
+                          //       style: TextStyle(
+                          //           color: Color(0xffff0863),
+                          //           fontSize: 18,
+                          //           fontWeight: FontWeight.w700,
+                          //           letterSpacing: 1.3
+                          //       ),
+                          //     ),
+                          //     const SizedBox(height: 10),
+                          //     TimerBuilder.periodic(
+                          //       const Duration(seconds: 1),
+                          //       builder: (context) {
+                          //         return Text(
+                          //           loadCurrentTime(),
+                          //           style: TextStyle(
+                          //               fontFamily: "Pretendard",
+                          //               fontWeight: FontWeight.w700,
+                          //               fontSize: 16,
+                          //               color: (theme ? const Color(0xff000000) : const Color(0xff2d386b))
+                          //           ),
+                          //         );
+                          //       },
+                          //     ),
+                          //   ],
+                          // ),
+                        )
                       ),
                       Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              width * 0.044, height * 0.04125, width * 0.044, 0),
+                          padding: EdgeInsets.fromLTRB(width * 0.044, height * 0.04125, width * 0.044, 0),
                           child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
