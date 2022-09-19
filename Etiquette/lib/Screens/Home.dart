@@ -266,6 +266,7 @@ class _Home extends State<Home> {
                           options: CarouselOptions(
                             viewportFraction: 0.9,
                             height: height * 0.55,
+                            enlargeCenterPage: true,
                             autoPlay: true, //자동재생 여부
                           ),
                           items: home_posters.map((item) {
