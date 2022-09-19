@@ -211,18 +211,18 @@ class _Home extends State<Home> {
                     children: <Widget> [
                       SizedBox(
                         width : width,
-                        height : height * 0.4,
+                        height : height * 0.55,
                         child: CarouselSlider(
                           options: CarouselOptions(
                             viewportFraction: 0.9,
-                            height: height * 0.4,
+                            height: height * 0.55,
                             autoPlay: true, //자동재생 여부
                           ),
                           items: home_posters.map((item) {
                             return Builder(builder: (BuildContext context) {
                               return Container(
                                 width : width,
-                                height : height * 0.4,
+                                height : height * 0.55,
                                 decoration: BoxDecoration(
                                   color: Colors.black,
                                   //border 를 주기 위해 decoration 사용
