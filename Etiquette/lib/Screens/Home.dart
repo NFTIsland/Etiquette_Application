@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:async/async.dart';
 import 'dart:convert';
-import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:timer_builder/timer_builder.dart';
@@ -13,6 +12,8 @@ import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/appbar.dart';
+import 'package:Etiquette/Widgets/alertDialogWidget.dart';
+import 'package:Etiquette/Utilities/round.dart';
 
 
 class Home extends StatefulWidget {
@@ -33,6 +34,7 @@ class _Home extends State<Home> {
 
   String currentTime = "Loading...";
   String klayCurrency = "Loading...";
+  String yesterday_last = "";
   String? nickname = "";
 
   List home_posters = [];
@@ -77,21 +79,65 @@ class _Home extends State<Home> {
   }
 
   Future<void> getKlayCurrency() async {
-    final res = await http.get(Uri.parse("https://api.coinone.co.kr/public/v2/ticker_new/KRW/KLAY"));
+    final res = await http.get(Uri.parse("https://api.coinone.co.kr/ticker?currency=klay"));
     Map<String, dynamic> data = json.decode(res.body);
     if (data["result"] == "success") {
-      klayCurrency = data["tickers"][0]["last"].toString();
+      klayCurrency = data["last"];
+      yesterday_last = data["yesterday_last"];
     } else {
       klayCurrency = "Loading...";
+      yesterday_last = "Loading...";
     }
   }
 
   String getStrKlayCurrency() {
     getKlayCurrency();
     if (double.tryParse(klayCurrency) == null) {
-      return klayCurrency;
+      return "Loading...";
     } else {
       return klayCurrency + " ￦";
+    }
+  }
+
+  Text getUpAndDownRate() {
+    double? _klayCurrency = double.tryParse(klayCurrency);
+    double? _yesterday_last = double.tryParse(yesterday_last);
+    if (_klayCurrency == null || _yesterday_last == null) {
+      return const Text(
+          "Loading...",
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xff4bc46d),
+          )
+      );
+    } else {
+      double up_and_down_rate = (_klayCurrency - _yesterday_last) * 100 / _yesterday_last;
+      if (up_and_down_rate >= 0.0) {
+        return Text(
+            "${roundDouble(up_and_down_rate, 2)}%",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xff4bc46d),
+            )
+        );
+      } else {
+        return Text(
+            "${roundDouble(up_and_down_rate, 2)}%",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.red,
+            )
+        );
+      }
     }
   }
 
@@ -210,7 +256,6 @@ class _Home extends State<Home> {
                     ]
                 ),
                 drawer: drawer(context, theme, nickname),
-
                 body: SingleChildScrollView(
                   child: Column(
                     children: <Widget> [
@@ -250,59 +295,100 @@ class _Home extends State<Home> {
                           }).toList(),
                         ),
                       ),
-                      Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              width * 0.044, height * 0.04125, width * 0.044, 0
-                          ),
-                          child: Container(
-                            width: width * 0.91,
-                            height: height * 0.06125,
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget> [
-                                  Padding(
-                                    padding: EdgeInsets.only(left: width * 0.0361),
-                                    child: Text(
-                                        "Klay 시세",
-                                        style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 20,
-                                            color: (theme
-                                                ?  const Color(0xff000000)
-                                                :  const Color(0xffffffff))
-                                        )
+                      Container(
+                        width: width * 0.91,
+                        height: height * 0.08,
+                        margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 21.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black87.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 1,
+                              offset: const Offset(1, 1), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget> [
+                              Padding(
+                                padding: EdgeInsets.only(left: width * 0.0361),
+                                child: Image.asset('assets/image/KlaytnLogo.png', width : width * 0.09, height : height * 0.18),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget> [
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: <Widget> [
+                                        Expanded(
+                                            child: Text(
+                                                "Klaytn",
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w700,
+                                                    // color: (theme ? const Color(0xff000000) : const Color(0xffffffff))
+                                                    color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
+                                                )
+                                            )
+                                        ),
+                                        const SizedBox(width: 5),
+                                        TimerBuilder.periodic(
+                                          const Duration(seconds: 1),
+                                          builder: (context) {
+                                            return Text(
+                                                getStrKlayCurrency(),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w600,
+                                                    // color: (theme ? const Color(0xff000000) : const Color(0xffffffff))
+                                                    color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
+                                                )
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(right: width * 0.0361),
-                                    child: TimerBuilder.periodic(
-                                      const Duration(seconds: 3),
-                                      builder: (context) {
-                                        return Text(
-                                          getStrKlayCurrency(),
-                                          style: TextStyle(
-                                              fontFamily: "Pretendard",
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 20,
-                                              color: (theme
-                                                  ?  const Color(0xff000000)
-                                                  :  const Color(0xffffffff))
+                                    const SizedBox(height: 3),
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Text(
+                                              "KLAY",
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  // color: (theme ? const Color(0xff000000) : const Color(0xffffffff))
+                                                  color: (theme ? const Color(0xffffffff) : Colors.grey)
+                                              )
                                           ),
-                                        );
-                                      },
+                                        ),
+                                        TimerBuilder.periodic(
+                                            const Duration(seconds: 1),
+                                            builder: (context) {
+                                              return getUpAndDownRate();
+                                            }
+                                        ),
+                                      ],
                                     ),
-                                  )
-                                ]
-                            ),
-                            decoration: BoxDecoration(
-                                color: (theme
-                                    ? const Color(0xffe8e8e8)
-                                    : const Color(0xff8AAAE5)),
-                                borderRadius: BorderRadius.circular(9)
-                            ),
-                          )
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(right: width * 0.0361),
+                              )
+                            ]
+                        ),
                       ),
                       Padding(
                           padding: EdgeInsets.fromLTRB(
@@ -377,7 +463,7 @@ class _Home extends State<Home> {
                                     //     )
                                     // )
                                   },
-                                  child: Text(
+                                  child: const Text(
                                       "+more",
                                       style: TextStyle(
                                         fontSize: 15,
@@ -406,8 +492,8 @@ class _Home extends State<Home> {
                                           onTap : () {
 
                                           },
-                                          child : Padding(
-                                              padding : EdgeInsets.only(left : width * 0.0361),
+                                          child: Padding(
+                                              padding : EdgeInsets.only(left: width * 0.0361, right: width * 0.0361),
                                               child : Padding(
                                                 padding: EdgeInsets.fromLTRB(0, height*0.005, 0, height*0.005),
                                                 child: Column(
