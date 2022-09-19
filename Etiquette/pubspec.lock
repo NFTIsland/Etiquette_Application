@@ -15,13 +15,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  calendar_date_picker2:
-    dependency: "direct main"
-    description:
-      name: calendar_date_picker2
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.3"
   carousel_slider:
     dependency: "direct main"
     description:
@@ -188,6 +181,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_date_pickers:
+    dependency: "direct main"
+    description:
+      name: flutter_date_pickers
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0"
   flutter_datetime_picker:
     dependency: "direct main"
     description:
@@ -202,6 +202,11 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  flutter_localizations:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:

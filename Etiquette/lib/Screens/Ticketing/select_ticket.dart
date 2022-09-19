@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
+import 'package:flutter_date_pickers/flutter_date_pickers.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,18 +14,21 @@ import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 import 'package:Etiquette/Utilities/round.dart';
 import 'package:Etiquette/Providers/Coinone/get_klay_currency.dart';
 import 'package:Etiquette/Providers/DB/get_ticket_seat_image_url.dart';
+import 'package:Etiquette/widgets/event.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:Etiquette/Providers/DB/update_ticket_owner.dart';
 import 'package:Etiquette/Providers/KAS/Kip17/kip17_token_transfer.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/klay_transaction.dart';
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:Etiquette/widgets/day_picker_page.dart';
+
 
 class SelectTicket extends StatefulWidget {
   String? product_name;
   String? place;
   String? category;
+  final List<Event> events;
 
-  SelectTicket({Key? key, this.product_name, this.place, this.category}) : super(key: key);
+  SelectTicket({Key? key, this.product_name, this.place, this.category, this.events = const []}) : super(key: key);
 
   @override
   State createState() => _SelectTicket();
@@ -39,6 +44,7 @@ class _SelectTicket extends State<SelectTicket> {
   String _price = "";
   String _payInfo = "";
   String _klayInfo = "";
+
   // String image_url = "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/seat_image%2Fseoul_a_theater.jpg?alt=media&token=9e93c0ac-960c-4853-916f-731218502647";
   String image_url = "";
 
@@ -121,7 +127,8 @@ class _SelectTicket extends State<SelectTicket> {
   }
 
   Future<void> init_PerformanceDate() async {
-    final url = "$SERVER_IP/ticket/ticketPerformanceDate/${widget.product_name!}/${widget.place!}";
+    final url = "$SERVER_IP/ticket/ticketPerformanceDate/${widget
+        .product_name!}/${widget.place!}";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
@@ -148,7 +155,8 @@ class _SelectTicket extends State<SelectTicket> {
 
   Future<void> load_performance_time(String date_value) async {
     if (date_value != "예매 일자 선택") {
-      final url = "$SERVER_IP/ticket/ticketPerformanceTime/${widget.product_name!}/${widget.place!}/${date_value}";
+      final url = "$SERVER_IP/ticket/ticketPerformanceTime/${widget
+          .product_name!}/${widget.place!}/${date_value}";
       try {
         await init_performanceTimeItems();
         var res = await http.get(Uri.parse(url));
@@ -177,7 +185,8 @@ class _SelectTicket extends State<SelectTicket> {
 
   Future<void> load_seat_class(String date_value, String time_value) async {
     if (time_value != "예매 시각 선택") {
-      final url = "$SERVER_IP/ticket/ticketSeatClass/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}";
+      final url = "$SERVER_IP/ticket/ticketSeatClass/${widget
+          .product_name!}/${widget.place!}/${date_value}/${time_value}";
       try {
         await init_seatClassItems();
         var res = await http.get(Uri.parse(url));
@@ -204,9 +213,12 @@ class _SelectTicket extends State<SelectTicket> {
     }
   }
 
-  Future<void> load_seat_no(String date_value, String time_value, String seat_class_value) async {
+  Future<void> load_seat_no(String date_value, String time_value,
+      String seat_class_value) async {
     if (seat_class_value != "좌석 등급 선택") {
-      final url = "$SERVER_IP/ticket/ticketSeatNo/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}/${seat_class_value}";
+      final url = "$SERVER_IP/ticket/ticketSeatNo/${widget
+          .product_name!}/${widget
+          .place!}/${date_value}/${time_value}/${seat_class_value}";
       try {
         await init_seatNoItems();
         var res = await http.get(Uri.parse(url));
@@ -234,8 +246,10 @@ class _SelectTicket extends State<SelectTicket> {
   }
 
   Future<void> load_price() async {
-    if (date_value != "예매 일자 선택" && time_value != "예매 시각 선택" && seat_class_value != "좌석 등급 선택") {
-      final url = "$SERVER_IP/ticket/ticketPrice/${widget.product_name!}/${seat_class_value}";
+    if (date_value != "예매 일자 선택" && time_value != "예매 시각 선택" &&
+        seat_class_value != "좌석 등급 선택") {
+      final url = "$SERVER_IP/ticket/ticketPrice/${widget
+          .product_name!}/${seat_class_value}";
       try {
         var res = await http.get(Uri.parse(url));
         Map<String, dynamic> data = json.decode(res.body);
@@ -258,7 +272,8 @@ class _SelectTicket extends State<SelectTicket> {
   }
 
   Future<void> loadKlayCurrency() async {
-    Map<String, dynamic> data = await getKlayCurrency(); // 현재 KLAY 시세 정보를 API를 통해 가져옴
+    Map<String,
+        dynamic> data = await getKlayCurrency(); // 현재 KLAY 시세 정보를 API를 통해 가져옴
     if (data["statusCode"] == 200) { // 현재 KLAY 시세 정보를 정상적으로 가져옴
       String klayCurrency = data['lastCurrency'];
       _klayCurrency = double.parse(klayCurrency);
@@ -272,7 +287,8 @@ class _SelectTicket extends State<SelectTicket> {
   }
 
   Future<void> loadTicketSeatImage() async {
-    Map<String, dynamic> data = await getTicketSeatImageUrl(widget.product_name!, widget.place!);
+    Map<String, dynamic> data = await getTicketSeatImageUrl(
+        widget.product_name!, widget.place!);
     if (data["statusCode"] == 200) {
       image_url = data['data'][0]['seat_image_url'];
     } else {
@@ -280,8 +296,11 @@ class _SelectTicket extends State<SelectTicket> {
     }
   }
 
-  Future<Map<String, dynamic>> loadTicketTokenIdAndOwner(String date_value, String time_value, String seat_class_value, String seat_no_value) async {
-    final url = "$SERVER_IP/ticket/ticketTokenIdAndOwner/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}/${seat_class_value}/${seat_no_value}";
+  Future<Map<String, dynamic>> loadTicketTokenIdAndOwner(String date_value,
+      String time_value, String seat_class_value, String seat_no_value) async {
+    final url = "$SERVER_IP/ticket/ticketTokenIdAndOwner/${widget
+        .product_name!}/${widget
+        .place!}/${date_value}/${time_value}/${seat_class_value}/${seat_no_value}";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
@@ -333,8 +352,15 @@ class _SelectTicket extends State<SelectTicket> {
 
   @override
   Widget build(BuildContext context) {
-    width = MediaQuery.of(context).size.width;
-    height = MediaQuery.of(context).size.height;
+    width = MediaQuery
+        .of(context)
+        .size
+        .width;
+    height = MediaQuery
+        .of(context)
+        .size
+        .height;
+
     return FutureBuilder(
         future: future,
         builder: (context, snapshot) {
@@ -345,21 +371,19 @@ class _SelectTicket extends State<SelectTicket> {
           } else if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
               appBar: defaultAppbar("티켓 선택"),
-              body: SingleChildScrollView(
-                child: Column(
-                  children : <Widget>[
-                    CalendarDatePicker2(
-
-                      config: CalendarDatePicker2Config(
-
-                        //controlsHeight: 0
-                      ),
-                      initialValue: [],
-                    )
-                    //showDatePicker(context: context, initialDate: DateTime(2022,09,01), firstDate: DateTime(2022,09,01), lastDate: DateTime(2022,10,)),
-                  ]
-                )
-              ),
+              body:  Column(
+                      children: <Widget>[
+                        Container(
+                          height : height/2,
+                          alignment: Alignment.center,
+                            child :
+                        DayPickerPage(
+                          events: events,
+                        )
+                        )
+                        //showDatePicker(context: context, initialDate: DateTime(2022,09,01), firstDate: DateTime(2022,09,01), lastDate: DateTime(2022,10,)),
+                      ]
+                  )
             );
           }
           return const Center(
@@ -368,10 +392,21 @@ class _SelectTicket extends State<SelectTicket> {
         }
     );
   }
+
+  final List<Event> events = [
+  /*
+    Event(DateTime.now(), "Today event"),
+
+    Event(DateTime.now().subtract(Duration(days: 3)), "Ev1"),
+    Event(DateTime.now().subtract(Duration(days: 13)), "Ev2"),
+    Event(DateTime.now().subtract(Duration(days: 30)), "Ev3"),
+    Event(DateTime.now().add(Duration(days: 3)), "Ev4"),
+    Event(DateTime.now().add(Duration(days: 13)), "Ev5"),
+    Event(DateTime.now().add(Duration(days: 30)), "Ev6"),
+
+     */
+  ];
 }
-
-
-
 /*
 Padding(
                   padding : const EdgeInsets.fromLTRB(15, 0, 15, 0),

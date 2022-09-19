@@ -6,6 +6,8 @@ import 'package:Etiquette/Models/serverset.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Screens/TabController.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +46,14 @@ class _MyApp extends State<MyApp>{
 
             if (jwt.length != 3) {
               return GetMaterialApp(
+                  localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                  supportedLocales: [
+                    //const Locale('en', 'US'), // American English
+                    //const Locale('ru', 'RU'), // Russian
+                    //const Locale("pt"), // Portuguese
+                    //const Locale('ar'),
+                    const Locale('ko',),// Arabic
+                  ],
                   debugShowCheckedModeBanner: false,
                   title: 'Etiquette', //앱 이름 etiquette으로 설정
                   theme: (theme ? ThemeData.dark() : ThemeData.light()),
@@ -56,6 +66,14 @@ class _MyApp extends State<MyApp>{
                   .isAfter(DateTime.now())) {
                 return GetMaterialApp(
                     debugShowCheckedModeBanner: false,
+                    localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                    supportedLocales: [
+                      //const Locale('en', 'US'), // American English
+                      //const Locale('ru', 'RU'), // Russian
+                      //const Locale("pt"), // Portuguese
+                      //const Locale('ar'),
+                      const Locale('ko',),// Arabic
+                    ],
                     title: 'Etiquette', //앱 이름 etiquette으로 설정
                     theme: (theme ? ThemeData.dark() : ThemeData.light()),
                     home: Tabb(idx:0)//Login() // 최초 페이지로 Login()실행
@@ -63,6 +81,14 @@ class _MyApp extends State<MyApp>{
               } else {
                 return GetMaterialApp(
                     debugShowCheckedModeBanner: false,
+                    localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                    supportedLocales: [
+                      //const Locale('en', 'US'), // American English
+                      //const Locale('ru', 'RU'), // Russian
+                      //const Locale("pt"), // Portuguese
+                      //const Locale('ar'),
+                      const Locale('ko',),// Arabic
+                    ],
                     title: 'Etiquette', //앱 이름 etiquette으로 설정
                     theme: (theme ? ThemeData.dark() : ThemeData.light()),
                     home: const Login() // 최초 페이지로 Login()실행
