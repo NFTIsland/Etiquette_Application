@@ -36,7 +36,10 @@ class _Home extends State<Home> {
   String? nickname = "";
 
   List home_posters = [];
-  List notices = [];
+  List titles = [];
+  List contents = [];
+  List upload_times = [];
+
 
   void _setData(bool value) async {
     var key = 'ala';
@@ -134,7 +137,9 @@ class _Home extends State<Home> {
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
         for (var _title in data['data']) {
-          notices.add(_title);
+          titles.add(_title['title']);
+          contents.add(_title['contents']);
+          upload_times.add(_title['upload_time'].toString());
         }
       } else {
         String msg = data['msg'];
@@ -391,21 +396,48 @@ class _Home extends State<Home> {
                               child : ListView.separated(
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                itemCount : notices.length,
+                                itemCount : contents.length,
                                 itemBuilder : (context, index) {
                                   return Container(
                                       alignment: Alignment.centerLeft,
                                       width : width * 0.91,
-                                      height : height * 0.065,
+                                      height : height * 0.08,
                                       child : InkWell(
                                           onTap : () {
 
                                           },
                                           child : Padding(
                                               padding : EdgeInsets.only(left : width * 0.0361),
-                                              child : Text(
-                                                  notices[index]['title'],
-                                                  style: TextStyle(fontFamily : "NotoSans", fontWeight : FontWeight.w400,fontSize: 20, color: (theme ? const Color(0xff000000) : const Color(0xff000000)))
+                                              child : Padding(
+                                                padding: EdgeInsets.fromLTRB(0, height*0.005, 0, height*0.005),
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: <Widget>[
+                                                        Text(
+                                                            titles[index],
+                                                            style: TextStyle(fontFamily : "NotoSans", fontWeight : FontWeight.w400,fontSize: 15, color: (theme ? const Color(0xff000000) : const Color(0xff000000)), overflow: TextOverflow.ellipsis)
+                                                        ),
+                                                        Text(
+                                                            upload_times[index],
+                                                            style: TextStyle(fontFamily : "NotoSans", fontWeight : FontWeight.w400,fontSize: 7, color: (theme ? const Color(0xff000000) : const Color(0xff000000)))
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Padding(
+                                                      child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          children: <Widget>[
+                                                            Text(
+                                                                contents[index],
+                                                                style: TextStyle(fontFamily : "NotoSans", fontWeight : FontWeight.w400,fontSize: 10, color: (theme ? const Color(0xff000000) : const Color(0xff000000)), overflow: TextOverflow.ellipsis)
+                                                            )
+                                                          ]
+                                                      ),
+                                                      padding : EdgeInsets.fromLTRB(0, height*0.01, 0, height*0.01),
+                                                    )],
+                                                ),
                                               )
                                           )
                                       )
