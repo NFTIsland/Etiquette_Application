@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:Etiquette/Screens/Ticketing/select_ticket.dart';
@@ -12,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:like_button/like_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class TicketDetails extends StatefulWidget {
   String? product_name;
@@ -41,6 +39,8 @@ class _TicketDetails extends State<TicketDetails>
   late Map<String, dynamic> detail;
   List price_list = [];
   String price_description = "";
+  String backdrop_url = "";
+  String poster_url = "";
   GlobalKey _tabbar = GlobalKey();
   GlobalKey _tabbarview = GlobalKey();
 
@@ -75,8 +75,7 @@ class _TicketDetails extends State<TicketDetails>
     }
 
     final kas_address = kas_address_data['data'][0]['kas_address'];
-    final url_priceInfo =
-        "$SERVER_IP/ticket/ticketPriceInfo/${widget.product_name!}";
+    final url_priceInfo = "$SERVER_IP/ticket/ticketPriceInfo/${widget.product_name!}";
     price_description = "";
     try {
       var res = await http.get(Uri.parse(url_priceInfo));
@@ -108,8 +107,7 @@ class _TicketDetails extends State<TicketDetails>
       print("티켓팅 --> ${ex.toString()}");
     }
 
-    final url_description =
-        "$SERVER_IP/ticket/ticketDescription/${widget.product_name!}";
+    final url_description = "$SERVER_IP/ticket/ticketDescription/${widget.product_name!}";
     try {
       var res = await http.get(Uri.parse(url_description));
       Map<String, dynamic> data = json.decode(res.body);
@@ -215,8 +213,7 @@ class _TicketDetails extends State<TicketDetails>
   @override
   void initState() {
     super.initState();
-    tabcontroller =
-        TabController(length: 2, vsync: this, animationDuration: Duration.zero);
+    tabcontroller = TabController(length: 2, vsync: this, animationDuration: Duration.zero);
     scrollController = ScrollController(initialScrollOffset: 0);
     getTheme();
     future = getTicketDetailFromDB();
@@ -253,19 +250,19 @@ class _TicketDetails extends State<TicketDetails>
                                           children: <Widget>[
                                         Stack(
                                           children: <Widget>[
-                                            Image(
-                                                image: AssetImage(
-                                                    "assets/image/mainlogo.png"
-                                                ),
+                                            Image.network(
+                                                detail['backdrop_url'],
                                                 width: width,
-                                                height: width * 0.33,
+                                                // height: width * 0.33,
+                                                height: width * 0.4,
                                                 fit: BoxFit.fill
                                             ),
                                             Positioned(
                                                 left: width * 0.05,
                                                 top: width * 0.05,
                                                 child: Image.network(
-                                                    "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
+                                                    // "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
+                                                    detail['poster_url'],
                                                     width: width * 0.25,
                                                     height: width * 0.38,
                                                     fit: BoxFit.fill
@@ -451,32 +448,26 @@ class _TicketDetails extends State<TicketDetails>
                                   children: [
                                     ListView(
                                         shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
+                                        physics: const NeverScrollableScrollPhysics(),
                                         children: [
                                           Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text(
+                                                const Text(
                                                   "\n상세 설명\n",
                                                   style: TextStyle(
                                                       fontSize: 18,
                                                       fontFamily: "NotoSans",
-                                                      fontWeight:
-                                                          FontWeight.w600
+                                                      fontWeight: FontWeight.w600
                                                   ),
                                                   overflow: TextOverflow.clip,
                                                 ),
                                                 Text(
-                                                    detail['description']
-                                                        .replaceAll(
-                                                            '\\n', '\n'),
-                                                    style: TextStyle(
+                                                    detail['description'].replaceAll('\\n', '\n'),
+                                                    style: const TextStyle(
                                                         fontSize: 15,
-                                                        fontFamily:
-                                                            "Pretendard",
-                                                        fontWeight:
-                                                            FontWeight.w400
+                                                        fontFamily: "Pretendard",
+                                                        fontWeight: FontWeight.w400
                                                     ),
                                                     overflow: TextOverflow.clip
                                                 )
@@ -542,8 +533,7 @@ class _TicketDetails extends State<TicketDetails>
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => SelectTicket(
-                                                product_name:
-                                                    widget.product_name!,
+                                                product_name: widget.product_name!,
                                                 place: widget.place!,
                                                 category: detail['category'],
                                               )
