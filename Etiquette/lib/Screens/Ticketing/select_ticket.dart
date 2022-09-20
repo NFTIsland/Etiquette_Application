@@ -371,19 +371,18 @@ class _SelectTicket extends State<SelectTicket> {
           } else if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
               appBar: defaultAppbar("티켓 선택"),
-              body:  Column(
-                      children: <Widget>[
-                        Container(
-                          height : height/2,
+              body: Container(
+
+                          height : height,
                           alignment: Alignment.center,
                             child :
                         DayPickerPage(
                           events: events,
+                          product_name: widget.product_name,
+                          place: widget.place,
+                          category: widget.category,
                         )
-                        )
-                        //showDatePicker(context: context, initialDate: DateTime(2022,09,01), firstDate: DateTime(2022,09,01), lastDate: DateTime(2022,10,)),
-                      ]
-                  )
+              ),
             );
           }
           return const Center(
