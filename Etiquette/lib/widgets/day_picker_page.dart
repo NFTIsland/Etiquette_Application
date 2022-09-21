@@ -143,7 +143,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
                                                     Navigator.push(
                                                              context,
                                                              MaterialPageRoute(
-                                                                 builder: (context) => TimePickerPage(place: widget.place,date:_selectedDate.toString().substring(0,10)/*날:일:월*/,product_name: widget.product_name,time: _totalinfo[index][0],)
+                                                                 builder: (context) => TimePickerPage(place: widget.place!,date:_selectedDate.toString().substring(0,10)/*날:일:월*/,product_name: widget.product_name!,time: _totalinfo[index][0],)
                                                              )
                                                          );
                                                     },
@@ -218,9 +218,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
         Set set_seatClass = {};
         for (Map<String, dynamic> item in _seatClass) {
           set_seatClass.add(item["seat_class"]);
-
-
-          load_seat_no(date_value, time_value, item["seat_class"]);
+          await load_seat_no(date_value, time_value, item["seat_class"]);
         }
       } else {
         _seatClass = [];
@@ -242,6 +240,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
         Map<String, dynamic> data = json.decode(res.body);
         if (res.statusCode == 200) {
           _seatNo = data["data"];
+          print("추가하는 값은 시간 : ${time_value}, 시트 클래스 종류는 : ${seat_class_value}, 크기는 ${_seatNo.length}");
           _timeseatClass.add([seat_class_value, _seatNo.length]);
 
         } else {
@@ -262,7 +261,6 @@ class _DayPickerPageState extends State<DayPickerPage> {
       flag = 1;
       _performanceTime = new List.empty(growable: true);
       _totalinfo = new List.empty(growable: true);
-      _timeseatClass = new List.empty(growable: true);
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
@@ -270,8 +268,9 @@ class _DayPickerPageState extends State<DayPickerPage> {
         Set set_performanceTime = {};
         int idx = 0;
         for (Map<String, dynamic> item in _performanceTime) {
+          _timeseatClass = new List.empty(growable: true);
           set_performanceTime.add(item["time"]);
-          load_seat_class(date_value.substring(0,10), item["time"]);
+          await load_seat_class(date_value.substring(0,10), item["time"]);
           _totalinfo.add([item["time"], _timeseatClass]);
           print(date_value);
           print("a;lskdjfasdf");
