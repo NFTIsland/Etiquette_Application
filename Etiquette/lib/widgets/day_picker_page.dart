@@ -7,6 +7,7 @@ import 'package:flutter_date_pickers/src/utils.dart';
 import 'package:Etiquette/widgets/event.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/widgets/time_picker_page.dart';
 /// Page with [dp.DayPicker].
 class DayPickerPage extends StatefulWidget {
   /// Custom events.
@@ -31,7 +32,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
   DateTime _selectedDate = DateTime.now();
   List notday = [];//되는 날짜 받기
   final DateTime _firstDate = DateTime.now();
-  final DateTime _lastDate = DateTime.now().add(Duration(days: 45));//마지막으로 되는 날짜가 언제까지인지. DateTime.now()가 아니라 DateTime형식으로 직접 날짜 지정해줘도 됨.
+   DateTime? _lastDate;//마지막으로 되는 날짜가 언제까지인지. DateTime.now()가 아니라 DateTime형식으로 직접 날짜 지정해줘도 됨.
 
 
   Color selectedDateStyleColor = Colors.blue;
@@ -45,6 +46,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
     //selectedSingleDateDecorationColor = Theme.of(context).colorScheme.secondary;
   }
 
+  late Future myFuture;
   @override
   Widget build(BuildContext context) {
     // add selected colors to default settings
@@ -66,110 +68,138 @@ class _DayPickerPageState extends State<DayPickerPage> {
       dayHeaderTitleBuilder: _dayHeaderTitleBuilder,
     );
 
-    return Flex(
-      mainAxisSize: MainAxisSize.max,
-      direction: MediaQuery.of(context).orientation == Orientation.portrait
-          ? Axis.vertical
-          : Axis.horizontal,
+    return FutureBuilder(
+      future : myFuture,
+      builder: (context, snapshot){
+        if (snapshot.hasError) {
+          return Text("통신 에러가 발생했습니다.");
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Flex(
+            mainAxisSize: MainAxisSize.max,
+            direction: MediaQuery.of(context).orientation == Orientation.portrait
+                ? Axis.vertical
+                : Axis.horizontal,
 
-      children: <Widget>[
-        Container(
-          //decoration: BoxDecoration(border: Border(bottom : BorderSide(width: 1, color: Color(0xffC4C4C4))),),
-          height : MediaQuery.of(context).size.height/2 - MediaQuery.of(context).size.height*0.02,
-          width: MediaQuery.of(context).size.width,
-          child: dp.DayPicker.single(
-            selectedDate: _selectedDate,
-            onChanged: _onSelectedDateChanged,//누르면 실행되는 함수
-            firstDate: _firstDate,
-            lastDate: _lastDate,
-            datePickerStyles: styles,
-            datePickerLayoutSettings: dp.DatePickerLayoutSettings(
+            children: <Widget>[
+              Container(
+                //decoration: BoxDecoration(border: Border(bottom : BorderSide(width: 1, color: Color(0xffC4C4C4))),),
+                height : MediaQuery.of(context).size.height/2 - MediaQuery.of(context).size.height*0.02,
+                width: MediaQuery.of(context).size.width,
+                child: dp.DayPicker.single(
+                  selectedDate: _selectedDate,
+                  onChanged: _onSelectedDateChanged,//누르면 실행되는 함수
+                  firstDate: _firstDate,
+                  lastDate: _lastDate!,
+                  datePickerStyles: styles,
+                  datePickerLayoutSettings: dp.DatePickerLayoutSettings(
 
-              maxDayPickerRowCount: 6,
-              showPrevMonthEnd: false,
-              showNextMonthStart: false,
-            ),
-            selectableDayPredicate: _isSelectableCustom,
-            eventDecorationBuilder: _eventDecorationBuilder,
-          ),
-        ),
-        Expanded(
-          child : flag == 0 ?
-              Center(child : Text("날짜를 선택해 주세요.")) : flag == 1 ?
-              Text("티켓을 불러오고 있습니다!") :
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: _totalinfo.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            //height : 200,
-                              width: MediaQuery.of(context).size.width,
-                              child :
-                              Column(
-                                  children : <Widget>[
-                                    Container(height : MediaQuery.of(context).size.height*0.01,decoration: BoxDecoration(
-                                        border: Border(top: BorderSide(width : 1, color: Color(0xffC4C4C4))),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black26.withOpacity(0.1),
-                                            spreadRadius: 0,
-                                            blurRadius: 0,
-                                            offset: const Offset(0, 0), // changes position of shadow
-                                          ),
-                                        ]),
-                                    ),
-                                    Padding(
-                                      padding : EdgeInsets.fromLTRB(20, 5, 20, 5),
-                                      child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children : <Widget>[
-                                            Text("${_totalinfo[index][0]}"),
-                                            ElevatedButton(onPressed: (){}, child: Row(children : <Widget> [Text("선택"), Icon(Icons.keyboard_arrow_right,)]), )
-                                          ]
-                                      ),
-
-                                    ),
-                                    Container(
-                                      padding : EdgeInsets.fromLTRB(5, 5, 5, 5),
-                                      child : GridView.builder(
-                                        shrinkWrap: true,itemCount : _totalinfo[index][1].length, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
-                                        childAspectRatio: 6 / 1, //item 의 가로 1, 세로 2 의 비율
-                                        mainAxisSpacing: 15, //수평 Padding
-                                        crossAxisSpacing: 5, //수직 Padding
-                                      ), itemBuilder: (BuildContext context, int idx){
-                                        return Container(
-                                            height: 50,
-                                            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                            decoration: BoxDecoration(border: Border(bottom: BorderSide(width : 1, color: Color(0xffDADADA)))),
-                                            child : Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: <Widget>[
-                                                Text("${_totalinfo[index][1][idx][0]} 석"),
-                                                Text("${_totalinfo[index][1][idx][1]} 석")
-                                              ],
-                                            )
-                                        );
-                                      },
-                                      ),
-                                    )
-
-                                  ]
-                              )
-                          );
-                        }
-                    ),
-                  ],
+                    maxDayPickerRowCount: 6,
+                    showPrevMonthEnd: false,
+                    showNextMonthStart: false,
+                  ),
+                  selectableDayPredicate: _isSelectableCustom,
+                  eventDecorationBuilder: _eventDecorationBuilder,
                 ),
-              )
-        )
+              ),
+              Expanded(
+                  child : flag == 0 ?
+                  Center(child : Text("날짜를 선택해 주세요.")) : flag == 1 ?
+                  Text("티켓을 불러오고 있습니다!") :
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: _totalinfo.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                //height : 200,
+                                  width: MediaQuery.of(context).size.width,
+                                  child :
+                                  Column(
+                                      children : <Widget>[
+                                        Container(height : MediaQuery.of(context).size.height*0.01,decoration: BoxDecoration(
+                                            border: Border(top: BorderSide(width : 1, color: Color(0xffC4C4C4))),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black26.withOpacity(0.1),
+                                                spreadRadius: 0,
+                                                blurRadius: 0,
+                                                offset: const Offset(0, 0), // changes position of shadow
+                                              ),
+                                            ]),
+                                        ),
+                                        Container(
+                                          padding : EdgeInsets.fromLTRB(20, 5, 20, 5),
+                                          color : Colors.white,
+                                          child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children : <Widget>[
+                                                Text("${_totalinfo[index][0]}", style : TextStyle(color: Color(0xffF6635B), fontSize: 18)),
+                                                ElevatedButton(
+                                                  onPressed: (){
+                                                    Navigator.push(
+                                                             context,
+                                                             MaterialPageRoute(
+                                                                 builder: (context) => TimePickerPage(place: widget.place,date:_selectedDate.toString().substring(0,10)/*날:일:월*/,product_name: widget.product_name,time: _totalinfo[index][0],)
+                                                             )
+                                                         );
+                                                    },
+                                                  style: ElevatedButton.styleFrom(primary: Color(0xffFD6059),elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)), minimumSize: Size(90, 32)), child: Row(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment : CrossAxisAlignment.center,children : <Widget> [Text("선택", style : TextStyle(fontSize: 14, fontWeight: FontWeight.w400)), Icon(Icons.keyboard_arrow_right_outlined,)]), )
+                                              ]
+                                          ),
 
-      ],
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(border: Border(top: BorderSide(width : 0.5 , color : Colors.red)), color: Color(0xffF2f2f2)),
+
+                                          margin : EdgeInsets.fromLTRB(10, 0, 10, 5),
+                                          padding : EdgeInsets.fromLTRB(0, 10, 0, 5),
+                                          child : GridView.builder(
+                                            shrinkWrap: true,itemCount : _totalinfo[index][1].length, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
+                                            childAspectRatio: 6 / 1, //item 의 가로 1, 세로 2 의 비율
+                                            mainAxisSpacing: 15, //수평 Padding
+                                            crossAxisSpacing: 5, //수직 Padding
+                                          ), itemBuilder: (BuildContext context, int idx){
+                                            return Container(
+                                                height: 50,
+                                                margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                decoration: BoxDecoration(border: Border(bottom: BorderSide(width : 1, color: Color(0xffDADADA)))),
+                                                child : Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: <Widget>[
+                                                    Text("${_totalinfo[index][1][idx][0]} 석", style : TextStyle(color : Color(0xff595959), fontSize : 13)),
+                                                    Text("${_totalinfo[index][1][idx][1]} 석", style : TextStyle(color : Color(0xffEE7E7B), fontSize: 13))
+                                                  ],
+                                                )
+                                            );
+                                          },
+                                          ),
+                                        )
+
+                                      ]
+                                  )
+                              );
+                            }
+                        ),
+                      ],
+                    ),
+                  )
+              )
+
+            ],
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
+
+
   }
   List _totalinfo = new List.empty(growable: true);
   List _timeseatClass = new List.empty(growable: true);
@@ -241,9 +271,10 @@ class _DayPickerPageState extends State<DayPickerPage> {
         int idx = 0;
         for (Map<String, dynamic> item in _performanceTime) {
           set_performanceTime.add(item["time"]);
-          print(item["time"]);
           load_seat_class(date_value.substring(0,10), item["time"]);
           _totalinfo.add([item["time"], _timeseatClass]);
+          print(date_value);
+          print("a;lskdjfasdf");
           //print(_timeseatClass.length);
           /*
           for(int i = 0; i < _totalinfo[0][1].length; i++){
@@ -267,11 +298,15 @@ class _DayPickerPageState extends State<DayPickerPage> {
     }
   }
 
-
   List _performanceDate = new List.empty(growable: true);
   List _compareDate = new List.empty(growable: true);
+  int max_year = 0;
+  int max_month = 0;
+  int max_day = 0;
+  DateTime _max = DateTime.utc(0,0,0,0);
   void initState(){
-    init_PerformanceDate();
+    myFuture = init_PerformanceDate();
+
   }
   Future<void> init_PerformanceDate() async {
     final url = "$SERVER_IP/ticket/ticketPerformanceDate/${widget
@@ -287,9 +322,32 @@ class _DayPickerPageState extends State<DayPickerPage> {
         }
         List list_performanceDate = set_performanceDate.toList();
         for (String item in list_performanceDate) {
-          _compareDate.add(DateTime.utc(int.parse(item.substring(0,4)), int.parse(item.substring(5,7)), int.parse(item.substring(8,10))
-          ));
+          _compareDate.add(DateTime.utc(int.parse(item.substring(0,4)), int.parse(item.substring(5,7)), int.parse(item.substring(8,10))));
+          if(_max.year <= int.parse(item.substring(0,4)))
+          {
+            if(_max.year == int.parse(item.substring(0,4)) && _max.month <= int.parse(item.substring(5,7))) {
+              if(_max.month == int.parse(item.substring(5,7)) && _max.day < int.parse(item.substring(8,10))){
+                max_day = int.parse(item.substring(8,10));
+                _max = DateTime.utc(int.parse(item.substring(0,4)), int.parse(item.substring(5,7)), int.parse(item.substring(8,10)));
+              }
+              else if(_max.month < int.parse(item.substring(5,7))){
+                max_month = int.parse(item.substring(5,7));
+                max_day = int.parse(item.substring(8,10));
+                _max = DateTime.utc(int.parse(item.substring(0,4)), int.parse(item.substring(5,7)), int.parse(item.substring(8,10)));
+              }
+
+            }
+            else if( _max.year < int.parse(item.substring(0,4))){
+              _max = DateTime.utc(int.parse(item.substring(0,4)), int.parse(item.substring(5,7)), int.parse(item.substring(8,10)));
+              max_year = int.parse(item.substring(0,4));
+              max_month = int.parse(item.substring(5,7));
+              max_day = int.parse(item.substring(8,10));
+            }
+          }
+
         }
+        _lastDate = _max;
+        print("실행됨");
       } else {
         _compareDate = [];
       }
@@ -343,3 +401,4 @@ class _DayPickerPageState extends State<DayPickerPage> {
 String _dayHeaderTitleBuilder(
     int dayOfTheWeek, List<String> localizedHeaders) =>
     localizedHeaders[dayOfTheWeek].substring(0, 1);
+
