@@ -463,7 +463,7 @@ class _TicketDetails extends State<TicketDetails>
                                                   overflow: TextOverflow.clip,
                                                 ),
                                                 Text(
-                                                    detail['description'].replaceAll('\\n', '\n'),
+                                                    detail['description'].replaceAll("...", "‡").replaceAll('\\n', '\n').replaceAll(".", ".\n\n").replaceAll("‡", "..."),
                                                     style: const TextStyle(
                                                         fontSize: 15,
                                                         fontFamily: "Pretendard",
