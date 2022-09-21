@@ -264,7 +264,8 @@ class _Home extends State<Home> {
                         height : height * 0.55,
                         child: CarouselSlider(
                           options: CarouselOptions(
-                            viewportFraction: 0.9,
+                            viewportFraction: 0.8,
+                            aspectRatio: 1.7,
                             height: height * 0.55,
                             enlargeCenterPage: true,
                             autoPlay: true, //자동재생 여부
