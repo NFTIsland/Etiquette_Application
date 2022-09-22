@@ -15,7 +15,6 @@ import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/round.dart';
 
-
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -41,7 +40,6 @@ class _Home extends State<Home> {
   List titles = [];
   List contents = [];
   List upload_times = [];
-
 
   void _setData(bool value) async {
     var key = 'ala';
@@ -79,7 +77,8 @@ class _Home extends State<Home> {
   }
 
   Future<void> getKlayCurrency() async {
-    final res = await http.get(Uri.parse("https://api.coinone.co.kr/ticker?currency=klay"));
+    final res = await http
+        .get(Uri.parse("https://api.coinone.co.kr/ticker?currency=klay"));
     Map<String, dynamic> data = json.decode(res.body);
     if (data["result"] == "success") {
       klayCurrency = data["last"];
@@ -103,40 +102,35 @@ class _Home extends State<Home> {
     double? _klayCurrency = double.tryParse(klayCurrency);
     double? _yesterday_last = double.tryParse(yesterday_last);
     if (_klayCurrency == null || _yesterday_last == null) {
-      return const Text(
-          "Loading...",
+      return const Text("Loading...",
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xff4bc46d),
-          )
-      );
+            color: Color(0xff147814),
+          ));
     } else {
-      double up_and_down_rate = (_klayCurrency - _yesterday_last) * 100 / _yesterday_last;
+      double up_and_down_rate =
+          (_klayCurrency - _yesterday_last) * 100 / _yesterday_last;
       if (up_and_down_rate >= 0.0) {
-        return Text(
-            "${roundDouble(up_and_down_rate, 2)}%",
+        return Text("${roundDouble(up_and_down_rate, 2)}%",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Color(0xff4bc46d),
-            )
-        );
+              color: Color(0xff147814),
+            ));
       } else {
-        return Text(
-            "${roundDouble(up_and_down_rate, 2)}%",
+        return Text("${roundDouble(up_and_down_rate, 2)}%",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.red,
-            )
-        );
+            ));
       }
     }
   }
@@ -169,9 +163,7 @@ class _Home extends State<Home> {
       loadHomePosters();
       getHomeNotices();
       getNickname();
-      await Future.delayed(
-          const Duration(milliseconds: 1000)
-      );
+      await Future.delayed(const Duration(milliseconds: 1000));
       return;
     });
   }
@@ -225,11 +217,18 @@ class _Home extends State<Home> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
                 appBar: AppBar(
-                    iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
-                    title: Text("Etiquette", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),
+                    iconTheme: IconThemeData(
+                        color:
+                            (theme ? const Color(0xffe8e8e8) : Colors.black)),
+                    title: Text("Etiquette",
+                        style: TextStyle(
+                            color: (theme
+                                ? const Color(0xffe8e8e8)
+                                : Colors.black))),
                     backgroundColor: Colors.white24,
                     foregroundColor: Colors.black,
-                    elevation: 0, // elevation은 떠보이는 느낌 설정하는 것, 0이면 뜨는 느낌 없음, foreground는 글자 색 변경
+                    elevation: 0,
+                    // elevation은 떠보이는 느낌 설정하는 것, 0이면 뜨는 느낌 없음, foreground는 글자 색 변경
                     actions: <Widget>[
                       IconButton(
                         icon: img,
@@ -239,7 +238,6 @@ class _Home extends State<Home> {
                             _delToken();
                             setState(() {
                               img = const Icon(Icons.notifications_none);
-
                             });
                             _setData(ala);
                           } else {
@@ -252,16 +250,14 @@ class _Home extends State<Home> {
                           }
                         },
                       ),
-
-                    ]
-                ),
+                    ]),
                 drawer: drawer(context, theme, nickname),
                 body: SingleChildScrollView(
                   child: Column(
-                    children: <Widget> [
+                    children: <Widget>[
                       SizedBox(
-                        width : width,
-                        height : height * 0.55,
+                        width: width,
+                        height: height * 0.55,
                         child: CarouselSlider(
                           options: CarouselOptions(
                             viewportFraction: 0.8,
@@ -273,8 +269,8 @@ class _Home extends State<Home> {
                           items: home_posters.map((item) {
                             return Builder(builder: (BuildContext context) {
                               return Container(
-                                width : width,
-                                height : height * 0.55,
+                                width: width,
+                                height: height * 0.55,
                                 decoration: BoxDecoration(
                                   color: Colors.black,
                                   //border 를 주기 위해 decoration 사용
@@ -302,59 +298,71 @@ class _Home extends State<Home> {
                         height: height * 0.08,
                         margin: const EdgeInsets.fromLTRB(21, 20, 21, 10),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          gradient: const LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Color(0xffF4FFFF),
+                              Color(0xff5AD2FF),
+                            ],
+                          ),
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black87.withOpacity(0.1),
+                              color: Colors.black87.withOpacity(0.4),
                               spreadRadius: 1,
                               blurRadius: 1,
-                              offset: const Offset(1, 1), // changes position of shadow
+                              offset: const Offset(
+                                  1, 1), // changes position of shadow
                             ),
                           ],
                         ),
                         child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget> [
+                            children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.only(left: width * 0.0361),
-                                child: Image.asset('assets/image/KlaytnLogo.png', width: width * 0.09, height: height * 0.18),
+                                child: Image.asset(
+                                    'assets/image/KlaytnLogo.png',
+                                    width: width * 0.09,
+                                    height: height * 0.18),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
-                                  children: <Widget> [
+                                  children: <Widget>[
                                     const SizedBox(height: 8),
                                     Row(
-                                      children: <Widget> [
+                                      children: <Widget>[
                                         Expanded(
-                                            child: Text(
-                                                "Klaytn",
+                                            child: Text("Klaytn",
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.w700,
-                                                    color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
-                                                )
-                                            )
-                                        ),
+                                                    color: (theme
+                                                        ? const Color(
+                                                            0xffffffff)
+                                                        : const Color(
+                                                            0xff000000))))),
                                         const SizedBox(width: 5),
                                         TimerBuilder.periodic(
                                           const Duration(seconds: 1),
                                           builder: (context) {
-                                            return Text(
-                                                getStrKlayCurrency(),
+                                            return Text(getStrKlayCurrency(),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.w600,
                                                     // color: (theme ? const Color(0xff000000) : const Color(0xffffffff))
-                                                    color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
-                                                )
-                                            );
+                                                    color: (theme
+                                                        ? const Color(
+                                                            0xffffffff)
+                                                        : const Color(
+                                                            0xff000000))));
                                           },
                                         ),
                                       ],
@@ -363,23 +371,21 @@ class _Home extends State<Home> {
                                     Row(
                                       children: <Widget>[
                                         Expanded(
-                                          child: Text(
-                                              "KLAY",
+                                          child: Text("KLAY",
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   // color: (theme ? const Color(0xff000000) : const Color(0xffffffff))
-                                                  color: (theme ? const Color(0xffffffff) : Colors.grey)
-                                              )
-                                          ),
+                                                  color: (theme
+                                                      ? const Color(0xffffffff)
+                                                      : Color(0xff6e6e6e)))),
                                         ),
                                         TimerBuilder.periodic(
                                             const Duration(seconds: 1),
                                             builder: (context) {
-                                              return getUpAndDownRate();
-                                            }
-                                        ),
+                                          return getUpAndDownRate();
+                                        }),
                                       ],
                                     ),
                                   ],
@@ -388,112 +394,94 @@ class _Home extends State<Home> {
                               Padding(
                                 padding: EdgeInsets.only(right: width * 0.0361),
                               )
-                            ]
-                        ),
+                            ]),
                       ),
                       Container(
-                        width: width * 0.91,
-                        height: height * 0.08,
-                        margin: const EdgeInsets.fromLTRB(21, 0, 21, 0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black87.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 1,
-                              offset: const Offset(1, 1), // changes position of shadow
+                          width: width * 0.91,
+                          height: height * 0.08,
+                          margin: const EdgeInsets.fromLTRB(21, 0, 21, 0),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: [
+                                Color(0xffFFDCFF),
+                                Color(0xffFF4646),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: width * 0.0290),
-                          child: Row(
-                            children: <Widget> [
-                              Icon(
-                                Icons.access_time_filled_outlined,
-                                size: width * 0.09,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black87.withOpacity(0.4),
+                                spreadRadius: 1,
+                                blurRadius: 1,
+                                offset: const Offset(
+                                    1, 1), // changes position of shadow
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget> [
-                                    const Text(
-                                      "서버시간",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 1.3
-                                      ),
-                                    ),
-                                    TimerBuilder.periodic(
-                                      const Duration(seconds: 1),
-                                      builder: (context) {
-                                        return Text(
-                                          loadCurrentTime(),
-                                          style: TextStyle(
-                                              fontFamily: "Pretendard",
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 16,
-                                              color: (theme ? const Color(0xff000000) : const Color(0xff2d386b))
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(right: width * 0.0361),
-                              )
                             ],
                           ),
-                          // child: Column(
-                          //   mainAxisAlignment: MainAxisAlignment.center,
-                          //   crossAxisAlignment: CrossAxisAlignment.start,
-                          //   children: <Widget> [
-                          //     const SizedBox(height: 5),
-                          //     const Text(
-                          //       "서버시간",
-                          //       style: TextStyle(
-                          //           color: Color(0xffff0863),
-                          //           fontSize: 18,
-                          //           fontWeight: FontWeight.w700,
-                          //           letterSpacing: 1.3
-                          //       ),
-                          //     ),
-                          //     const SizedBox(height: 10),
-                          //     TimerBuilder.periodic(
-                          //       const Duration(seconds: 1),
-                          //       builder: (context) {
-                          //         return Text(
-                          //           loadCurrentTime(),
-                          //           style: TextStyle(
-                          //               fontFamily: "Pretendard",
-                          //               fontWeight: FontWeight.w700,
-                          //               fontSize: 16,
-                          //               color: (theme ? const Color(0xff000000) : const Color(0xff2d386b))
-                          //           ),
-                          //         );
-                          //       },
-                          //     ),
-                          //   ],
-                          // ),
-                        )
-                      ),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: width * 0.0290),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.access_time_filled_outlined,
+                                  size: width * 0.09,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      const Text(
+                                        "서버시간",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: 1.3),
+                                      ),
+                                      TimerBuilder.periodic(
+                                        const Duration(seconds: 1),
+                                        builder: (context) {
+                                          return Text(
+                                            loadCurrentTime(),
+                                            style: TextStyle(
+                                                fontFamily: "Pretendard",
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16,
+                                                color: (theme
+                                                    ? const Color(0xff000000)
+                                                    : const Color(0xff2d386b))),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(right: width * 0.0361),
+                                )
+                              ],
+                            ),
+                          )),
                       Padding(
-                          padding: EdgeInsets.fromLTRB(width * 0.044, height * 0.04125, width * 0.044, 0),
+                          padding: EdgeInsets.fromLTRB(width * 0.044,
+                              height * 0.04125, width * 0.044, 0),
                           child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                Text(
-                                    "공지사항",
-                                    style: TextStyle( fontFamily : "Pretendard",fontWeight: FontWeight.w500, fontSize: 20, color: (theme ? const Color(0xffffffff) : const Color(0xff000000)))
-                                ),
+                                Text("공지사항",
+                                    style: TextStyle(
+                                        fontFamily: "Pretendard",
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 20,
+                                        color: (theme
+                                            ? const Color(0xffffffff)
+                                            : const Color(0xff000000)))),
                                 TextButton(
                                   onPressed: () {
                                     // Navigator.push(
@@ -503,90 +491,136 @@ class _Home extends State<Home> {
                                     //     )
                                     // )
                                   },
-                                  child: const Text(
-                                      "+more",
+                                  child: const Text("+more",
                                       style: TextStyle(
                                         fontSize: 15,
                                         color: Color(0xff5D5D5D),
-                                      )
-                                  ),
+                                      )),
                                 ),
-                              ]
-                          )
-                      ),
+                              ])),
                       Padding(
-                          padding : EdgeInsets.fromLTRB(width*0.044, height*0.019, width*0.044, height*0.02875),
-                          child : Container(
-                              width : width * 0.91,
-                              decoration : BoxDecoration(borderRadius: BorderRadius.circular(9), color : (theme ? const Color(0xffe8e8e8) : const Color(0xffffffff)),),
-                              child : ListView.separated(
+                          padding: EdgeInsets.fromLTRB(width * 0.044,
+                              height * 0.019, width * 0.044, height * 0.02875),
+                          child: Container(
+                              width: width * 0.91,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(9),
+                                color: (theme
+                                    ? const Color(0xffe8e8e8)
+                                    : const Color(0xffffffff)),
+                              ),
+                              child: ListView.separated(
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                itemCount : contents.length,
-                                itemBuilder : (context, index) {
+                                itemCount: contents.length,
+                                itemBuilder: (context, index) {
                                   return Container(
                                       alignment: Alignment.centerLeft,
-                                      width : width * 0.91,
-                                      height : height * 0.08,
-                                      child : InkWell(
-                                          onTap : () {
-
-                                          },
+                                      width: width * 0.91,
+                                      height: height * 0.08,
+                                      child: InkWell(
+                                          onTap: () {},
                                           child: Padding(
-                                              padding : EdgeInsets.only(left: width * 0.0361, right: width * 0.0361),
-                                              child : Padding(
-                                                padding: EdgeInsets.fromLTRB(0, height*0.005, 0, height*0.005),
+                                              padding: EdgeInsets.only(
+                                                  left: width * 0.0361,
+                                                  right: width * 0.0361),
+                                              child: Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0,
+                                                    height * 0.005,
+                                                    0,
+                                                    height * 0.005),
                                                 child: Column(
                                                   children: <Widget>[
                                                     Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: <Widget>[
-                                                        Text(
-                                                            titles[index],
-                                                            style: TextStyle(fontFamily : "NotoSans", fontWeight : FontWeight.w400,fontSize: 15, color: (theme ? const Color(0xff000000) : const Color(0xff000000)), overflow: TextOverflow.ellipsis)
-                                                        ),
+                                                        Text(titles[index],
+                                                            style: TextStyle(
+                                                                fontFamily:
+                                                                    "NotoSans",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 15,
+                                                                color: (theme
+                                                                    ? const Color(
+                                                                        0xff000000)
+                                                                    : const Color(
+                                                                        0xff000000)),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis)),
                                                         Text(
                                                             upload_times[index],
-                                                            style: TextStyle(fontFamily : "NotoSans", fontWeight : FontWeight.w400,fontSize: 7, color: (theme ? const Color(0xff000000) : const Color(0xff000000)))
-                                                        )
+                                                            style: TextStyle(
+                                                                fontFamily:
+                                                                    "NotoSans",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 7,
+                                                                color: (theme
+                                                                    ? const Color(
+                                                                        0xff000000)
+                                                                    : const Color(
+                                                                        0xff000000))))
                                                       ],
                                                     ),
                                                     Padding(
                                                       child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
                                                           children: <Widget>[
                                                             Text(
                                                                 contents[index],
-                                                                style: TextStyle(fontFamily : "NotoSans", fontWeight : FontWeight.w400,fontSize: 10, color: (theme ? const Color(0xff000000) : const Color(0xff000000)), overflow: TextOverflow.ellipsis)
-                                                            )
-                                                          ]
-                                                      ),
-                                                      padding : EdgeInsets.fromLTRB(0, height*0.01, 0, height*0.01),
-                                                    )],
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        "NotoSans",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    fontSize:
+                                                                        10,
+                                                                    color: (theme
+                                                                        ? const Color(
+                                                                            0xff000000)
+                                                                        : const Color(
+                                                                            0xff000000)),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis))
+                                                          ]),
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              0,
+                                                              height * 0.01,
+                                                              0,
+                                                              height * 0.01),
+                                                    )
+                                                  ],
                                                 ),
-                                              )
-                                          )
-                                      )
-                                  );
+                                              ))));
                                 },
-                                separatorBuilder: (BuildContext context, int index) => const Divider(
+                                separatorBuilder:
+                                    (BuildContext context, int index) =>
+                                        const Divider(
                                   thickness: 1,
-                                  height : 0,
-                                  color : Color(0x55000000),
+                                  height: 0,
+                                  color: Color(0x55000000),
                                 ),
-                              )
-                          )
-                      ),
+                              ))),
                     ],
                   ),
-                )
-            );
+                ));
           }
           return const Center(
             child: CircularProgressIndicator(),
           );
-        }
-    );
+        });
   }
 }
 
@@ -595,7 +629,7 @@ _getToken() async {
   print("messaging.getToken(), ${await messaging.getToken()}");
 }
 
-_delToken() async{
+_delToken() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   await messaging.deleteToken();
   print("deleting token");
