@@ -222,9 +222,7 @@ class _Home extends State<Home> {
                             (theme ? const Color(0xffe8e8e8) : Colors.black)),
                     title: Text("Etiquette",
                         style: TextStyle(
-                            color: (theme
-                                ? const Color(0xffe8e8e8)
-                                : Colors.black))),
+                            color: (theme ? const Color(0xffe8e8e8) : Colors.black))),
                     backgroundColor: Colors.white24,
                     foregroundColor: Colors.black,
                     elevation: 0,
@@ -253,369 +251,294 @@ class _Home extends State<Home> {
                     ]),
                 drawer: drawer(context, theme, nickname),
                 body: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        width: width,
+                    child: Column(children: <Widget>[
+                  SizedBox(
+                    width: width,
+                    height: height * 0.55,
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                        viewportFraction: 0.8,
+                        aspectRatio: 1.7,
                         height: height * 0.55,
-                        child: CarouselSlider(
-                          options: CarouselOptions(
-                            viewportFraction: 0.8,
-                            aspectRatio: 1.7,
-                            height: height * 0.55,
-                            enlargeCenterPage: true,
-                            autoPlay: true, //자동재생 여부
-                          ),
-                          items: home_posters.map((item) {
-                            return Builder(builder: (BuildContext context) {
-                              return Container(
-                                width: width,
-                                height: height * 0.55,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  //border 를 주기 위해 decoration 사용
-                                  border: Border.all(
-                                    width: 0,
-                                    color: Colors.grey,
-                                  ),
-                                  borderRadius: BorderRadius.circular(16.0),
-                                ),
-                                child: ClipRRect(
-                                  //ClipRRect : 위젯 모서리 둥글게 하기위해 사용하는 위젯
-                                  borderRadius: BorderRadius.circular(16.0),
-                                  child: Image.network(
-                                    item,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                              );
-                            });
-                          }).toList(),
-                        ),
+                        enlargeCenterPage: true,
+                        autoPlay: true, //자동재생 여부
                       ),
-                      Container(
-                        width: width * 0.91,
-                        height: height * 0.08,
-                        margin: const EdgeInsets.fromLTRB(21, 20, 21, 10),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                            colors: [
-                              Color(0xffF4FFFF),
-                              Color(0xff5AD2FF),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black87.withOpacity(0.4),
-                              spreadRadius: 1,
-                              blurRadius: 1,
-                              offset: const Offset(
-                                  1, 1), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(left: width * 0.0361),
-                                child: Image.asset(
-                                    'assets/image/KlaytnLogo.png',
-                                    width: width * 0.09,
-                                    height: height * 0.18),
+                      items: home_posters.map((item) {
+                        return Builder(builder: (BuildContext context) {
+                          return Container(
+                            width: width,
+                            height: height * 0.55,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              //border 를 주기 위해 decoration 사용
+                              border: Border.all(
+                                width: 0,
+                                color: Colors.grey,
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: ClipRRect(
+                              //ClipRRect : 위젯 모서리 둥글게 하기위해 사용하는 위젯
+                              borderRadius: BorderRadius.circular(16.0),
+                              child: Image.network(
+                                item,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          );
+                        });
+                      }).toList(),
+                    ),
+                  ),
+                  Container(
+                    width: width * 0.91,
+                    height: height * 0.08,
+                    margin: const EdgeInsets.fromLTRB(21, 20, 21, 10),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          Color(0xffF4FFFF),
+                          Color(0xff5AD2FF),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black87.withOpacity(0.4),
+                          spreadRadius: 1,
+                          blurRadius: 1,
+                          offset:
+                              const Offset(1, 1), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(left: width * 0.0361),
+                            child: Image.asset('assets/image/KlaytnLogo.png',
+                                width: width * 0.09, height: height * 0.18),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                const SizedBox(height: 8),
+                                Row(
                                   children: <Widget>[
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                            child: Text("Klaytn",
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: (theme
-                                                        ? const Color(
-                                                            0xffffffff)
-                                                        : const Color(
-                                                            0xff000000))))),
-                                        const SizedBox(width: 5),
-                                        TimerBuilder.periodic(
-                                          const Duration(seconds: 1),
-                                          builder: (context) {
-                                            return Text(getStrKlayCurrency(),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w600,
-                                                    // color: (theme ? const Color(0xff000000) : const Color(0xffffffff))
-                                                    color: (theme
-                                                        ? const Color(
-                                                            0xffffffff)
-                                                        : const Color(
-                                                            0xff000000))));
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 3),
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Text("KLAY",
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  // color: (theme ? const Color(0xff000000) : const Color(0xffffffff))
-                                                  color: (theme
-                                                      ? const Color(0xffffffff)
-                                                      : Color(0xff6e6e6e)))),
-                                        ),
-                                        TimerBuilder.periodic(
-                                            const Duration(seconds: 1),
-                                            builder: (context) {
-                                          return getUpAndDownRate();
-                                        }),
-                                      ],
+                                    Expanded(
+                                        child: Text("Klaytn",
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
+                                                color: (theme ? const Color(0xffffffff) : const Color(0xff000000))))),
+                                    const SizedBox(width: 5),
+                                    TimerBuilder.periodic(
+                                      const Duration(seconds: 1),
+                                      builder: (context) {
+                                        return Text(getStrKlayCurrency(),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w600,
+                                                color: (theme ? const Color(0xffffffff) : const Color(0xff000000))));
+                                      },
                                     ),
                                   ],
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(right: width * 0.0361),
-                              )
-                            ]),
-                      ),
-                      Container(
-                          width: width * 0.91,
-                          height: height * 0.08,
-                          margin: const EdgeInsets.fromLTRB(21, 0, 21, 0),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [
-                                Color(0xffFFDCFF),
-                                Color(0xffFF4646),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black87.withOpacity(0.4),
-                                spreadRadius: 1,
-                                blurRadius: 1,
-                                offset: const Offset(
-                                    1, 1), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: width * 0.0290),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.access_time_filled_outlined,
-                                  size: width * 0.09,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      const Text(
-                                        "서버시간",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 1.3),
-                                      ),
-                                      TimerBuilder.periodic(
+                                const SizedBox(height: 3),
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text("KLAY",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: (theme ? const Color(0xffffffff) : Color(0xff6e6e6e)))),
+                                    ),
+                                    TimerBuilder.periodic(
                                         const Duration(seconds: 1),
                                         builder: (context) {
-                                          return Text(
-                                            loadCurrentTime(),
-                                            style: TextStyle(
-                                                fontFamily: "Pretendard",
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16,
-                                                color: (theme
-                                                    ? const Color(0xff000000)
-                                                    : const Color(0xff2d386b))),
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
+                                      return getUpAndDownRate();
+                                    }),
+                                  ],
                                 ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(right: width * 0.0361),
-                                )
                               ],
                             ),
-                          )),
-                      Padding(
-                          padding: EdgeInsets.fromLTRB(width * 0.044,
-                              height * 0.04125, width * 0.044, 0),
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text("공지사항",
-                                    style: TextStyle(
-                                        fontFamily: "Pretendard",
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 20,
-                                        color: (theme
-                                            ? const Color(0xffffffff)
-                                            : const Color(0xff000000)))),
-                                TextButton(
-                                  onPressed: () {
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => const NoticePage()
-                                    //     )
-                                    // )
-                                  },
-                                  child: const Text("+more",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Color(0xff5D5D5D),
-                                      )),
-                                ),
-                              ])),
-                      Padding(
-                          padding: EdgeInsets.fromLTRB(width * 0.044,
-                              height * 0.019, width * 0.044, height * 0.02875),
-                          child: Container(
-                              width: width * 0.91,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(9),
-                                color: (theme
-                                    ? const Color(0xffe8e8e8)
-                                    : const Color(0xffffffff)),
-                              ),
-                              child: ListView.separated(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: contents.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                      alignment: Alignment.centerLeft,
-                                      width: width * 0.91,
-                                      height: height * 0.08,
-                                      child: InkWell(
-                                          onTap: () {},
-                                          child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: width * 0.0361,
-                                                  right: width * 0.0361),
-                                              child: Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0,
-                                                    height * 0.005,
-                                                    0,
-                                                    height * 0.005),
-                                                child: Column(
-                                                  children: <Widget>[
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: <Widget>[
-                                                        Text(titles[index],
-                                                            style: TextStyle(
-                                                                fontFamily:
-                                                                    "NotoSans",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize: 15,
-                                                                color: (theme
-                                                                    ? const Color(
-                                                                        0xff000000)
-                                                                    : const Color(
-                                                                        0xff000000)),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis)),
-                                                        Text(
-                                                            upload_times[index],
-                                                            style: TextStyle(
-                                                                fontFamily:
-                                                                    "NotoSans",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize: 7,
-                                                                color: (theme
-                                                                    ? const Color(
-                                                                        0xff000000)
-                                                                    : const Color(
-                                                                        0xff000000))))
-                                                      ],
-                                                    ),
-                                                    Padding(
-                                                      child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text(
-                                                                contents[index],
-                                                                style: TextStyle(
-                                                                    fontFamily:
-                                                                        "NotoSans",
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    fontSize:
-                                                                        10,
-                                                                    color: (theme
-                                                                        ? const Color(
-                                                                            0xff000000)
-                                                                        : const Color(
-                                                                            0xff000000)),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis))
-                                                          ]),
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              0,
-                                                              height * 0.01,
-                                                              0,
-                                                              height * 0.01),
-                                                    )
-                                                  ],
-                                                ),
-                                              ))));
-                                },
-                                separatorBuilder:
-                                    (BuildContext context, int index) =>
-                                        const Divider(
-                                  thickness: 1,
-                                  height: 0,
-                                  color: Color(0x55000000),
-                                ),
-                              ))),
-                    ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: width * 0.0361),
+                          )
+                        ]),
                   ),
-                ));
+                  Container(
+                      width: width * 0.91,
+                      height: height * 0.08,
+                      margin: const EdgeInsets.fromLTRB(21, 0, 21, 0),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                          colors: [
+                            Color(0xffFFDCFF),
+                            Color(0xffFF4646),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black87.withOpacity(0.4),
+                            spreadRadius: 1,
+                            blurRadius: 1,
+                            offset: const Offset(
+                                1, 1), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: width * 0.0290),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.access_time_filled_outlined,
+                              size: width * 0.09,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  const Text(
+                                    "서버시간",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 1.3),
+                                  ),
+                                  TimerBuilder.periodic(
+                                    const Duration(seconds: 1),
+                                    builder: (context) {
+                                      return Text(
+                                        loadCurrentTime(),
+                                        style: TextStyle(
+                                            fontFamily: "Pretendard",
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 16,
+                                            color: (theme ? const Color(0xff000000) : const Color(0xff2d386b))),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: width * 0.0361),
+                            )
+                          ],
+                        ),
+                      )),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          width * 0.044, height * 0.04125, width * 0.044, 0),
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text("공지사항",
+                                style: TextStyle(
+                                    fontFamily: "Pretendard",
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                    color: (theme ? const Color(0xffffffff) : const Color(0xff000000)))),
+                            TextButton(
+                              onPressed: () {
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) => const NoticePage()
+                                //     )
+                                // )
+                              },
+                              child: const Text("+more",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xff5D5D5D),
+                                  )),
+                            ),
+                          ])),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(width * 0.044, height * 0.019,
+                        width * 0.044, height * 0.02875),
+                    child: Container(
+                        width: width * 0.91,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(9),
+                          color: (theme ? const Color(0xffe8e8e8) : const Color(0xffffffff)),
+                        ),
+                        child: ListView.separated(
+                            separatorBuilder:
+                                (BuildContext context, int index) =>
+                                    const Divider(thickness: 2),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: contents.length,
+                            itemBuilder: (context, index) {
+                              return Theme(
+                                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                                  child: ExpansionTile(
+                                      backgroundColor: Colors.white,
+                                      collapsedBackgroundColor: Colors.white,
+                                      title: Text(titles[index],
+                                          style: TextStyle(
+                                              fontFamily: "NotoSans",
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 20,
+                                              color: (theme ? const Color(0xff000000) : const Color(0xff000000)),
+                                              overflow: TextOverflow.ellipsis)),
+                                      subtitle: Text(upload_times[index],
+                                          style: TextStyle(
+                                              fontFamily: "NotoSans",
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 10,
+                                              color: (theme ? const Color(0xff000000) : const Color(0xff000000)),
+                                              overflow: TextOverflow.ellipsis)),
+                                      children: <Widget>[
+                                        Container(
+                                            width: width * 0.8,
+                                            child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Flexible(
+                                                      child: Text(
+                                                          contents[index],
+                                                          softWrap: true,
+                                                          maxLines: 40,
+                                                          style: TextStyle(fontFamily: "NotoSans", fontWeight: FontWeight.w400, fontSize: 15,
+                                                              color: (theme ? const Color(0xff000000) : const Color(0xff000000)))))
+                                                ]
+                                            )
+                                        )
+                                      ]
+                                  )
+                              );
+                            }
+                            )
+                    ),
+                  ),
+                ]
+                    )
+                )
+            );
           }
           return const Center(
             child: CircularProgressIndicator(),
