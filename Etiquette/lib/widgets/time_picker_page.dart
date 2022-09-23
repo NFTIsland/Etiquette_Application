@@ -21,7 +21,7 @@ import 'package:Etiquette/Providers/DB/update_ticket_owner.dart';
 class TimePickerPage extends StatefulWidget{
   String product_name;
   String place;
-  String category = "";
+  String? category;
   String date;
   String time;
   TimePickerPage({
@@ -30,7 +30,7 @@ class TimePickerPage extends StatefulWidget{
     required this.place,
     required this.date,
     required this.time,
-    category,
+    required this.category,
   }) : super(key: key);
   @override
   State<StatefulWidget> createState() => _TimePickerPage();
@@ -38,13 +38,15 @@ class TimePickerPage extends StatefulWidget{
 
 class _TimePickerPage extends State<TimePickerPage>{
   Timer? timer;
-  void initState(){
+
+  @override
+  void initState() {
     super.initState();
-    load_seat_class(widget.date!, widget.time!);
+    load_seat_class(widget.date, widget.time);
     loadKlayCurrency();
     loadTicketSeatImage();
     timer = Timer.periodic(
-      const Duration(seconds: 3), // 3초 마다 자동 갱신
+      const Duration(seconds: 1), // 1초 마다 자동 갱신
           (timer) {
         setState(() {
           loadKlayCurrency();
@@ -52,8 +54,17 @@ class _TimePickerPage extends State<TimePickerPage>{
       },
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
+  }
+
   late double width;
   late double height;
+
+  @override
   Widget build(context){
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
@@ -200,11 +211,29 @@ class _TimePickerPage extends State<TimePickerPage>{
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children : <Widget>[
-                          Text("총 출금 수량", style : TextStyle(color: Colors.grey)),
-                          Text(_klayInfo, style : TextStyle(color : Color(0xffEE3D43), fontSize: 20, fontFamily: "Pretendard", fontWeight: FontWeight.w600))
+                          const Text(
+                              "총 출금 수량",
+                              style: TextStyle(
+                                  color: Colors.grey
+                              )
+                          ),
+                          Text(
+                              _klayInfo,
+                              style: const TextStyle(
+                                  color: Color(0xffEE3D43),
+                                  fontSize: 20,
+                                  fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w600
+                              )
+                          )
                         ]
                     ),
-                    Text(_payInfo, style : TextStyle(color: Colors.grey))
+                    Text(
+                        _payInfo,
+                        style: const TextStyle(
+                            color: Colors.grey
+                        )
+                    )
                   ],
                 )
               )
@@ -213,8 +242,7 @@ class _TimePickerPage extends State<TimePickerPage>{
 
       ),
       bottomNavigationBar: Container(
-        padding : EdgeInsets.fromLTRB(width * 0.03, height * 0.01,
-            width * 0.03, height * 0.011),
+        padding : EdgeInsets.fromLTRB(width * 0.03, height * 0.01, width * 0.03, height * 0.011),
         child : ElevatedButton(
           child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -240,7 +268,7 @@ class _TimePickerPage extends State<TimePickerPage>{
                   BorderRadius.circular(9.5)),
               minimumSize:
               Size.fromHeight(height * 0.062),
-              primary: (Color(0xffEE3D43))
+              primary: const Color(0xffEE3D43)
           ),
           onPressed: () async {
             if (seat_class_value != "좌석 등급 선택"
@@ -248,7 +276,7 @@ class _TimePickerPage extends State<TimePickerPage>{
               final pay_selected = await displayDialog_YesOrNo(context, "티켓 결제", "위 옵션으로 결제하시겠습니까?");
               if (pay_selected) { // 다이얼 로그에서 OK 누름
                 final kas_address_data = await getKasAddress(); // jwt token으로부터 kas_address 가져오기
-                final tokenId_and_owner = await loadTicketTokenIdAndOwner(widget.date!, widget.time!, seat_class_value, seat_no_value); // 5가지 데이터로 token_id와 owner 가져오기
+                final tokenId_and_owner = await loadTicketTokenIdAndOwner(widget.date, widget.time, seat_class_value, seat_no_value); // 5가지 데이터로 token_id와 owner 가져오기
 
                 if (kas_address_data['statusCode'] == 200) {
                   if (tokenId_and_owner['owner'] != "" && tokenId_and_owner['token_id'] != "") {
@@ -265,7 +293,6 @@ class _TimePickerPage extends State<TimePickerPage>{
 
                         if (klayTransactionData['statusCode'] == 200) { // 트랜잭션 성공
                           Map<String, dynamic> kip17TokenTransferData = await kip17TokenTransfer(widget.category!, token_id, owner, owner, sender);
-
                           if (kip17TokenTransferData['statusCode'] == 200) {
                             Map<String, dynamic> updateTicketOwnerData = await updateTicketOwner(sender, token_id);
 
@@ -328,9 +355,7 @@ class _TimePickerPage extends State<TimePickerPage>{
 
   Future<Map<String, dynamic>> loadTicketTokenIdAndOwner(String date_value,
       String time_value, String seat_class_value, String seat_no_value) async {
-    final url = "$SERVER_IP/ticket/ticketTokenIdAndOwner/${widget
-        .product_name!}/${widget
-        .place!}/${date_value}/${time_value}/${seat_class_value}/${seat_no_value}";
+    final url = "$SERVER_IP/ticket/ticketTokenIdAndOwner/${widget.product_name}/${widget.place}/$date_value/$time_value/$seat_class_value/$seat_no_value";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
@@ -356,7 +381,7 @@ class _TimePickerPage extends State<TimePickerPage>{
 
   Future<void> loadTicketSeatImage() async {
     Map<String, dynamic> data = await getTicketSeatImageUrl(
-        widget.product_name!, widget.place!);
+        widget.product_name, widget.place);
     if (data["statusCode"] == 200) {
       image_url = data['data'][0]['seat_image_url'];
     } else {
@@ -433,9 +458,7 @@ class _TimePickerPage extends State<TimePickerPage>{
   Future<void> load_seat_no(String date_value, String time_value,
       String seat_class_value) async {
     if (seat_class_value != "좌석 등급 선택") {
-      final url = "$SERVER_IP/ticket/ticketSeatNo/${widget
-          .product_name!}/${widget
-          .place!}/${date_value}/${time_value}/${seat_class_value}";
+      final url = "$SERVER_IP/ticket/ticketSeatNo/${widget.product_name}/${widget.place}/$date_value/$time_value/$seat_class_value";
       try {
         await init_seatNoItems();
         var res = await http.get(Uri.parse(url));
@@ -484,8 +507,7 @@ class _TimePickerPage extends State<TimePickerPage>{
 
   Future<void> load_seat_class(String date_value, String time_value) async {
     if (time_value != "예매 시각 선택") {
-      final url = "$SERVER_IP/ticket/ticketSeatClass/${widget
-          .product_name!}/${widget.place!}/${date_value}/${time_value}";
+      final url = "$SERVER_IP/ticket/ticketSeatClass/${widget.product_name}/${widget.place}/$date_value/$time_value";
       try {
         await init_seatClassItems();
         var res = await http.get(Uri.parse(url));
