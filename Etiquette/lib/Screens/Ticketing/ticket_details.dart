@@ -265,15 +265,13 @@ class _TicketDetails extends State<TicketDetails>
                                 return [
                                   SliverToBoxAdapter(
                                       child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: <Widget>[
                                         Stack(
                                           children: <Widget>[
                                             Image.network(
                                                 detail['backdrop_url'],
                                                 width: width,
-                                                // height: width * 0.33,
                                                 height: width * 0.4,
                                                 fit: BoxFit.fill
                                             ),
@@ -281,7 +279,6 @@ class _TicketDetails extends State<TicketDetails>
                                                 left: width * 0.05,
                                                 top: width * 0.05,
                                                 child: Image.network(
-                                                    // "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
                                                     detail['poster_url'],
                                                     width: width * 0.25,
                                                     height: width * 0.38,
@@ -292,12 +289,7 @@ class _TicketDetails extends State<TicketDetails>
                                           clipBehavior: Clip.none,
                                         ),
                                         Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              width * 0.05,
-                                              width * 0.15,
-                                              width * 0.05,
-                                              0
-                                          ),
+                                          padding: EdgeInsets.fromLTRB(width * 0.05, width * 0.15, width * 0.05, 0),
                                           child: Text("${widget.product_name!}",
                                               style: TextStyle(
                                                   fontSize: 20,
@@ -307,31 +299,22 @@ class _TicketDetails extends State<TicketDetails>
                                           ),
                                         ),
                                         Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              width * 0.04,
-                                              width * 0.01,
-                                              width * 0.04,
-                                              0),
+                                          padding: EdgeInsets.fromLTRB(width * 0.04, width * 0.01, width * 0.04, 0),
                                           child:
                                           Column(
                                           children : [
                                           Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
                                               Row(children: <Widget>[
-                                                Icon(
-                                                    Icons.location_on_outlined,
-                                                    size: 20
-                                                ),
+                                                Icon(Icons.location_on_outlined, size: 20),
                                                 SizedBox(width: width * 0.01),
                                                 Text("${widget.place!}",
                                                     style: TextStyle(
                                                         fontSize: 15,
-                                                        fontFamily:
-                                                            'Pretendard',
-                                                        fontWeight:
-                                                            FontWeight.w400)
+                                                        fontFamily: 'Pretendard',
+                                                        fontWeight: FontWeight.w400
+                                                    )
                                                 )
                                               ]
                                               ),
@@ -340,19 +323,14 @@ class _TicketDetails extends State<TicketDetails>
                                                     start: Color(0xff00ddff),
                                                     end: Color(0xff0099cc)
                                                 ),
-                                                bubblesColor:
-                                                    const BubblesColor(
-                                                  dotPrimaryColor:
-                                                      Color(0xff33b5e5),
-                                                  dotSecondaryColor:
-                                                      Color(0xff0099cc),
+                                                bubblesColor: const BubblesColor(
+                                                  dotPrimaryColor: Color(0xff33b5e5),
+                                                  dotSecondaryColor: Color(0xff0099cc),
                                                 ),
                                                 likeBuilder: (like) {
                                                   return Icon(
                                                     Icons.favorite,
-                                                    color: like
-                                                        ? Colors.red
-                                                        : Colors.grey,
+                                                    color: like ? Colors.red : Colors.grey,
                                                     size: 30,
                                                   );
                                                 },
@@ -363,23 +341,22 @@ class _TicketDetails extends State<TicketDetails>
                                           ),
                                             Visibility(
                                               visible: !widget.showPurchaseButton!,
-                                                child:
-                                            Row(children : [
-                                              Icon(Icons.event_seat_outlined, size : 20),
-                                              SizedBox(width: width * 0.01),
-                                              Text("${widget.seat_class}석 ${widget.seat_No}번",
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontFamily:
-                                                      'Pretendard',
-                                                      fontWeight:
-                                                      FontWeight.w400)
-                                              )
-                                            ])
+                                                child: Row(
+                                                    children : [
+                                                      Icon(Icons.event_seat_outlined, size : 20),
+                                                      SizedBox(width: width * 0.01),
+                                                      Text("${widget.seat_class}석 ${widget.seat_No}번",
+                                                          style: TextStyle(
+                                                              fontSize: 15,
+                                                              fontFamily: 'Pretendard',
+                                                              fontWeight: FontWeight.w400
+                                                          )
+                                                      )
+                                                    ]
+                                                )
                                             )
-                                            ]
-                                            )
-
+                                          ]
+                                          )
                                         ),
                                         SizedBox(height: height * 0.015),
                                         Center(
@@ -389,48 +366,37 @@ class _TicketDetails extends State<TicketDetails>
                                             width: width * 0.9,
                                             height: width * 0.09,
                                             decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey, width: 1),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: (theme
-                                                  ? const Color(0xffe8e8e8)
-                                                  : const Color(0xffffffff)
-                                              ),
+                                              border: Border.all(color: Colors.grey, width: 1),
+                                              borderRadius: BorderRadius.circular(10),
+                                              color: (theme ? const Color(0xffe8e8e8) : const Color(0xffffffff)),
                                             ),
                                             child: TabBar(
-                                              indicator: (tabcontroller!.index == 0)
-                                                  ? BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                              bottomLeft: Radius
-                                                                  .circular(9),
-                                                              topLeft: Radius
-                                                                  .circular(9)
-                                                          ),
-                                                      color: Color(0xff333333)
-                                              )
-                                                  : BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                              bottomRight: Radius
-                                                                  .circular(9),
-                                                              topRight: Radius
-                                                                  .circular(9)
-                                                          ),
-                                                      color: Color(0xff333333)
+                                              indicator: (tabcontroller!.index == 0) ?
+                                              BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.only(
+                                                      bottomLeft: Radius.circular(9),
+                                                      topLeft: Radius.circular(9)
+                                                  ),
+                                                  color: Color(0xff333333)
+                                              ) :
+                                              BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.only(
+                                                      bottomRight: Radius.circular(9),
+                                                      topRight: Radius.circular(9)
+                                                  ),
+                                                  color: Color(0xff333333)
                                               ),
-
                                               indicatorPadding: EdgeInsets.zero,
                                               labelPadding: EdgeInsets.zero,
                                               controller: tabcontroller,
                                               unselectedLabelStyle:
                                                   const TextStyle(
                                                       fontFamily: 'NotoSans',
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                              unselectedLabelColor:
-                                                  Colors.black,
+                                                      fontWeight: FontWeight.w500
+                                                  ),
+                                              unselectedLabelColor: Colors.black,
                                               labelColor: Colors.white,
                                               labelStyle: TextStyle(
                                                   fontFamily: 'NotoSans',
@@ -459,8 +425,7 @@ class _TicketDetails extends State<TicketDetails>
                                 ];
                               },
                               body: Container(
-                                padding: EdgeInsets.fromLTRB(
-                                    width * 0.05, 0, width * 0.05, 0),
+                                padding: EdgeInsets.fromLTRB(width * 0.05, 0, width * 0.05, 0),
                                 child: TabBarView(
                                   key: _tabbarview,
                                   physics: const NeverScrollableScrollPhysics(),
@@ -483,7 +448,8 @@ class _TicketDetails extends State<TicketDetails>
                                                   overflow: TextOverflow.clip,
                                                 ),
                                                 Text(
-                                                    detail['description'].replaceAll("...", "‡").replaceAll('\\n', '\n').replaceAll(".", ".\n\n").replaceAll("‡", "..."),
+                                                    detail['description'].replaceAll("...", "‡").replaceAll('\\n', '\n')
+                                                        .replaceAll(".", ".\n\n").replaceAll("‡", "..."),
                                                     style: const TextStyle(
                                                         fontSize: 15,
                                                         fontFamily: "Pretendard",
@@ -500,24 +466,21 @@ class _TicketDetails extends State<TicketDetails>
                                         physics: NeverScrollableScrollPhysics(),
                                         children: [
                                           Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text("\n좌석 별 가격",
                                                     style: TextStyle(
                                                         fontSize: 18,
                                                         fontFamily: "NotoSans",
-                                                        fontWeight:
-                                                            FontWeight.w600)
+                                                        fontWeight: FontWeight.w600)
                                                 ),
                                                 Text(
                                                     "\n${price_description.replaceAll("\n", "\n\n")}",
                                                     style: TextStyle(
                                                         fontSize: 15,
-                                                        fontFamily:
-                                                            "Pretendard",
-                                                        fontWeight:
-                                                            FontWeight.w400)
+                                                        fontFamily: "Pretendard",
+                                                        fontWeight: FontWeight.w400
+                                                    )
                                                 )
                                               ]
                                           ),
@@ -530,79 +493,66 @@ class _TicketDetails extends State<TicketDetails>
                       )
                   ),
                   Container(
-                    padding: EdgeInsets.fromLTRB(width * 0.03, height * 0.01,
-                        width * 0.03, height * 0.011),
+                    padding: EdgeInsets.fromLTRB(width * 0.03, height * 0.01, width * 0.03, height * 0.011),
                     color: Colors.white24,
                     child: Visibility(
-                        child: widget.showPurchaseButton!
-                            ? ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    elevation: 0,
-                                    shadowColor: Colors.transparent,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(9.5)),
-                                    minimumSize:
-                                    Size.fromHeight(height * 0.062),
-                                    primary: (theme
-                                        ? const Color(0xffe8e8e8)
-                                        : Color(0xffEE3D43))
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SelectTicket(
-                                                product_name: widget.product_name!,
-                                                place: widget.place!,
-                                                category: detail['category'],
-                                              )
-                                      )
-                                  );
-                                },
-                                child: Text("예매하기",
-                                    style: TextStyle(
-                                      color: (theme
-                                          ? Color(0xff000000)
-                                          : Color(0xffffffff)
-                                      ),
+                        child: widget.showPurchaseButton! ?
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(9.5)),
+                              minimumSize: Size.fromHeight(height * 0.062),
+                              primary: (theme ? const Color(0xffe8e8e8) : Color(0xffEE3D43))
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SelectTicket(
+                                      product_name: widget.product_name!,
+                                      place: widget.place!,
+                                      category: detail['category'],
                                     )
-                                ),
+                                )
+                            );
+                            },
+                          child: Text("예매하기",
+                              style: TextStyle(
+                                color: (theme ? Color(0xff000000) : Color(0xffffffff)),
                               )
-                            : ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    elevation: 0,
-                                    shadowColor: Colors.transparent,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(9.5)),
-                                    minimumSize:
-                                        Size.fromHeight(height * 0.062),
-                                    primary: (theme
-                                        ? const Color(0xffe8e8e8)
-                                        : Color(0xffEE3D43))
-                                ),
-                                onPressed: () async{
-                                  original_price =  await load_price(widget.product_name!, widget.seat_class!);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => UploadTicket(token_id: widget.token_id, product_name: widget.product_name, owner: widget.owner,place: widget.place,seat_class: widget.seat_class, seat_No: widget.seat_No,performance_date: widget.performance_date,original_price: original_price.toString(),category: detail['category'],)
-                                      )
-                                  );
-                                },
-                                child: Text("판매하기",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontFamily: 'NotoSans',
-                                      fontWeight: FontWeight.w600,
-                                      color: (theme
-                                          ? const Color(0xff000000)
-                                          : const Color(0xffffffff)
-                                      ),
-                                    )
-                                ),
+                          ),
+                        ) :
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(9.5)
+                              ),
+                              minimumSize: Size.fromHeight(height * 0.062),
+                              primary: (theme ? const Color(0xffe8e8e8) : Color(0xffEE3D43))
+                          ),
+                          onPressed: () async{
+                            original_price =  await load_price(widget.product_name!, widget.seat_class!);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UploadTicket(token_id: widget.token_id, product_name: widget.product_name, owner: widget.owner,place: widget.place,seat_class: widget.seat_class, seat_No: widget.seat_No,performance_date: widget.performance_date,original_price: original_price.toString(),category: detail['category'],)
+                                )
+                            );
+                            },
+                          child: Text("판매하기",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'NotoSans',
+                                fontWeight: FontWeight.w600,
+                                color: (theme ? const Color(0xff000000) : const Color(0xffffffff)),
                               )
+                          ),
+                        )
                     ),
                   ),
                 ]
@@ -617,35 +567,3 @@ class _TicketDetails extends State<TicketDetails>
   }
 }
 
-TableRow tableRow(String title, String value) {
-  return TableRow(
-    children: <Widget>[
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Container(
-            padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-            alignment: Alignment.center,
-            child: Text(title,
-                style: const TextStyle(
-                  fontFamily: '',
-                  fontSize: 20,
-                )
-            )
-        ),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Container(
-            padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-            alignment: Alignment.center,
-            child: Text(value,
-                style: const TextStyle(
-                  fontFamily: '',
-                  fontSize: 15,
-                )
-            )
-        ),
-      ),
-    ],
-  );
-}

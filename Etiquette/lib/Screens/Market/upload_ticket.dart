@@ -2,22 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:Etiquette/Models/serverset.dart';
-import 'package:Etiquette/Providers/Coinone/get_klay_currency.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
-import 'package:Etiquette/Providers/DB/update_ticket_owner.dart';
-import 'package:Etiquette/Providers/KAS/Kip17/kip17_token_transfer.dart';
-import 'package:Etiquette/Providers/KAS/Wallet/klay_transaction.dart';
-import 'package:Etiquette/Utilities/add_comma_to_number.dart';
-import 'package:Etiquette/Utilities/round.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:like_button/like_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class UploadTicket extends StatefulWidget {
   String? token_id;
@@ -29,17 +22,17 @@ class UploadTicket extends StatefulWidget {
   String? seat_No;
   String? original_price;
   String? category;
-  UploadTicket(
-      {Key? key,
-        required this.token_id,
-        required this.product_name,
-        required this.original_price,
-        required this.owner,
-        required this.place,
-        required this.performance_date,
-        required this.category,
-        required this.seat_class,
-        required this.seat_No})
+
+  UploadTicket({Key? key,
+    required this.token_id,
+    required this.product_name,
+    required this.original_price,
+    required this.owner,
+    required this.place,
+    required this.performance_date,
+    required this.category,
+    required this.seat_class,
+    required this.seat_No})
       : super(key: key);
 
   @override
@@ -105,7 +98,8 @@ class _UploadTicket extends State<UploadTicket>
         "auction_comments": comments_controller.text
       });
       if (res.statusCode == 200) {
-        await displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드가 성공적으로 완료되었습니다.");
+        await displayDialog_checkonly(
+            context, "티켓 업로드", "티켓 업로드가 성공적으로 완료되었습니다.");
         Navigator.of(context).pop();
         send_data_for_schedule();
       } else {
@@ -131,87 +125,6 @@ class _UploadTicket extends State<UploadTicket>
     }
   }
 
-  Future<void> bid() async {
-    if (bid_price_controller.text == "") {
-      displayDialog_checkonly(context, "입찰", "입찰가를 입력해 주십시오.");
-      return;
-    }
-
-    final bid_price = int.parse(bid_price_controller.text);
-    if (bid_price % auction_details['bid_unit'] != 0) {
-      displayDialog_checkonly(context, "입찰", "입찰 단위에 맞지 않습니다. 다시 입력해 주십시오.");
-      return;
-    }
-
-    if (bid_price < auction_details['auction_start_price']) {
-      displayDialog_checkonly(context, "입찰", "입찰가는 경매 시작가보다 커야 합니다.");
-      return;
-    }
-
-    if (int.tryParse(previous_bid_price) != null) {
-      if (bid_price <
-          int.parse(previous_bid_price) + auction_details['bid_unit'] &&
-          bid_price != auction_details['immediate_purchase_price']) {
-        displayDialog_checkonly(context, "입찰", "최소 입찰가보다 큰 금액을 입력해야 합니다.");
-        return;
-      }
-    }
-
-    const url_bid = "$SERVER_IP/market/bid";
-    try {
-      Map<String, dynamic> kas_address_data = await getKasAddress();
-      if (kas_address_data['statusCode'] == 200) {
-        final bidder = kas_address_data['data'][0]['kas_address'];
-        var res = await http.post(Uri.parse(url_bid), body: {
-          "token_id": widget.token_id!,
-          "bidder": bidder,
-          "bid_price": bid_price.toString(),
-        });
-        Map<String, dynamic> data = json.decode(res.body);
-        if (data['statusCode'] == 200) {
-          displayDialog_checkonly(context, "입찰", "입찰이 성공적으로 완료되었습니다.");
-        } else {
-          final msg = data['msg'];
-          displayDialog_checkonly(context, "입찰", "입찰에 실패했습니다.\n\n$msg");
-          print("입찰 --> $msg");
-        }
-      } else {
-        String message = kas_address_data["msg"];
-        String errorMessage = "계정 정보를 가져오지 못했습니다.\n\n$message";
-        displayDialog_checkonly(context, "통신 오류", errorMessage);
-        print("입찰 --> $errorMessage");
-      }
-    } catch (ex) {
-      int statusCode = 400;
-      String msg = ex.toString();
-      displayDialog_checkonly(
-          context, "입찰", "statusCode: $statusCode\n\nmessage: $msg");
-    }
-  }
-
-  Future<Map<String, dynamic>> terminateAuction(String bidder) async {
-    const url = "$SERVER_IP/market/terminateAuction";
-    try {
-      var res = await http.delete(Uri.parse(url),
-          body: {'token_id': widget.token_id!, 'bidder': bidder});
-      Map<String, dynamic> data = json.decode(res.body);
-      return data;
-    } catch (ex) {
-      return {"statusCode": 400, "msg": ex.toString()};
-    }
-  }
-
-  Future<void> loadKlayCurrency() async {
-    Map<String, dynamic> data =
-    await getKlayCurrency(); // 현재 KLAY 시세 정보를 API를 통해 가져옴
-    if (data["statusCode"] == 200) {
-      // 현재 KLAY 시세 정보를 정상적으로 가져옴
-      String klayCurrency = data['lastCurrency'];
-      _klayCurrency = double.parse(klayCurrency);
-    } else {
-      _klayCurrency = 0.0;
-    }
-  }
 
   Future<void> setInterest() async {
     const url = "$SERVER_IP/individual/interestAuction";
@@ -274,8 +187,7 @@ class _UploadTicket extends State<UploadTicket>
   @override
   void initState() {
     super.initState();
-    tabcontroller =
-        TabController(length: 2, vsync: this, animationDuration: Duration.zero);
+    tabcontroller = TabController(length: 2, vsync: this, animationDuration: Duration.zero);
     scrollController = ScrollController(initialScrollOffset: 0);
     future = getTheme();
   }
@@ -289,15 +201,8 @@ class _UploadTicket extends State<UploadTicket>
 
   @override
   Widget build(BuildContext context) {
-
-    width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    height = MediaQuery
-        .of(context)
-        .size
-        .height;
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
     return FutureBuilder(
         future: future,
         builder: (context, snapshot) {
@@ -310,627 +215,458 @@ class _UploadTicket extends State<UploadTicket>
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
             return GestureDetector(
-              onTap : () => FocusScope.of(context).unfocus(),
+              onTap: () => FocusScope.of(context).unfocus(),
               child: Scaffold(
                 appBar: defaultAppbar("티켓 상세 정보"),
-                body: Column(children: <Widget>[
+                body: Column(
+                    children: <Widget>[
                   Flexible(
-                      fit: FlexFit.tight,
-                      child: Container(
-                          child: NestedScrollView(
-                              headerSliverBuilder: (context, value) {
-                                return [
-                                  SliverToBoxAdapter(
-                                      child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Stack(
-                                              children: <Widget>[
-                                                Image(
-                                                    image: AssetImage(
-                                                        "assets/image/mainlogo.png"),
-                                                    width: width,
-                                                    height: width * 0.33,
-                                                    fit: BoxFit.fill),
-                                                Positioned(
-                                                    left: width * 0.05,
-                                                    top: width * 0.05,
-                                                    child: Image.network(
-                                                        "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
-                                                        width: width * 0.25,
-                                                        height: width * 0.38,
-                                                        fit: BoxFit.fill))
-                                              ],
-                                              clipBehavior: Clip.none,
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  width * 0.05,
-                                                  width * 0.15,
-                                                  width * 0.05,
-                                                  0),
-                                              child: Text(
-                                                  "${widget.product_name!}",
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontFamily: 'NotoSans',
-                                                      fontWeight: FontWeight
-                                                          .w800)),
-                                            ),
-                                            Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    width * 0.04,
-                                                    width * 0.01,
-                                                    width * 0.04,
-                                                    0),
-                                                child: Column(
-                                                    children: <Widget>[
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                        children: <Widget>[
-                                                          Row(children: <Widget>[
-                                                            Icon(Icons
-                                                                .location_on_outlined,
-                                                                size: 20),
-                                                            SizedBox(
-                                                                width: width *
-                                                                    0.01),
-                                                            Text("${widget
-                                                                .place!}",
-                                                                style: TextStyle(
-                                                                    fontSize: 15,
-                                                                    fontFamily: 'Pretendard',
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .w400))
-                                                          ]),
-                                                          LikeButton(
-                                                            circleColor: const CircleColor(
-                                                                start: Color(
-                                                                    0xff00ddff),
-                                                                end: Color(
-                                                                    0xff0099cc)),
-                                                            bubblesColor: const BubblesColor(
-                                                              dotPrimaryColor:
-                                                              Color(0xff33b5e5),
-                                                              dotSecondaryColor:
-                                                              Color(0xff0099cc),
-                                                            ),
-                                                            likeBuilder: (like) {
-                                                              return Icon(
-                                                                Icons.favorite,
-                                                                color: like
-                                                                    ? Colors.red
-                                                                    : Colors.grey,
-                                                                size: 30,
-                                                              );
-                                                            },
-                                                            isLiked: like,
-                                                            onTap: onLikeButtonTapped,
-                                                          )
-                                                        ],
-                                                      ),
-                                                      Row(children: [
-                                                        Icon(Icons
-                                                            .event_seat_outlined,
-                                                            size: 20),
-                                                        SizedBox(
-                                                            width: width * 0.01),
-                                                        Text("${widget
-                                                            .seat_class}석 ${widget
-                                                            .seat_No}번",
-                                                            style: TextStyle(
-                                                                fontSize: 15,
-                                                                fontFamily:
-                                                                'Pretendard',
-                                                                fontWeight:
-                                                                FontWeight.w400)
-                                                        )
-                                                      ])
-                                                    ]
-                                                )
-                                            ),
-                                            SizedBox(height: height * 0.015),
-                                            Center(
-                                              child: Container(
-                                                key: _tabbar,
-                                                alignment: Alignment.topCenter,
-                                                width: width * 0.9,
-                                                height: width * 0.09,
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: Colors.grey,
-                                                      width: 1),
-                                                  borderRadius:
-                                                  BorderRadius.circular(10),
-                                                  color: (theme
-                                                      ? const Color(0xffe8e8e8)
-                                                      : const Color(0xffffffff)),
-                                                ),
-                                                child: TabBar(
-                                                  indicator: (tabcontroller!
-                                                      .index == 0)
-                                                      ? BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.only(
-                                                          bottomLeft: Radius
-                                                              .circular(9),
-                                                          topLeft: Radius
-                                                              .circular(9)
-                                                      ),
-                                                      color: Color(0xff333333)
-                                                  )
-                                                      : BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.only(
-                                                          bottomRight: Radius
-                                                              .circular(9),
-                                                          topRight: Radius
-                                                              .circular(9)
-                                                      ),
-                                                      color: Color(0xff333333)
-                                                  ),
-                                                  indicatorPadding: EdgeInsets
-                                                      .zero,
-                                                  labelPadding: EdgeInsets.zero,
-                                                  controller: tabcontroller,
-                                                  indicatorWeight: 0,
-                                                  unselectedLabelStyle:
-                                                  const TextStyle(
-                                                      fontFamily: 'NotoSans',
-                                                      fontWeight:
-                                                      FontWeight.w500),
-                                                  unselectedLabelColor: Colors
-                                                      .black,
-                                                  labelColor: Colors.white,
-                                                  labelStyle: TextStyle(
-                                                      fontFamily: 'NotoSans',
-                                                      fontWeight: FontWeight
-                                                          .w700),
-                                                  tabs: [
-                                                    Tab(
-                                                      //text: "코멘트",
-                                                        child: Container(
-                                                          child: const Text(
-                                                              '코멘트'),
-                                                          alignment: Alignment
-                                                              .center,
-                                                          height: double.infinity,
-                                                          decoration: const BoxDecoration(
-                                                            //color: Colors.white,
-                                                            border: Border(
-                                                              right: BorderSide(
-                                                                  color: Colors
-                                                                      .grey),
-                                                            ),
-                                                          ),
-                                                        )),
-                                                    Tab(
-                                                      //text: "경매 정보",
-                                                        child: Container(
-                                                          child: const Text(
-                                                              '경매 정보'),
-                                                          alignment: Alignment
-                                                              .center,
-                                                          height: double.infinity,
-                                                        )),
-                                                  ],
-                                                  onTap: (int idx) {
-                                                    setState(() {
-                                                      tabcontroller!.index = idx;
-                                                      _scrollDown();
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ])),
-                                ];
-                              },
-                              body: Container(
-                                padding: EdgeInsets.fromLTRB(
-                                    width * 0.05, 0, 0, 0),
-                                child: TabBarView(
-                                  key: _tabbarview,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  controller: tabcontroller,
-                                  children: [
-                                    ListView(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        children: [
-                                          Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children : <Widget>[
-                                                Text("\n판매자의 코멘트\n",
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontFamily: "NotoSans",
-                                                        fontWeight:
-                                                        FontWeight.w600)),
-                                                Container(
-                                                  child: TextField(
-                                                      maxLines: 500,
-                                                      maxLength: 500,
-                                                      minLines: 30,
-                                                      //expands: true,
-                                                      keyboardType: TextInputType
-                                                          .multiline,
-                                                      controller: comments_controller,
-                                                      decoration: const InputDecoration(
-                                                        enabledBorder: OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                                width: 1,
-                                                                color: Colors.grey)
-                                                        ),
-                                                        disabledBorder: OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                                width: 1,
-                                                                color: Colors.grey)
-                                                        ),
-                                                        border: OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                                width: 1,
-                                                                color: Colors.red)
-                                                        ),
-                                                      ),
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontFamily:
-                                                          "Pretendard",
-                                                          fontWeight:
-                                                          FontWeight.w400)
-                                                  ),
-                                                ),
-
-                                              ]
-                                          )
-
-
-                                        ]),
-                                    ListView(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      padding:
-                                      EdgeInsets.only(top: height * 0.03),
-                                      children: ListTile
-                                          .divideTiles(context: context, tiles: [
-                                        ListTile(
-                                            title: Row(children: [
-                                              Container(
-                                                width: width * 0.25,
-                                                child: Text("거래 종료일",
-                                                    style: TextStyle(
-                                                        fontFamily: "Pretendard",
-                                                        fontWeight: FontWeight
-                                                            .w500,
-                                                        fontSize: 14,
-                                                        color: Color(
-                                                            0xff808393))),
-                                              ),
-                                              Expanded(
-                                                child: auction_end_date == "" ?
-                                                ElevatedButton(
-                                                    onPressed: () {
-                                                      if (widget.product_name !=
-                                                          "" &&
-                                                          widget.place != "" &&
-                                                          widget.original_price !=
-                                                              "") {
-                                                        final maxTime = DateTime(
-                                                            int.parse(widget
-                                                                .performance_date!
-                                                                .substring(0, 4)),
-                                                            int.parse(widget
-                                                                .performance_date!
-                                                                .substring(5, 7)),
-                                                            int.parse(widget
-                                                                .performance_date!.substring(8, 10)),
-                                                            int.parse(widget
-                                                                .performance_date!
-                                                                .substring(
-                                                                11, 13)),
-                                                            int.parse(widget
-                                                                .performance_date!
-                                                                .substring(
-                                                                14, 16)))
-                                                            .subtract(
-                                                            const Duration(
-                                                                hours: 3));
-                                                        DatePicker
-                                                            .showDateTimePicker(
-                                                          context,
-                                                          showTitleActions: true,
-                                                          minTime: DateTime.now()
-                                                              .add(const Duration(
-                                                              minutes: 1)),
-                                                          maxTime: maxTime,
-                                                          onChanged: (date) {
-                                                            print(
-                                                                'change $date in time zone ' +
-                                                                    date
-                                                                        .timeZoneOffset
-                                                                        .inHours
-                                                                        .toString());
-                                                          },
-                                                          onConfirm: (date) {
-                                                            if (date.isBefore(
-                                                                maxTime) || date
-                                                                .isAtSameMomentAs(
-                                                                maxTime)) {
-                                                              setState(() {
-                                                                auction_end_date =
-                                                                "${date
-                                                                    .year}-${date
-                                                                    .month
-                                                                    .toString()
-                                                                    .padLeft(2,
-                                                                    '0')}-${date
-                                                                    .day
-                                                                    .toString()
-                                                                    .padLeft(2,
-                                                                    '0')} ${date
-                                                                    .hour
-                                                                    .toString()
-                                                                    .padLeft(2,
-                                                                    '0')}:${date
-                                                                    .minute
-                                                                    .toString()
-                                                                    .padLeft(
-                                                                    2, '0')}:00";
-                                                              });
-                                                            } else {
-                                                              displayDialog_checkonly(
-                                                                  context,
-                                                                  "티켓 업로드",
-                                                                  "경매 마감 시각은 티켓 사용 시각으로부터 3시간 전 까지 선택 할 수 있습니다.");
-                                                            }
-                                                          },
-                                                          locale: LocaleType.ko,
-                                                        );
-                                                      } else {
-                                                        displayDialog_checkonly(
-                                                            context, "티켓 업로드",
-                                                            "업로드 할 티켓을 선택해 주세요.");
-                                                      }
-                                                    },
-                                                    child: const Text(
-                                                      '경매 마감 시각 선택',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                      ),
-                                                    )
-                                                ) :
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children : <Widget>[
-                                                    Text("$auction_end_date"),
-                                                    ElevatedButton(
-
-                                                        onPressed: () {
-                                                          if (widget.product_name !=
-                                                              "" &&
-                                                              widget.place != "" &&
-                                                              widget.original_price !=
-                                                                  "") {
-                                                            final maxTime = DateTime(
-                                                                int.parse(widget
-                                                                    .performance_date!
-                                                                    .substring(0, 4)),
-                                                                int.parse(widget
-                                                                    .performance_date!
-                                                                    .substring(5, 7)),
-                                                                int.parse(widget
-                                                                    .performance_date!.substring(8, 10)),
-                                                                int.parse(widget
-                                                                    .performance_date!
-                                                                    .substring(
-                                                                    11, 13)),
-                                                                int.parse(widget
-                                                                    .performance_date!
-                                                                    .substring(
-                                                                    14, 16)))
-                                                                .subtract(
-                                                                const Duration(
-                                                                    hours: 3));
-                                                            DatePicker
-                                                                .showDateTimePicker(
-                                                              context,
-                                                              showTitleActions: true,
-                                                              minTime: DateTime.now()
-                                                                  .add(const Duration(
-                                                                  minutes: 1)),
-                                                              maxTime: maxTime,
-                                                              onChanged: (date) {
-                                                                print(
-                                                                    'change $date in time zone ' +
-                                                                        date
-                                                                            .timeZoneOffset
-                                                                            .inHours
-                                                                            .toString());
-                                                              },
-                                                              onConfirm: (date) {
-                                                                if (date.isBefore(
-                                                                    maxTime) || date
-                                                                    .isAtSameMomentAs(
-                                                                    maxTime)) {
-                                                                  setState(() {
-                                                                    auction_end_date =
-                                                                    "${date
-                                                                        .year}-${date
-                                                                        .month
-                                                                        .toString()
-                                                                        .padLeft(2,
-                                                                        '0')}-${date
-                                                                        .day
-                                                                        .toString()
-                                                                        .padLeft(2,
-                                                                        '0')} ${date
-                                                                        .hour
-                                                                        .toString()
-                                                                        .padLeft(2,
-                                                                        '0')}:${date
-                                                                        .minute
-                                                                        .toString()
-                                                                        .padLeft(
-                                                                        2, '0')}:00";
-                                                                  });
-                                                                } else {
-                                                                  displayDialog_checkonly(
-                                                                      context,
-                                                                      "티켓 업로드",
-                                                                      "경매 마감 시각은 티켓 사용 시각으로부터 3시간 전 까지 선택 할 수 있습니다.");
-                                                                }
-                                                              },
-                                                              locale: LocaleType.ko,
-                                                            );
-                                                          } else {
-                                                            displayDialog_checkonly(
-                                                                context, "티켓 업로드",
-                                                                "업로드 할 티켓을 선택해 주세요.");
-                                                          }
-                                                        },
-                                                        child: const Text(
-                                                          '수정',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                          ),
-                                                        )
-                                                    )
-                                                  ]
-                                                )
-                                              )
-                                            ])),
-                                        ListTile(
-                                            title: Row(children: [
-                                              Container(
-                                                width: width * 0.25,
-                                                child: Text("티켓 원가",
-                                                    style: TextStyle(
-                                                        fontFamily: "Pretendard",
-                                                        fontWeight: FontWeight
-                                                            .w500,
-                                                        fontSize: 14,
-                                                        color: Color(
-                                                            0xff808393))),
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                    "${widget.original_price}",
-                                                    style: TextStyle(
-                                                        fontFamily: "NotoSans",
-                                                        fontWeight: FontWeight
-                                                            .w400,
-                                                        fontSize: 16,
-                                                        color: Color(
-                                                            0xff1F1F1F))),
-
-                                              )
-                                            ])),
-                                        ListTile(
-                                            title: Row(children: [
-                                              Container(
-                                                width: width * 0.25,
-                                                child: Text("경매 시작가",
-                                                    style: TextStyle(
-                                                        fontFamily: "Pretendard",
-                                                        fontWeight: FontWeight
-                                                            .w500,
-                                                        fontSize: 14,
-                                                        color: Color(
-                                                            0xff808393))),
-                                              ),
-                                              Expanded(
-                                                  child: TextField(
-                                                    controller: start_controller,
-                                                    keyboardType: TextInputType
-                                                        .number,
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontFamily:
-                                                        "Pretendard",
-                                                        fontWeight:
-                                                        FontWeight.w400),
-                                                  )
-                                              )
-                                            ])),
-                                        ListTile(
-                                            title: Row(children: [
-                                              Container(
-                                                width: width * 0.25,
-                                                child: Text("입찰 단위",
-                                                    style: TextStyle(
-                                                        fontFamily: "Pretendard",
-                                                        fontWeight: FontWeight
-                                                            .w500,
-                                                        fontSize: 14,
-                                                        color: Color(
-                                                            0xff808393))),
-                                              ),
-                                              Expanded(
-                                                  child: TextField(
-                                                      controller: bid_controller,
-                                                      keyboardType: TextInputType
-                                                          .number,
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontFamily:
-                                                          "Pretendard",
-                                                          fontWeight:
-                                                          FontWeight.w400)
-                                                  )
-                                              )
-                                            ])),
-                                        ListTile(
-                                            title: Row(children: [
-                                              Container(
-                                                width: width * 0.25,
-                                                child: Text("즉시 거래가",
-                                                    style: TextStyle(
-                                                        fontFamily: "Pretendard",
-                                                        fontWeight: FontWeight
-                                                            .w500,
-                                                        fontSize: 14,
-                                                        color: Color(
-                                                            0xff808393))),
-                                              ),
-                                              Expanded(
-                                                  child: TextField(
-                                                      controller: buynow_controller,
-                                                      keyboardType: TextInputType
-                                                          .number,
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontFamily:
-                                                          "Pretendard",
-                                                          fontWeight:
-                                                          FontWeight.w400)
-                                                  )
-                                              )
-                                            ])),
-                                      ]).toList(),
-                                    ),
-                                  ],
+                    fit: FlexFit.tight,
+                    child: NestedScrollView(
+                      headerSliverBuilder: (context, value) {
+                      return [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Stack(
+                                children: <Widget>[
+                                  Image(
+                                      image: AssetImage("assets/image/mainlogo.png"),
+                                      width: width,
+                                      height: width * 0.33,
+                                      fit: BoxFit.fill),
+                                  Positioned(
+                                      left: width * 0.05,
+                                      top: width * 0.05,
+                                      child: Image.network(
+                                          "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
+                                          width: width * 0.25,
+                                          height: width * 0.38,
+                                          fit: BoxFit.fill))
+                                ],
+                                clipBehavior: Clip.none,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(width * 0.05, width * 0.15, width * 0.05, 0),
+                                child: Text(
+                                    "${widget.product_name!}",
+                                    style: TextStyle(fontSize: 20, fontFamily: 'NotoSans', fontWeight: FontWeight.w800)
                                 ),
-                              )))),
+                              ),
+                              Padding(
+                                  padding: EdgeInsets.fromLTRB(width * 0.04, width * 0.01, width * 0.04, 0
+                                  ),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Row(children: <Widget>[
+                                            Icon(Icons.location_on_outlined, size: 20),
+                                            SizedBox(width: width * 0.01),
+                                            Text(
+                                                "${widget.place!}",
+                                                style: TextStyle(fontSize: 15, fontFamily: 'Pretendard', fontWeight: FontWeight.w400)
+                                            )
+                                          ]),
+                                          LikeButton(
+                                            circleColor: const CircleColor(
+                                                start: Color(0xff00ddff),
+                                                end: Color(0xff0099cc)),
+                                            bubblesColor: const BubblesColor(
+                                              dotPrimaryColor: Color(0xff33b5e5),
+                                              dotSecondaryColor: Color(0xff0099cc),
+                                            ),
+                                            likeBuilder: (like) {
+                                              return Icon(
+                                                Icons.favorite,
+                                                color: like ? Colors.red : Colors.grey,
+                                                size: 30,
+                                              );
+                                            },
+                                            isLiked: like,
+                                            onTap: onLikeButtonTapped,
+                                          )
+                                        ],
+                                      ),
+                                      Row(children: [
+                                        Icon(Icons.event_seat_outlined, size: 20),
+                                        SizedBox(width: width * 0.01),
+                                        Text(
+                                            "${widget.seat_class}석 ${widget.seat_No}번",
+                                            style: TextStyle(fontSize: 15, fontFamily: 'Pretendard', fontWeight: FontWeight.w400)
+                                        )
+                                      ])
+                                  ])
+                              ),
+                              SizedBox(height: height * 0.015),
+                              Center(
+                                child : Container(
+                                  key: _tabbar,
+                                  alignment: Alignment.topCenter,
+                                  width: width * 0.9,
+                                  height: width * 0.09,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey, width: 1),
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                    color: (theme ? const Color(0xffe8e8e8) : const Color(0xffffffff)),
+                                  ),
+                                  child: TabBar(
+                                    indicator: (tabcontroller!.index == 0) ?
+                                    BoxDecoration(
+                                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(9), topLeft: Radius.circular(9)),
+                                        color: Color(0xff333333)
+                                    ) :
+                                    BoxDecoration(
+                                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(9), topRight: Radius.circular(9)),
+                                        color: Color(0xff333333)
+                                    ),
+                                    indicatorPadding: EdgeInsets.zero,
+                                    labelPadding: EdgeInsets.zero,
+                                    controller: tabcontroller,
+                                    indicatorWeight: 0,
+                                    unselectedLabelStyle:
+                                    const TextStyle(fontFamily: 'NotoSans', fontWeight: FontWeight.w500),
+                                    unselectedLabelColor: Colors.black,
+                                    labelColor: Colors.white,
+                                    labelStyle: TextStyle(fontFamily: 'NotoSans', fontWeight: FontWeight.w700),
+                                    tabs: [
+                                      Tab(
+                                        //text: "코멘트",
+                                          child: Container(
+                                            child: const Text('코멘트'),
+                                            alignment: Alignment.center,
+                                            height: double.infinity,
+                                            decoration: const BoxDecoration(
+                                              //color: Colors.white,
+                                              border: Border(right: BorderSide(color: Colors.grey),),
+                                            ),
+                                          )
+                                      ),
+                                      Tab(
+                                        //text: "경매 정보",
+                                          child: Container(
+                                            child: const Text('경매 정보'),
+                                            alignment: Alignment.center,
+                                            height: double.infinity,
+                                          )
+                                      ),
+                                    ],
+                                    onTap: (int idx) {
+                                      setState(() {
+                                        tabcontroller!.index = idx;
+                                        _scrollDown();
+                                      });
+                                    },
+                                  ),
+                                )
+                              ),
+                            ]
+                          )
+                        ),
+                      ];
+                      },
+                        body: Container(
+                          padding: EdgeInsets.fromLTRB(width * 0.05, 0, width*0.05, 0),
+                          child: TabBarView(
+                            key: _tabbarview,
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: tabcontroller,
+                            children: [
+                              ListView(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  children: [
+                                    Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text("\n판매자의 코멘트\n",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontFamily: "NotoSans",
+                                                  fontWeight: FontWeight.w600)
+                                          ),
+                                          Container(
+                                            child: TextField(
+                                                maxLines: 500,
+                                                maxLength: 500,
+                                                minLines: 30,
+                                                //expands: true,
+                                                keyboardType: TextInputType.multiline,
+                                                controller: comments_controller,
+                                                decoration: const InputDecoration(
+                                                  enabledBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          width: 1,
+                                                          color: Colors.grey)
+                                                  ),
+                                                  disabledBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          width: 1,
+                                                          color: Colors.grey)
+                                                  ),
+                                                  border: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          width: 1,
+                                                          color: Colors.red)
+                                                  ),
+                                                ),
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontFamily: "Pretendard",
+                                                    fontWeight: FontWeight.w400)
+                                            ),
+                                          ),
+                                        ]
+                                    )
+                                  ]),
+                              ListView(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                padding: EdgeInsets.only(top: height * 0.03),
+                                children: ListTile.divideTiles(
+                                    context: context, tiles: [
+                                  ListTile(
+                                      title: Row(
+                                          children: [
+                                            Container(
+                                              width: width * 0.25,
+                                              child: Text("거래 종료일",
+                                                  style: TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                  color: Color(0xff808393))
+                                              ),
+                                            ),
+                                        Expanded(
+                                            child: auction_end_date == "" ?
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  if (widget.product_name != "" &&
+                                                      widget.place != "" &&
+                                                      widget.original_price != "") {
+                                                    final maxTime =
+                                                    DateTime(
+                                                        int.parse(widget.performance_date!.substring(0, 4)),
+                                                        int.parse(widget.performance_date!.substring(5, 7)),
+                                                        int.parse(widget.performance_date!.substring(8, 10)),
+                                                        int.parse(widget.performance_date!.substring(11, 13)),
+                                                        int.parse(widget.performance_date!.substring(14, 16)))
+                                                        .subtract(const Duration(hours: 3));
+                                                    DatePicker.showDateTimePicker(
+                                                      context,
+                                                      showTitleActions: true,
+                                                      minTime: DateTime.now()
+                                                          .add(const Duration(minutes: 1)),
+                                                      maxTime: maxTime,
+                                                      onChanged: (date) {
+                                                        print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+                                                      },
+                                                      onConfirm: (date) {
+                                                        if (date.isBefore(maxTime) ||
+                                                            date.isAtSameMomentAs(maxTime)) {
+                                                          setState(() {
+                                                            auction_end_date =
+                                                            "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} "
+                                                            "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:00";
+                                                          });
+                                                        } else {
+                                                          displayDialog_checkonly(
+                                                              context,
+                                                              "티켓 업로드",
+                                                              "경매 마감 시각은 티켓 사용 시각으로부터 3시간 전 까지 선택 할 수 있습니다.");
+                                                        }
+                                                      },
+                                                      locale: LocaleType.ko,
+                                                    );
+                                                  } else {
+                                                    displayDialog_checkonly(
+                                                        context, "티켓 업로드",
+                                                        "업로드 할 티켓을 선택해 주세요.");
+                                                  }
+                                                },
+                                                child: const Text(
+                                                  '경매 마감 시각 선택',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                )
+                                            )
+                                                :
+                                            Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: <Widget>[
+                                                  Text("$auction_end_date"),
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        if (widget.product_name != "" &&
+                                                            widget.place != "" &&
+                                                            widget.original_price != "") {
+                                                          final maxTime = DateTime(
+                                                              int.parse(widget.performance_date!.substring(0, 4)),
+                                                              int.parse(widget.performance_date!.substring(5, 7)),
+                                                              int.parse(widget.performance_date!.substring(8, 10)),
+                                                              int.parse(widget.performance_date!.substring(11, 13)),
+                                                              int.parse(widget.performance_date!.substring(14, 16)))
+                                                              .subtract(const Duration(hours: 3));
+                                                          DatePicker.showDateTimePicker(
+                                                            context, showTitleActions: true,
+                                                            minTime: DateTime.now().add(const Duration(minutes: 1)),
+                                                            maxTime: maxTime,
+                                                            onChanged: (date) {
+                                                              print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+                                                            },
+                                                            onConfirm: (date) {
+                                                              if (date.isBefore(maxTime) || date.isAtSameMomentAs(maxTime)) {
+                                                                setState(() {
+                                                                  auction_end_date =
+                                                                  "${date.year}-${date.month.toString().padLeft(2, '0')}"
+                                                                  "-${date.day.toString().padLeft(2, '0')} "
+                                                                  "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:00";
+                                                                });
+                                                              } else {
+                                                                displayDialog_checkonly(
+                                                                    context,
+                                                                    "티켓 업로드",
+                                                                    "경매 마감 시각은 티켓 사용 시각으로부터 3시간 전 까지 선택 할 수 있습니다.");
+                                                              }
+                                                            },
+                                                            locale: LocaleType.ko,
+                                                          );
+                                                        } else {
+                                                          displayDialog_checkonly(
+                                                              context,
+                                                              "티켓 업로드",
+                                                              "업로드 할 티켓을 선택해 주세요.");
+                                                        }
+                                                      },
+                                                      child: const Text('수정',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                        ),
+                                                      )
+                                                  )
+                                                ]
+                                            )
+                                        )
+                                      ])
+                                  ),
+                                  ListTile(
+                                      title: Row(children: [
+                                        SizedBox(
+                                          width: width * 0.25,
+                                          child: Text(
+                                              "티켓 원가",
+                                              style: TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                  color: Color(0xff808393))),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                              "${widget.original_price}",
+                                              style: TextStyle(
+                                                  fontFamily: "NotoSans",
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 16,
+                                                  color: Color(0xff1F1F1F))),
+
+                                        )
+                                      ])
+                                  ),
+                                  ListTile(
+                                      title: Row(children: [
+                                        Container(
+                                          width: width * 0.25,
+                                          child: Text("경매 시작가",
+                                              style: TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                  color: Color(0xff808393))),
+                                        ),
+                                        Expanded(
+                                            child: TextField(
+                                              controller: start_controller,
+                                              keyboardType: TextInputType.number,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontFamily: "Pretendard",
+                                                  fontWeight: FontWeight.w400),
+                                            )
+                                        )
+                                      ])),
+                                  ListTile(
+                                      title: Row(children: [
+                                        SizedBox(
+                                          width: width * 0.25,
+                                          child: Text("입찰 단위",
+                                              style: TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                  color: Color(0xff808393))),
+                                        ),
+                                        Expanded(
+                                            child: TextField(
+                                                controller: bid_controller,
+                                                keyboardType: TextInputType.number,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontFamily: "Pretendard",
+                                                    fontWeight: FontWeight.w400)
+                                            )
+                                        )
+                                      ])),
+                                  ListTile(
+                                      title: Row(children: [
+                                        SizedBox(
+                                          width: width * 0.25,
+                                          child: Text("즉시 거래가",
+                                            style: TextStyle(
+                                              fontFamily: "Pretendard",
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14,
+                                              color: Color(0xff808393)
+                                            )
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: TextField(
+                                              controller: buynow_controller,
+                                              keyboardType: TextInputType.number,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontFamily: "Pretendard",
+                                                  fontWeight: FontWeight.w400)
+                                          )
+                                        )
+                                      ])),
+                                ]).toList(),
+                              ),
+                            ],
+                          ),
+                        )
+                    )
+                  ),
                 ]),
                 bottomNavigationBar: SizedBox(
                   child: ElevatedButton(
                     child: const Text("티켓 업로드"),
                     style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(9.5)),
-                        minimumSize:
-                        Size.fromHeight(height * 0.062),
-                        primary: (theme
-                            ? const Color(0xffe8e8e8)
-                            : Color(0xffEE3D43))
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                          BorderRadius.circular(9.5)),
+                      minimumSize: Size.fromHeight(height * 0.062),
+                      primary: (theme ? const Color(0xffe8e8e8) : Color(0xffEE3D43)
+                      )
                     ),
                     onPressed: () async {
                       int _startPrice = int.parse(start_controller.text);
@@ -940,64 +676,59 @@ class _UploadTicket extends State<UploadTicket>
                       if (_startPrice <= _originalPrice
                           && (_bidUnit % 100 == 0)
                           && _immediatePurchasePrice <= _originalPrice) {
-                        if (comments_controller.text != "") {
-                          if (auction_end_date != "") {
-                            // final selected = await displayDialog_YesOrNo(context, "티켓 업로드", "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n(한번 업로드한 티켓은 취소할 수 없습니다.)");
+                          if (comments_controller.text != "") {
+                            if (auction_end_date != "") {
                             final selected = await showDialog(
                               context: context,
-                              builder: (context) => AlertDialog(
+                              builder: (context) =>
+                              AlertDialog(
                                 title: const Text("티켓 업로드"),
                                 content: RichText(
-                                    text: const TextSpan(
-                                      children: [
-                                        TextSpan(
-                                            text: "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 13,
-                                            )
-                                        ),
-                                        TextSpan(
-                                            text: "한번 업로드한 티켓은 취소할 수 없습니다.",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            )
-                                        )
-                                      ],
-                                    )
+                                  text: const TextSpan(
+                                    children: [
+                                      TextSpan(
+                                          text: "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13,
+                                          )
+                                      ),
+                                      TextSpan(
+                                          text: "한번 업로드한 티켓은 취소할 수 없습니다.",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          )
+                                      )
+                                    ],
+                                  )
                                 ),
                                 actions: <Widget>[
                                   TextButton(
                                     child: const Text('Cancel'),
-                                    onPressed: () => Navigator.pop(context, false),
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
                                   ),
                                   TextButton(
                                     child: const Text('OK'),
-                                    onPressed: () => Navigator.pop(context, true),
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
                                   ),
                                 ],
                               ),
-                            );
-
-                            if (selected) {
-                              upload_ticket();
+                              );
+                              if (selected) {upload_ticket();}
                             }
-                          } else {
-                            displayDialog_checkonly(context, "티켓 업로드", "경매 마감 날짜 및 시각을 선택해 주세요.");
+                            else {displayDialog_checkonly(context, "티켓 업로드", "경매 마감 날짜 및 시각을 선택해 주세요.");}
                           }
-                        } else {
-                          displayDialog_checkonly(context, "티켓 업로드", "사용자 코멘트를 작성해 주십시오.");
-                        }
-                      } else {
-                        displayDialog_checkonly(context, "티켓 업로드", "조건을 모두 만족하는지 확인해 주십시오.");
+                          else {displayDialog_checkonly(context, "티켓 업로드", "사용자 코멘트를 작성해 주십시오.");}
                       }
+                      else {displayDialog_checkonly(context, "티켓 업로드", "조건을 모두 만족하는지 확인해 주십시오.");}
                     },
                   ),
                 ),
               ),
             );
-
           }
           return const Center(
             child: CircularProgressIndicator(),
@@ -1005,459 +736,3 @@ class _UploadTicket extends State<UploadTicket>
         });
   }
 }
-
-
-
-
-/*
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:http/http.dart' as http;
-import 'package:Etiquette/Screens/Market/load_holding_tickets.dart';
-import 'package:Etiquette/Models/serverset.dart';
-import 'package:Etiquette/Widgets/alertDialogWidget.dart';
-
-class UploadTicket extends StatefulWidget {
-  const UploadTicket({Key? key, }) : super(key: key);
-
-  @override
-  State createState() => _UploadTicket();
-}
-
-class CustomPicker extends CommonPickerModel {
-  String digits(int value, int length) {
-    return '$value'.padLeft(length, "0");
-  }
-
-  CustomPicker({DateTime? currentTime, LocaleType? locale}) : super(locale: locale) {
-    this.currentTime = currentTime ?? DateTime.now();
-    this.setLeftIndex(this.currentTime.hour);
-    this.setMiddleIndex(this.currentTime.minute);
-    this.setRightIndex(this.currentTime.second);
-  }
-
-  @override
-  String? leftStringAtIndex(int index) {
-    if (index >= 0 && index < 24) {
-      return this.digits(index, 2);
-    } else {
-      return null;
-    }
-  }
-
-  @override
-  String? middleStringAtIndex(int index) {
-    if (index >= 0 && index < 60) {
-      return this.digits(index, 2);
-    } else {
-      return null;
-    }
-  }
-
-  @override
-  String? rightStringAtIndex(int index) {
-    if (index >= 0 && index < 60) {
-      return this.digits(index, 2);
-    } else {
-      return null;
-    }
-  }
-
-  @override
-  String leftDivider() {
-    return "|";
-  }
-
-  @override
-  String rightDivider() {
-    return "|";
-  }
-
-  @override
-  List<int> layoutProportions() {
-    return [1, 2, 1];
-  }
-
-  @override
-  DateTime finalTime() {
-    return currentTime.isUtc
-        ? DateTime.utc(
-        currentTime.year,
-        currentTime.month,
-        currentTime.day,
-        this.currentLeftIndex(),
-        this.currentMiddleIndex(),
-        this.currentRightIndex())
-        : DateTime(
-        currentTime.year,
-        currentTime.month,
-        currentTime.day,
-        this.currentLeftIndex(),
-        this.currentMiddleIndex(),
-        this.currentRightIndex());
-  }
-}
-
-class _UploadTicket extends State<UploadTicket> {
-  String token_id = "";
-  String product_name = "";
-  String place = "";
-  String category = "";
-  String original_price = "";
-  int end_year = 0;
-  int end_month = 0;
-  int end_day = 0;
-  int end_hour = 0;
-  int end_minute = 0;
-
-  String auction_end_date = "";
-
-  final start_price_controller = TextEditingController();
-  final bid_unit_controller = TextEditingController();
-  final immediate_purchase_price_controller = TextEditingController();
-  final comments_controller = TextEditingController();
-
-  Future<void> send_data_for_schedule() async {
-    const url = "$SERVER_IP/scheduler/auctionSchedule";
-    try {
-      await http.post(Uri.parse(url), body: {
-        "token_id": token_id,
-        "alias": category,
-        "auction_end_date": auction_end_date,
-      });
-    } catch (ex) {
-      print("티켓 업로드 --> ${ex.toString()}");
-      displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드에 실패했습니다.");
-    }
-  }
-
-  Future<void> upload_ticket() async {
-    const url = "$SERVER_IP/market/setTicketToBid";
-    try {
-      var res = await http.post(Uri.parse(url), body: {
-        "token_id": token_id,
-        "auction_start_price": start_price_controller.text,
-        "bid_unit": bid_unit_controller.text,
-        "immediate_purchase_price": immediate_purchase_price_controller.text,
-        "auction_end_date": auction_end_date,
-        "auction_comments": comments_controller.text
-      });
-      if (res.statusCode == 200) {
-        await displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드가 성공적으로 완료되었습니다.");
-        Navigator.of(context).pop();
-        send_data_for_schedule();
-      } else {
-        displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드에 실패했습니다.");
-      }
-    } catch (ex) {
-      print("티켓 업로드 --> ${ex.toString()}");
-      displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드에 실패했습니다.");
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) { // NFT화 된 티켓 업로드
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("티켓 업로드"),
-        centerTitle: true,
-        backgroundColor: Colors.white24,
-        foregroundColor: Colors.black,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon( // 뒤로가기 버튼
-              Icons.arrow_back_ios_new_rounded
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                        padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            final data = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const LoadHoldingTickets()
-                                )
-                            );
-                            if (data != null) {
-                              setState(() {
-                                token_id = data["token_id"];
-                                product_name = data["product_name"];
-                                place = data["place"];
-                                category = data["category"];
-                                original_price = data["original_price"].toString();
-                                end_year = int.parse(data["end_year"]);
-                                end_month = int.parse(data["end_month"]);
-                                end_day = int.parse(data["end_day"]);
-                                end_hour = int.parse(data["end_hour"]);
-                                end_minute = int.parse(data["end_minute"]);
-                              });
-                              print(DateTime(end_year, end_month, end_day, end_hour, end_minute));
-                            }
-                          },
-                          child: const Text("티켓 불러오기"),
-                        )
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
-                      child: Row(
-                        children: <Widget> [
-                          Text("티켓 이름: $product_name"),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: Row(
-                        children: <Widget> [
-                          Text("장소: $place"),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: Row(
-                        children: <Widget> [
-                          Text("원가: $original_price 원"),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
-                      child: ElevatedButton(
-                          onPressed: () {
-                            if (product_name != "" && place != "" && original_price != "") {
-                              final maxTime = DateTime(end_year, end_month, end_day, end_hour, end_minute).subtract(const Duration(hours: 3));
-                              DatePicker.showDateTimePicker(
-                                context,
-                                showTitleActions: true,
-                                minTime: DateTime.now().add(const Duration(minutes: 1)),
-                                maxTime: maxTime,
-                                onChanged: (date) {
-                                  print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
-                                },
-                                onConfirm: (date) {
-                                  if (date.isBefore(maxTime) || date.isAtSameMomentAs(maxTime)) {
-                                    setState(() {
-                                      auction_end_date = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:00";
-                                    });
-                                  } else {
-                                    displayDialog_checkonly(context, "티켓 업로드", "경매 마감 시각은 티켓 사용 시각으로부터 3시간 전 까지 선택 할 수 있습니다.");
-                                  }
-                                },
-                                locale: LocaleType.ko,
-                              );
-                            } else {
-                              displayDialog_checkonly(context, "티켓 업로드", "업로드 할 티켓을 선택해 주세요.");
-                            }
-                          },
-                          child: const Text(
-                            '경매 마감 날짜 및 시각 선택',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          )
-                      ),
-                    ),
-                    const Text("(티켓 사용 시각 3시간 전까지 선택 가능)"),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: Row(
-                        children: <Widget> [
-                          Text("경매 마감: $auction_end_date"),
-                        ],
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: Row(
-                        children: <Widget>[
-                          const Text("경매 시작가: "),
-                          Flexible(
-                            child: TextField(
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              controller: start_price_controller,
-                            ),
-                          ),
-                          const Text("원"),
-                        ],
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(40, 10, 40, 0),
-                      child: Text("(원가 이하만 입력 가능)"),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: Row(
-                        children: <Widget>[
-                          const Text("입찰 단위: "),
-                          Flexible(
-                            child: TextField(
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              controller: bid_unit_controller,
-                            ),
-                          ),
-                          const Text("원"),
-                        ],
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(40, 10, 40, 0),
-                      child: Text("(100의 배수만 입력 가능)"),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: Row(
-                        children: <Widget>[
-                          const Text("즉시 거래가: "),
-                          Flexible(
-                            child: TextField(
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              controller: immediate_purchase_price_controller,
-                            ),
-                          ),
-                          const Text("원"),
-                        ],
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(40, 10, 40, 0),
-                      child: Text("(원가 이하만 입력 가능)"),
-                    ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.fromLTRB(20, 10, 0, 0),
-                      child: const Text("사용자 코멘트"),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height / 2,
-                        child: Row(
-                          children: <Widget> [
-                            Flexible(
-                              child: TextField(
-                                maxLines: null,
-                                maxLength: 500,
-                                expands: true,
-                                keyboardType: TextInputType.multiline,
-                                controller: comments_controller,
-                                decoration: const InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(width: 3, color: Colors.greenAccent)
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: ElevatedButton(
-                        child: const Text("티켓 업로드"),
-                        style: ElevatedButton.styleFrom(
-                          primary: const Color(0xffffb877),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () async {
-                          int _startPrice = int.parse(start_price_controller.text);
-                          int _bidUnit = int.parse(bid_unit_controller.text);
-                          int _immediatePurchasePrice = int.parse(immediate_purchase_price_controller.text);
-                          int _originalPrice = int.parse(original_price);
-                          if (_startPrice <= _originalPrice
-                              && (_bidUnit % 100 == 0)
-                              && _immediatePurchasePrice <= _originalPrice) {
-                            if (comments_controller.text != "") {
-                              if (auction_end_date != "") {
-                                // final selected = await displayDialog_YesOrNo(context, "티켓 업로드", "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n(한번 업로드한 티켓은 취소할 수 없습니다.)");
-                                final selected = await showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text("티켓 업로드"),
-                                    content: RichText(
-                                        text: const TextSpan(
-                                          children: [
-                                            TextSpan(
-                                                text: "위 옵션으로 티켓 업로드를 진행하시겠습니까?\n",
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 13,
-                                                )
-                                            ),
-                                            TextSpan(
-                                                text: "한번 업로드한 티켓은 취소할 수 없습니다.",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                )
-                                            )
-                                          ],
-                                        )
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: const Text('Cancel'),
-                                        onPressed: () => Navigator.pop(context, false),
-                                      ),
-                                      TextButton(
-                                        child: const Text('OK'),
-                                        onPressed: () => Navigator.pop(context, true),
-                                      ),
-                                    ],
-                                  ),
-                                );
-
-                                if (selected) {
-                                  upload_ticket();
-                                }
-                              } else {
-                                displayDialog_checkonly(context, "티켓 업로드", "경매 마감 날짜 및 시각을 선택해 주세요.");
-                              }
-                            } else {
-                              displayDialog_checkonly(context, "티켓 업로드", "사용자 코멘트를 작성해 주십시오.");
-                            }
-                          } else {
-                            displayDialog_checkonly(context, "티켓 업로드", "조건을 모두 만족하는지 확인해 주십시오.");
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
- */
