@@ -12,6 +12,7 @@ import 'package:Etiquette/Providers/KAS/Kip17/kip17_get_token_data.dart';
 import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/Utilities/compare_strings_ignore_case.dart';
 import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
+import 'package:Etiquette/Screens/Drawer/TicketView.dart';
 
 class Hold extends StatefulWidget {
   const Hold({Key? key}) : super(key: key);
@@ -58,7 +59,17 @@ class _Hold extends State<Hold> {
               'seat_class': ticket['seat_class'],
               'seat_No': ticket['seat_No'],
               'performance_date': ticket['performance_date'],
+              'poster_url': ticket['poster_url'],
             };
+
+            if (ticket['poster_url'] == null) {
+              if (ticket['category'] == 'movie') {
+                ex['poster_url'] = 'https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fsample_movie_poster.png?alt=media&token=536aeb85-7b8f-4f1d-b99f-340abc2259c4';
+              } else {
+                ex['poster_url'] = 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg';
+              }
+            }
+
             holdlist.add(ex);
             setState(() {});
           }
@@ -405,11 +416,16 @@ class _Hold extends State<Hold> {
     }
   }
 
+  Future<void> loading() async {
+    holdlist.clear();
+    await getTheme();
+    await getHoldlistFromDB();
+  }
+
   @override
   void initState() {
     super.initState();
-    getTheme();
-    future = getHoldlistFromDB();
+    future = loading();
   }
 
   @override
@@ -491,6 +507,7 @@ class _Hold extends State<Hold> {
                           ),
                         ),
                     ),
+                    const SizedBox(height: 10),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Center(
@@ -517,18 +534,18 @@ class _Hold extends State<Hold> {
                                       final token_id = holdlist[index]['token_id'];
                                       final _kip17GetTokenData = await kip17GetTokenData(alias, token_id);
                                       Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) => TicketDetails(
-                                                owner : _kip17GetTokenData['data']['owner'],
-                                                token_id : holdlist[index]['token_id'],
-                                                product_name: holdlist[index]['product_name'],
-                                                place: holdlist[index]['place'],
-                                                showPurchaseButton: false,
-                                                seat_class: holdlist[index]['seat_class'],
-                                                seat_No: holdlist[index]['seat_No'],
-                                                performance_date : holdlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + holdlist[index]['performance_date'].substring(11, 16),
-                                              )
-                                          )
+                                        MaterialPageRoute(
+                                          builder: (context) => TicketDetails(
+                                            owner : _kip17GetTokenData['data']['owner'],
+                                            token_id : holdlist[index]['token_id'],
+                                            product_name: holdlist[index]['product_name'],
+                                            place: holdlist[index]['place'],
+                                            showPurchaseButton: false,
+                                            seat_class: holdlist[index]['seat_class'],
+                                            seat_No: holdlist[index]['seat_No'],
+                                            performance_date : holdlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + holdlist[index]['performance_date'].substring(11, 16),
+                                          ),
+                                        ),
                                       );
                                     },
                                     child: SizedBox(
@@ -537,69 +554,67 @@ class _Hold extends State<Hold> {
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: <Widget> [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Center(
-                                              child: Image.network(
-                                                'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
-                                                width: 80,
-                                                height: 80,
-                                                fit: BoxFit.fill
-                                              ),
+                                          const SizedBox(width: 10),
+                                          Center(
+                                            child: Image.network(
+                                              holdlist[index]['poster_url'],
+                                              width: 80,
+                                              height: 117.93,
+                                              fit: BoxFit.fill,
                                             ),
                                           ),
+                                          const SizedBox(width: 24),
                                           Expanded(
                                             flex: 4,
-                                            child: Center(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: <Widget> [
-                                                  const SizedBox(height: 10),
-                                                  Text(
-                                                    holdlist[index]['product_name'],
-                                                    textAlign: TextAlign.center,
-                                                    style: const TextStyle(
-                                                      fontFamily: 'NotoSans',
-                                                      fontWeight: FontWeight.w500,
-                                                      fontSize: 16,
-                                                    ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget> [
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  holdlist[index]['product_name'],
+                                                  style: TextStyle(
+                                                    fontFamily: 'NotoSans',
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: holdlist[index]['product_name'].length >= 21 ? 13 : 16,
                                                   ),
-                                                  const SizedBox(height: 10),
-                                                  Text(
-                                                    holdlist[index]['place'],
-                                                    style: const TextStyle(
-                                                      fontSize: 13,
-                                                      fontFamily: 'Pretendard',
-                                                      fontWeight: FontWeight.w400,
-                                                    ),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  holdlist[index]['place'],
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w400,
                                                   ),
-                                                  const SizedBox(height: 10),
-                                                  Text(
-                                                    "${holdlist[index]['seat_class']}석 ${holdlist[index]['seat_No']}번",
-                                                    style: const TextStyle(
-                                                      fontFamily: 'Pretendard',
-                                                      fontWeight: FontWeight.w400,
-                                                      fontSize: 13,
-                                                    ),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  "${holdlist[index]['seat_class']}석 ${holdlist[index]['seat_No']}번",
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 13,
                                                   ),
-                                                  const SizedBox(height: 10),
-                                                  Text(
-                                                    holdlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + holdlist[index]['performance_date'].substring(11, 16),
-                                                    style: const TextStyle(
-                                                      fontFamily: 'Pretendard',
-                                                      fontWeight: FontWeight.w400,
-                                                      fontSize: 13,
-                                                    ),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  holdlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + holdlist[index]['performance_date'].substring(11, 16),
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 13,
                                                   ),
-                                                  const SizedBox(height: 10),
-                                                ],
-                                              ),
+                                                ),
+                                                const SizedBox(height: 10),
+                                              ],
                                             ),
                                           ),
                                           Expanded(
                                             flex: 1,
                                             child: Center(
                                               child: IconButton(
+                                                padding: EdgeInsets.zero,
                                                 icon: const Icon(
                                                   Icons.qr_code_rounded,
                                                   size: 50.0,
@@ -625,8 +640,22 @@ class _Hold extends State<Hold> {
                                                         final seat_No = holdlist[index]['seat_No'];
                                                         final performance_date = holdlist[index]['performance_date'];
                                                         final tokenUri = _kip17GetTokenData['data']['tokenUri'];
+                                                        final nickname = Get.arguments.toString();
 
-                                                        showTicketQrCodeDialog(category, product_name, place, seat_class, seat_No, performance_date, tokenUri);
+                                                        Navigator.of(context).push(
+                                                          MaterialPageRoute(
+                                                            builder: (context) => TicketView(
+                                                              category: category,
+                                                              product_name: product_name,
+                                                              place: place,
+                                                              seat_class: seat_class,
+                                                              seat_No: seat_No,
+                                                              performance_date: performance_date,
+                                                              tokenUri: tokenUri,
+                                                              nickname: nickname,
+                                                            ),
+                                                          ),
+                                                        );
                                                       } else {
                                                         displayDialog_checkonly(context, "모바일 티켓", "해당 티켓은 변조로 인해 사용할 수 없습니다. 서비스 센터에 문의해 주세요.");
                                                       }
