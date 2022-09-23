@@ -37,6 +37,10 @@ class _Wallet extends State<Wallet> {
   String balanceAndWonMsg = "Loading...";
   late final String address;
 
+  // 조회 선택에서 사용
+  String selected_type = "전체";
+  String selected_span = "1주일";
+
   Future<bool> getTheme() async {
     var key = 'theme';
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -84,7 +88,7 @@ class _Wallet extends State<Wallet> {
 
   Future<void> loadTransactionHistory() async {
     transactions.clear();
-    final history = await getTransactionHistory(address, 20);
+    final history = await getTransactionHistory(address, selected_type, selected_span);
     if (history['statusCode'] == 200) {
       for (var item in history['data']['items']) {
         if (item['transferType'] == 'klay') {
@@ -245,9 +249,9 @@ class _Wallet extends State<Wallet> {
                     padding: const EdgeInsets.all(10),
                     onPressed: () {
                       Clipboard.setData(
-                          ClipboardData(
-                            text: address,
-                          )
+                        ClipboardData(
+                          text: address,
+                        ),
                       );
                     },
                   ),
@@ -273,6 +277,8 @@ class _Wallet extends State<Wallet> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return FutureBuilder(
       future: future,
       builder: (context, snapshot) {
@@ -415,13 +421,443 @@ class _Wallet extends State<Wallet> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Text(
-                      "거래 내역",
-                      style: Theme.of(context).textTheme.headline6?.apply(
-                        color: Colors.black,
-                        fontWeightDelta: 2,
-                        fontFamily: 'Pretendard'
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget> [
+                        Text(
+                          "거래 내역",
+                          style: Theme.of(context).textTheme.headline6?.apply(
+                              color: Colors.black,
+                              fontWeightDelta: 2,
+                              fontFamily: 'Pretendard'
+                          ),
+                        ),
+                        ElevatedButton(
+                          child: const Text(
+                            "조회 선택",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Pretendard',
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0,
+                              vertical: 11.0,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(9.0),
+                              side: const BorderSide(
+                                color: Color(0xffe8e8e8),
+                              ),
+                            ),
+                            elevation: 0,
+                            primary: const Color(0xffe8e8e8),
+                          ),
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return StatefulBuilder(
+                                  builder: (context, bottomState) {
+                                    return Container(
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(16.0),
+                                          topRight: Radius.circular(16.0),
+                                        ),
+                                        color: Colors.white,
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget> [
+                                          const SizedBox(height: 5),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: <Widget> [
+                                              IconButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                icon: const Icon(
+                                                  Icons.close,
+                                                  size: 20,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              const Text(
+                                                "조회 선택",
+                                                style: TextStyle(
+                                                  fontFamily: "Pretendard",
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 17,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  loadTransactionHistory();
+                                                  setState(() {});
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text(
+                                                  "완료",
+                                                  style: TextStyle(
+                                                    fontFamily: "Pretendard",
+                                                    fontSize: 17,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 25),
+                                            child: Text(
+                                              "유형",
+                                              style: TextStyle(
+                                                fontFamily: "Pretendard",
+                                                fontSize: 17,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 18, right: 18),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget> [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 5, right: 5),
+                                                    child: CupertinoButton( // 복사 버튼
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      color: selected_type == "전체" ? Colors.lightBlue[50] : Colors.grey[200],
+                                                      child: Text(
+                                                        "전체",
+                                                        style: TextStyle(
+                                                          fontFamily: "Pretendard",
+                                                          fontSize: 10,
+                                                          color: selected_type == "전체" ? Colors.black : Colors.grey[600],
+                                                        ),
+                                                      ),
+                                                      padding: const EdgeInsets.all(10),
+                                                      onPressed: () {
+                                                        bottomState(() {
+                                                          setState(() {
+                                                            selected_type = "전체";
+                                                          });
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 5, right: 5),
+                                                    child: CupertinoButton( // 복사 버튼
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      color: selected_type == "KLAY 입금" ? Colors.lightBlue[50] : Colors.grey[100],
+                                                      child: Text(
+                                                        "KLAY 입금",
+                                                        style: TextStyle(
+                                                          fontFamily: "Pretendard",
+                                                          fontSize: 9,
+                                                          color: selected_type == "KLAY 입금" ? Colors.black : Colors.grey[600],
+                                                        ),
+                                                      ),
+                                                      padding: const EdgeInsets.all(10),
+                                                      onPressed: () {
+                                                        bottomState(() {
+                                                          setState(() {
+                                                            selected_type = "KLAY 입금";
+                                                          });
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 5, right: 5),
+                                                    child: CupertinoButton( // 복사 버튼
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      color: selected_type == "KLAY 출금" ? Colors.lightBlue[50] : Colors.grey[100],
+                                                      child: Text(
+                                                        "KLAY 출금",
+                                                        style: TextStyle(
+                                                          fontFamily: "Pretendard",
+                                                          fontSize: 9,
+                                                          color: selected_type == "KLAY 출금" ? Colors.black : Colors.grey[600],
+                                                        ),
+                                                      ),
+                                                      padding: const EdgeInsets.all(10),
+                                                      onPressed: () {
+                                                        bottomState(() {
+                                                          setState(() {
+                                                            selected_type = "KLAY 출금";
+                                                          });
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 5, right: 5),
+                                                    child: CupertinoButton( // 복사 버튼
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      color: selected_type == "티켓 구매" ? Colors.lightBlue[50] : Colors.grey[100],
+                                                      child: Text(
+                                                        "티켓 구매",
+                                                        style: TextStyle(
+                                                          fontFamily: "Pretendard",
+                                                          fontSize: 10,
+                                                          color: selected_type == "티켓 구매" ? Colors.black : Colors.grey[600],
+                                                        ),
+                                                      ),
+                                                      padding: const EdgeInsets.all(10),
+                                                      onPressed: () {
+                                                        bottomState(() {
+                                                          setState(() {
+                                                            selected_type = "티켓 구매";
+                                                          });
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 5, right: 5),
+                                                    child: CupertinoButton( // 복사 버튼
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      color: selected_type == "티켓 판매" ? Colors.lightBlue[50] : Colors.grey[100],
+                                                      child: Text(
+                                                        "티켓 판매",
+                                                        style: TextStyle(
+                                                          fontFamily: "Pretendard",
+                                                          fontSize: 10,
+                                                          color: selected_type == "티켓 판매" ? Colors.black : Colors.grey[600],
+                                                        ),
+                                                      ),
+                                                      padding: const EdgeInsets.all(10),
+                                                      onPressed: () {
+                                                        bottomState(() {
+                                                          setState(() {
+                                                            selected_type = "티켓 판매";
+                                                          });
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 25),
+                                            child: Text(
+                                              "기간",
+                                              style: TextStyle(
+                                                fontFamily: "Pretendard",
+                                                fontSize: 17,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 18, right: 18),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget> [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 5, right: 5),
+                                                    child: CupertinoButton( // 복사 버튼
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      color: selected_span == "1주일" ? Colors.lightBlue[50] : Colors.grey[200],
+                                                      child: Text(
+                                                        "1주일",
+                                                        style: TextStyle(
+                                                          fontFamily: "Pretendard",
+                                                          fontSize: 16,
+                                                          color: selected_span == "1주일" ? Colors.black : Colors.grey[400],
+                                                        ),
+                                                      ),
+                                                      padding: const EdgeInsets.all(10),
+                                                      onPressed: () {
+                                                        bottomState(() {
+                                                          setState(() {
+                                                            selected_span = "1주일";
+                                                          });
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 5, right: 5),
+                                                    child: CupertinoButton( // 복사 버튼
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      color: selected_span == "1개월" ? Colors.lightBlue[50] : Colors.grey[100],
+                                                      child: Text(
+                                                        "1개월",
+                                                        style: TextStyle(
+                                                          fontFamily: "Pretendard",
+                                                          fontSize: 16,
+                                                          color: selected_span == "1개월" ? Colors.black : Colors.grey[400],
+                                                        ),
+                                                      ),
+                                                      padding: const EdgeInsets.all(10),
+                                                      onPressed: () {
+                                                        bottomState(() {
+                                                          setState(() {
+                                                            selected_span = "1개월";
+                                                          });
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 5, right: 5),
+                                                    child: CupertinoButton( // 복사 버튼
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      color: selected_span == "3개월" ? Colors.lightBlue[50] : Colors.grey[100],
+                                                      child: Text(
+                                                        "3개월",
+                                                        style: TextStyle(
+                                                          fontFamily: "Pretendard",
+                                                          fontSize: 16,
+                                                          color: selected_span == "3개월" ? Colors.black : Colors.grey[400],
+                                                        ),
+                                                      ),
+                                                      padding: const EdgeInsets.all(10),
+                                                      onPressed: () {
+                                                        bottomState(() {
+                                                          setState(() {
+                                                            selected_span = "3개월";
+                                                          });
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+                                          // SizedBox(
+                                          //   height: (56 * 6).toDouble(),
+                                          //   child: Stack(
+                                          //     alignment: const Alignment(0, 0),
+                                          //     clipBehavior: Clip.none,
+                                          //     children: <Widget> [
+                                          //       Positioned(
+                                          //         child: ListView(
+                                          //           physics: NeverScrollableScrollPhysics(),
+                                          //           children: <Widget>[
+                                          //             ListTile(
+                                          //               title: Text(
+                                          //                 "Inbox",
+                                          //                 style: TextStyle(color: Colors.black),
+                                          //               ),
+                                          //               leading: Icon(
+                                          //                 Icons.inbox,
+                                          //                 color: Colors.black,
+                                          //               ),
+                                          //               onTap: () {},
+                                          //             ),
+                                          //             ListTile(
+                                          //               title: Text(
+                                          //                 "Starred",
+                                          //                 style: TextStyle(color: Colors.black),
+                                          //               ),
+                                          //               leading: Icon(
+                                          //                 Icons.star_border,
+                                          //                 color: Colors.black,
+                                          //               ),
+                                          //               onTap: () {},
+                                          //             ),
+                                          //             ListTile(
+                                          //               title: Text(
+                                          //                 "Sent",
+                                          //                 style: TextStyle(color: Colors.black),
+                                          //               ),
+                                          //               leading: Icon(
+                                          //                 Icons.send,
+                                          //                 color: Colors.black,
+                                          //               ),
+                                          //               onTap: () {},
+                                          //             ),
+                                          //             ListTile(
+                                          //               title: Text(
+                                          //                 "Trash",
+                                          //                 style: TextStyle(color: Colors.black),
+                                          //               ),
+                                          //               leading: Icon(
+                                          //                 Icons.delete_outline,
+                                          //                 color: Colors.black,
+                                          //               ),
+                                          //               onTap: () {},
+                                          //             ),
+                                          //             ListTile(
+                                          //               title: Text(
+                                          //                 "Spam",
+                                          //                 style: TextStyle(color: Colors.black),
+                                          //               ),
+                                          //               leading: Icon(
+                                          //                 Icons.error,
+                                          //                 color: Colors.black,
+                                          //               ),
+                                          //               onTap: () {},
+                                          //             ),
+                                          //             ListTile(
+                                          //               title: Text(
+                                          //                 "Drafts",
+                                          //                 style: TextStyle(color: Colors.black),
+                                          //               ),
+                                          //               leading: Icon(
+                                          //                 Icons.mail_outline,
+                                          //                 color: Colors.black,
+                                          //               ),
+                                          //               onTap: () {},
+                                          //             ),
+                                          //           ],
+                                          //         ),
+                                          //       )
+                                          //     ],
+                                          //   ),
+                                          // ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     Divider(
                       height: 31,
