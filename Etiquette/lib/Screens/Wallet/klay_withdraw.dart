@@ -22,7 +22,7 @@ class _KlayWithdraw extends State<KlayWithdraw> {
   late bool theme;
   final inputValueController = TextEditingController();
   final inputReceiverAddressController = TextEditingController();
-  String klay = "잔액: ";
+  double klay = 0.0;
   late final senderAddress;
 
   final warningMessageTitle = "주의사항";
@@ -31,7 +31,6 @@ class _KlayWithdraw extends State<KlayWithdraw> {
   final warningMessage3 = "가 맞는지 다시 한번 확인해 주세요. 출금이 진행된 이후에는 되돌릴 수 없습니다.\n\n출금 시 송신자로부터 0.000525 KLAY의 수수료가 발생합니다.";
 
   Future<bool> getTheme() async {
-    late bool theme;
     var key = 'theme';
     SharedPreferences pref = await SharedPreferences.getInstance();
     theme = (pref.getBool(key) ?? false);
@@ -44,19 +43,18 @@ class _KlayWithdraw extends State<KlayWithdraw> {
       senderAddress = kas_address_data['data'][0]['kas_address'];
       final data = await getBalance(senderAddress);
       if (data["statusCode"] == 200) {
-        klay = data["data"];
-        double _klay = double.parse(klay);
-        _klay = roundDouble(_klay, 2);
+        String _klay = data["data"];
+        klay = double.parse(_klay);
+        klay = roundDouble(klay, 2);
         setState(() {
-          klay = "잔액: ${_klay.toString().replaceAllMapped(reg, mathFunc)} KLAY";
+
         });
       } else {
-        int statusCode = data["statusCode"];
-        String message = data["msg"];
-        String errorMessage = "KAS 계정 잔액 확인에 실패했습니다.\n\nstatus code: $statusCode\nmessage: $message";
+        String msg = data["msg"];
+        String errorMessage = "KAS 계정 잔액 확인에 실패했습니다.\n\n$msg";
         displayDialog_checkonly(context, "KAS 계정 잔액 확인", errorMessage);
         setState(() {
-          klay = "잔액: ";
+          klay = 0.0;
         });
       }
     } else {
@@ -98,15 +96,22 @@ class _KlayWithdraw extends State<KlayWithdraw> {
     }
   }
 
+  Future<void> loading() async {
+    await processGetBalance();
+    await getTheme();
+  }
+
   @override
   void initState() {
     super.initState();
-    future = processGetBalance();
-    getTheme();
+    future = loading();
+    // future = processGetBalance();
   }
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return FutureBuilder(
       future: future,
       builder: (context, snapshot) {
@@ -120,195 +125,313 @@ class _KlayWithdraw extends State<KlayWithdraw> {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
-            appBar: defaultAppbar("KLAY 출금"),
-            body: Column(
-              children: <Widget> [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Center(
+            appBar: appbarWithArrowBackButton("KLAY 출금", theme),
+            body: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget> [
+                    const Text(
+                      "출금 주소, 출금 수량을 입력해 주세요",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                        keyboardType: TextInputType.text,
+                        maxLines: 1,
+                        maxLength: 11,
+                        controller: inputReceiverAddressController,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontFamily: 'Quicksand',
+                          fontWeight: FontWeight.bold,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: '주소 입력',
+                          hintStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontFamily: 'Pretendard',
+                          ),
+                          labelText: '출금 주소',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 18,
+                            fontFamily: 'Quicksand',
+                          ),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.qr_code),
+                            onPressed: () async {
+                              final qrCodeScanResult = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                    const QRCodeScanner()
+                                ),
+                              );
+                              inputReceiverAddressController.text = qrCodeScanResult!;
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          counterText: "",
+                        )
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      onChanged: (amount) {
+                        setState(() {
+                          int? _parse = int.tryParse(amount);
+                          if (_parse != null) {
+                            if (_parse > (klay - 0.01)) {
+                              inputValueController.text = (klay - 0.01).toString();
+                            }
+                          }
+                        });
+                      },
+                      keyboardType: TextInputType.number,
+                      maxLines: 1,
+                      maxLength: 42,
+                      controller: inputValueController,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontFamily: 'Quicksand',
+                        fontWeight: FontWeight.bold,
+                      ),
+                      decoration: InputDecoration(
+                          hintText: '수량 입력',
+                          hintStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontFamily: 'Pretendard',
+                          ),
+                          labelText: '출금 수량',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 18,
+                            fontFamily: 'Pretendard',
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          counterText: "",
+                          suffixText: "KLAY",
+                          suffixStyle: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontFamily: "Quicksand",
+                            color: Colors.grey[600],
+                          )
+                      ),
+                    ),
+                    Divider(
+                      height: 40,
+                      color: Colors.grey[400],
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget> [
+                            const Text(
+                              "출금 가능 수량",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontFamily: 'Pretendard',
+                              ),
+                            ),
+                            Text(
+                              "${klay.toString().replaceAllMapped(reg, mathFunc)} KLAY",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                fontFamily: 'Pretendard',
+                              ),
+                            ),
+                          ],
+                        )
+                    ),
+                    Divider(
+                      height: 40,
+                      color: Colors.grey[400],
+                    ),
+                    Expanded(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget> [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                            child: Text(
-                              klay,
-                              style: const TextStyle(
-                                fontSize: 25,
-                              ),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                            child: Text(
-                              "수신자 주소",
-                              style: TextStyle(
-                                fontSize: 25,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                            child: TextField(
-                              keyboardType: TextInputType.emailAddress,
-                              controller: inputReceiverAddressController,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: '수신자 주소',
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                focusedBorder: const OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0)
-                                    ),
-                                    borderSide: BorderSide(
-                                      width: 1,
-                                      color: Colors.blueAccent,
-                                    )
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Theme.of(context).accentColor,
-                                  ),
-                                ),
-                                suffixIcon: IconButton(
-                                  color: Theme.of(context).accentColor,
-                                  icon: const Icon(
-                                      Icons.qr_code,
-                                      size: 30
-                                  ),
-                                  onPressed: () async {
-                                    final qrCodeScanResult = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                          const QRCodeScanner()
-                                      ),
-                                    );
-                                    inputReceiverAddressController.text = qrCodeScanResult!;
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                            child: Text(
-                              "출금할 KLAY 양",
-                              style: TextStyle(
-                                fontSize: 25,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                            child: TextField(
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter(
-                                  RegExp('[0-9.]'),
-                                  allow: true,
-                                ),
-                                FilteringTextInputFormatter(
-                                  RegExp('.'),
-                                  allow: true,
-                                ),
-                              ],
-                              controller: inputValueController,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: '출금할 KLAY 양',
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                focusedBorder: const OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0)
-                                    ),
-                                    borderSide: BorderSide(
-                                      width: 1,
-                                      color: Colors.blueAccent,
-                                    )
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Theme.of(context).accentColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                            child: Text(
-                              warningMessageTitle,
-                              style: const TextStyle(
-                                fontSize: 25,
-                                color: Colors.pink,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 15, 20, 0),
-                            child: RichText(
-                                text: TextSpan(
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
+                              padding: const EdgeInsets.only(left: 10, right: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget> [
+                                  const Text(
+                                    "수수료",
+                                    style: TextStyle(
                                       color: Colors.black,
+                                      fontSize: 15,
+                                      fontFamily: 'Pretendard',
                                     ),
-                                    children: <TextSpan> [
-                                      TextSpan(
-                                        text: warningMessage1,
-                                      ),
-                                      TextSpan(
-                                          text: warningMessage2,
-                                          style: const TextStyle(
-                                            color: Colors.red,
-                                          )
-                                      ),
-                                      TextSpan(
-                                        text: warningMessage3,
-                                      ),
-                                    ]
-                                )
-                            ),
+                                  ),
+                                  Text(
+                                    "0.00525 KLAY",
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 15,
+                                      fontFamily: 'Pretendard',
+                                    ),
+                                  ),
+                                ],
+                              )
+                          ),
+                          Divider(
+                            height: 40,
+                            color: Colors.grey[400],
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget> [
-                                ElevatedButton (
-                                  child : const Text("출금"),
-                                  style : ElevatedButton.styleFrom(
-                                      primary : Colors.deepPurpleAccent
+                              padding: const EdgeInsets.only(left: 10, right: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget> [
+                                  RichText(
+                                    text: const TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: "총 출금 수량",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 15,
+                                              fontFamily: 'Pretendard',
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: "(수수료 포함)",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 9,
+                                              fontFamily: 'Pretendard',
+                                            ),
+                                          ),
+                                        ]
+                                    ),
                                   ),
-                                  onPressed: () async {
-                                    final selected = await displayDialog_YesOrNo(context, "KLAY 출금", "수신자 주소가 Klaytn 주소가 맞는지 다시 한번 확인해 주세요.\n\n출금이 이루어진 이후에는 되돌릴 수 없습니다.\n\nKLAY 출금을 진행하시겠습니까?");
-
-                                    if (selected) {
-                                      processWithdraw();
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
+                                  Text(
+                                      double.tryParse(inputValueController.text) == null
+                                          ? "0.00525 KLAY"
+                                          : "${roundDouble((double.parse(inputValueController.text) + 0.00525), 5)} KLAY",
+                                      style: const TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        fontFamily: 'Pretendard',
+                                      )
+                                  )
+                                ],
+                              )
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                ),
-              ],
+                    )
+                  ]
+              ),
             ),
+            bottomNavigationBar: Container(
+              padding : EdgeInsets.fromLTRB(width * 0.03, height * 0.01, width * 0.03, height * 0.011),
+              child: ElevatedButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const <Widget> [
+                    Icon(
+                      Icons.monetization_on_rounded,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      " 전송",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(9.5)
+                  ),
+                  minimumSize: Size.fromHeight(height * 0.062),
+                  primary: const Color(0xffEE3D43),
+                ),
+                onPressed: () async {
+                  // final selected = await displayDialog_YesOrNo(context, "KLAY 출금", "수신자 주소가 Klaytn 주소가 맞는지 다시 한번 확인해 주세요.\n\n출금이 이루어진 이후에는 되돌릴 수 없습니다.\n\nKLAY 출금을 진행하시겠습니까?");
+                  final selected = await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text(
+                        "KLAY 출금",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Pretendard',
+                        ),
+                      ),
+                      content: RichText(
+                        text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "수신자 주소가 Klaytn 주소가 맞는지 다시 한번 확인해 주세요.\n\n",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontFamily: 'Pretendard',
+                                ),
+                              ),
+                              TextSpan(
+                                text: "출금이 이루어진 이후에는 되돌릴 수 없습니다.\n\n",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Pretendard',
+                                ),
+                              ),
+                              TextSpan(
+                                text: "KLAY 출금을 진행하시겠습니까?",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontFamily: 'Pretendard',
+                                ),
+                              ),
+                            ]
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('Cancel'),
+                          onPressed: () => Navigator.pop(context, false),
+                        ),
+                        TextButton(
+                          child: const Text('OK'),
+                          onPressed: () => Navigator.pop(context, true),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (selected) {
+                    processWithdraw();
+                  }
+                },
+              ),
+            )
           );
         }
         return const Center(
