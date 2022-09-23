@@ -512,15 +512,21 @@ class _Hold extends State<Hold> {
                                   child: InkWell(
                                     highlightColor: Colors.transparent,
                                     splashFactory: NoSplash.splashFactory,
-                                    onTap: () {
+                                    onTap: () async {
+                                      final alias = holdlist[index]['category'];
+                                      final token_id = holdlist[index]['token_id'];
+                                      final _kip17GetTokenData = await kip17GetTokenData(alias, token_id);
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) => TicketDetails(
+                                                owner : _kip17GetTokenData['data']['owner'],
+                                                token_id : holdlist[index]['token_id'],
                                                 product_name: holdlist[index]['product_name'],
                                                 place: holdlist[index]['place'],
                                                 showPurchaseButton: false,
                                                 seat_class: holdlist[index]['seat_class'],
-                                                seat_No: holdlist[index]['seat_No']
+                                                seat_No: holdlist[index]['seat_No'],
+                                                performance_date : holdlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + holdlist[index]['performance_date'].substring(11, 16),
                                               )
                                           )
                                       );

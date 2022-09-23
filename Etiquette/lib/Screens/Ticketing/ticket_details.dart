@@ -13,14 +13,17 @@ import 'package:like_button/like_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TicketDetails extends StatefulWidget {
+  String? owner;
+  String? token_id;
   String? product_name;
   String? place;
   bool? showPurchaseButton;
   String? seat_class;
   String? seat_No;
+  String? performance_date;
 
   TicketDetails(
-      {Key? key, this.product_name, this.place, this.showPurchaseButton, this.seat_class, this.seat_No})
+      {Key? key, this.owner, this.token_id, this.product_name, this.place, this.showPurchaseButton, this.seat_class, this.seat_No, this.performance_date})
       : super(key: key);
 
   @override
@@ -32,6 +35,7 @@ class _TicketDetails extends State<TicketDetails>
   late bool theme;
   late double width;
   late double height;
+  int ? original_price;
   String? remain;
   bool like = false;
   List tab = ["내용 요약", "가격 정보"];
@@ -59,6 +63,22 @@ class _TicketDetails extends State<TicketDetails>
     SharedPreferences pref = await SharedPreferences.getInstance();
     theme = (pref.getBool(key) ?? false);
     return theme;
+  }
+
+  Future<int> load_price(String product_name, String seat_class) async {
+    final url = "$SERVER_IP/ticket/ticketPrice/$product_name/$seat_class";
+    try {
+      var res = await http.get(Uri.parse(url));
+      Map<String, dynamic> data = json.decode(res.body);
+      if (res.statusCode == 200) {
+        return data["data"][0]["price"];
+      } else {
+        return 0;
+      }
+    } catch (ex) {
+      print("가격 가져오기 --> ${ex.toString()}");
+      return 0;
+    }
   }
 
   String buildPriceDescription(String seat_class, int price) {
@@ -562,11 +582,12 @@ class _TicketDetails extends State<TicketDetails>
                                         ? const Color(0xffe8e8e8)
                                         : Color(0xffEE3D43))
                                 ),
-                                onPressed: () {
+                                onPressed: () async{
+                                  original_price =  await load_price(widget.product_name!, widget.seat_class!);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => UploadTicket()
+                                          builder: (context) => UploadTicket(token_id: widget.token_id, product_name: widget.product_name, owner: widget.owner,place: widget.place,seat_class: widget.seat_class, seat_No: widget.seat_No,performance_date: widget.performance_date,original_price: original_price.toString(),category: detail['category'],)
                                       )
                                   );
                                 },
