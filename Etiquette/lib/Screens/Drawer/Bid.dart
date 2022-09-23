@@ -113,339 +113,667 @@ class _Bid extends State<Bid> {
         } else if(snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
               appBar: appbarWithArrowBackButton("입찰 티켓 목록", theme),
-              body: Column(
-                children: <Widget> [
-                  Container(
-                      width: double.infinity,
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.only(left: 20, top: 20),
+              body: SingleChildScrollView(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget> [
+                    SizedBox(
+                      width: 150,
+                      height: 60,
+                      child: DropdownButtonFormField(
+                        icon: const Icon(Icons.expand_more),
+                        decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                    width: 1,
+                                    color: Colors.grey,
+                                  )
+                              ),
+                              labelStyle: const TextStyle(
+                                  color: Colors.grey
+                              ),
+                              labelText: 'Filter',
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                              )
+                          ),
+                          value: _selected,
+                          items: filter.map((value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text(
+                                  value,
+                                  style: const TextStyle(
+                                      fontSize: 15
+                                  )
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (dynamic value) {
+                            setState(() {
+                              _selected = value;
+                            });
+                          },
+                        ),
+                    ),
+                    Visibility(
+                      visible: bidlist.isEmpty,
                       child: SizedBox(
-                          width: 150,
-                          height: 60,
-                          child: DropdownButtonFormField(
-                            icon: const Icon(Icons.expand_more),
-                            decoration: InputDecoration(
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: const BorderSide(
-                                        width: 1,
-                                        color: Colors.grey
-                                    )
-                                ),
-                                labelStyle: const TextStyle(
-                                    color: Colors.grey
-                                ),
-                                labelText: 'Filter',
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12)
-                                )
+                        height: height - 200,
+                        child: const Center(
+                          child: Text(
+                            "현재 입찰 중인 티켓이 없습니다.",
+                            style: TextStyle(
+                              fontSize: 20,
                             ),
-                            value: _selected,
-                            items: filter.map((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(
-                                    value,
-                                    style: const TextStyle(
-                                        fontSize: 15
-                                    )
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (dynamic value) {
-                              setState(() {
-                                _selected = value;
-                              });
-                            },
-                          )
-                      ),
-                  ),
-                  Visibility(
-                    visible: bidlist.isEmpty,
-                    child: SizedBox(
-                      height: height - 200,
-                      child: const Center(
-                        child: Text(
-                          "현재 입찰 중인 티켓이 없습니다.",
-                          style: TextStyle(
-                            fontSize: 20,
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Center(
-                        child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: bidlist.length,
-                            itemBuilder: (context, index) {
-                              return Card(
-                                elevation: 0,
-                                color: Colors.white24,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                margin: const EdgeInsets.symmetric(
-                                  vertical: 10,
-                                  horizontal: 10,
-                                ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget> [
+                        Divider(
+                          height: 31,
+                          color: Colors.grey[400],
+                        ),
+                        SizedBox(
+                          height: height - 200,
+                          child: ListView.separated(
+                            itemCount: bidlist.length,
+                            itemBuilder: (ctx, i) {
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 10, bottom: 10),
                                 child: InkWell(
                                   highlightColor: Colors.transparent,
-                                  splashFactory: NoSplash.splashFactory,
+                                  splashFactory: InkRipple.splashFactory,
                                   onTap: () {
                                     Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) => MarketDetails(
-                                              token_id: bidlist[index]['token_id'],
-                                              product_name: bidlist[index]['product_name'],
-                                              owner: bidlist[index]['owner'],
-                                              place: bidlist[index]['place'],
-                                              performance_date: bidlist[index]['performance_date'],
-                                              seat_class: bidlist[index]['seat_class'],
-                                              seat_No: bidlist[index]['seat_No'],
-                                            )
-                                        )
+                                      MaterialPageRoute(
+                                        builder: (context) => MarketDetails(
+                                          token_id: bidlist[i]['token_id'],
+                                          product_name: bidlist[i]['product_name'],
+                                          owner: bidlist[i]['owner'],
+                                          place: bidlist[i]['place'],
+                                          performance_date: bidlist[i]['performance_date'],
+                                          seat_class: bidlist[i]['seat_class'],
+                                          seat_No: bidlist[i]['seat_No'],
+                                        ),
+                                      ),
                                     );
                                   },
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: <Widget> [
-                                        Container(
-                                          width: (width - 20) / 5 * 2,
-                                          height: 230,
-                                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                                          child: Center(
-                                            child: Image.network(
-                                                'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.fill
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget> [
+                                      const SizedBox(width: 10),
+                                      Center(
+                                        child: Image.network(
+                                          // bidlist[i]['poster_url'],
+                                          'https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fkbo_logo.png?alt=media&token=b3a5372d-1e5c-4013-b2d5-1dad86ff4060',
+                                          width: 80,
+                                          height: 117.93,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 24),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget> [
+                                            Text(
+                                              bidlist[i]['product_name'],
+                                              style: Theme.of(context).textTheme.subtitle1?.apply(
+                                                  color: Colors.black,
+                                                  fontWeightDelta: 2
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                        Container(
-                                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                            width: (width - 20) / 5 * 3,
-                                            height: 230,
-                                            child: GridView.count(
-                                              crossAxisCount: 2,
-                                              childAspectRatio: (width - 20) / 150,
-                                              children: <Widget> [
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget> [
-                                                    const Text(
-                                                      "티켓명",
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 12,
-                                                      ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 15.0),
+                                              child: Row(
+                                                children: <Widget> [
+                                                  const Icon(
+                                                    Icons.location_on_outlined,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(width: 7),
+                                                  Text(
+                                                    bidlist[i]['place'],
+                                                    style: TextStyle(
+                                                      color: Colors.grey[600],
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 13,
+                                                      fontFamily: 'Pretendard',
                                                     ),
-                                                    const SizedBox(height: 4),
-                                                    Flexible(
-                                                        child : RichText(
-                                                          overflow: TextOverflow.ellipsis,
-                                                          maxLines: 2,
-                                                          text : TextSpan(text :bidlist[index]['product_name'], style: const TextStyle(
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 15.0),
+                                              child: Row(
+                                                children: <Widget> [
+                                                  const Icon(
+                                                    Icons.calendar_month,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(width: 7),
+                                                  Text(
+                                                    bidlist[i]['performance_date'].substring(0, 10).replaceAll("-", ".") + " "
+                                                        + bidlist[i]['performance_date'].substring(11, 16),
+                                                    style: TextStyle(
+                                                      color: Colors.grey[600],
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 13,
+                                                      fontFamily: 'Pretendard',
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 15.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: <Widget> [
+                                                  const Icon(
+                                                    Icons.event_seat_outlined,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: <Widget> [
+                                                        Text(
+                                                          "좌석 정보",
+                                                          style: TextStyle(
+                                                            fontFamily: 'Pretendard',
+                                                            color: Colors.grey[600],
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          "${bidlist[i]['seat_class']}석 ${bidlist[i]['seat_No']}번",
+                                                          style: const TextStyle(
+                                                            fontFamily: 'Pretendard',
+                                                            fontWeight: FontWeight.bold,
                                                             color: Colors.black,
-                                                            fontSize: 12,
-                                                          ),),
-                                                        )
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget> [
-                                                    const Text(
-                                                      "장소",
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Flexible(
-                                                        child : RichText(
-                                                          overflow: TextOverflow.ellipsis,
-                                                          maxLines: 2,
-                                                          text : TextSpan(text :bidlist[index]['place'], style: const TextStyle(
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 15.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: <Widget> [
+                                                  const Icon(
+                                                    Icons.access_alarms_outlined,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: <Widget> [
+                                                        Text(
+                                                          "경매 마감 날짜",
+                                                          style: TextStyle(
+                                                            fontFamily: 'Pretendard',
+                                                            color: Colors.grey[600],
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          bidlist[i]['auction_end_date'].substring(0, 10).replaceAll("-", ".") + " "
+                                                              + bidlist[i]['auction_end_date'].substring(11, 16),
+                                                          style: const TextStyle(
+                                                            fontFamily: 'Pretendard',
+                                                            fontWeight: FontWeight.bold,
                                                             color: Colors.black,
-                                                            fontSize: 12,
-                                                          ),),
-                                                        )
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget> [
-                                                    const Text(
-                                                      "좌석 등급",
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 12,
-                                                      ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 15.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: <Widget> [
+                                                  const Icon(
+                                                    Icons.access_time_rounded,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: <Widget> [
+                                                        Text(
+                                                          "남은 시간",
+                                                          style: TextStyle(
+                                                            fontFamily: 'Pretendard',
+                                                            color: Colors.grey[600],
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          remainSellingTime(bidlist[i]['auction_end_date']),
+                                                          style: const TextStyle(
+                                                            fontFamily: 'Pretendard',
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    const SizedBox(height: 4),
-                                                    Text(
-                                                      "${bidlist[index]['seat_class']}석",
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget> [
-                                                    const Text(
-                                                      "좌석 번호",
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 12,
-                                                      ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 15.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: <Widget> [
+                                                  bidlist[i]['count'] >= 2 ?
+                                                  const Icon(
+                                                    Icons.people,
+                                                    size: 18,
+                                                  ) :
+                                                  const Icon(
+                                                    Icons.person,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: <Widget> [
+                                                        Text(
+                                                          "현재 입찰자 수",
+                                                          style: TextStyle(
+                                                            fontFamily: 'Pretendard',
+                                                            color: Colors.grey[600],
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          "${bidlist[i]['count'].toString()}명",
+                                                          style: const TextStyle(
+                                                            fontFamily: 'Pretendard',
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    const SizedBox(height: 4),
-                                                    Text(
-                                                      "${bidlist[index]['seat_No']}번",
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget> [
-                                                    const Text(
-                                                      "예매 날짜",
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 12,
-                                                      ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 15.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: <Widget> [
+                                                  const Icon(
+                                                    Icons.money,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: <Widget> [
+                                                        Text(
+                                                          "현재 최고 입찰가",
+                                                          style: TextStyle(
+                                                            fontFamily: 'Pretendard',
+                                                            color: Colors.grey[600],
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          "${bidlist[i]['max'].toString().replaceAllMapped(reg, mathFunc)} 원",
+                                                          style: const TextStyle(
+                                                            fontFamily: 'Pretendard',
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    const SizedBox(height: 4),
-                                                    Text(
-                                                      bidlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".")
-                                                          + " "
-                                                          + bidlist[index]['performance_date'].substring(11, 16),
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget> [
-                                                    const Text(
-                                                      "경매 마감 날짜",
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Text(
-                                                      bidlist[index]['auction_end_date'].substring(0, 10).replaceAll("-", ".")
-                                                          + " " +
-                                                          bidlist[index]['auction_end_date'].substring(11, 16),
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget> [
-                                                    const Text(
-                                                      "남은 시간",
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Text(
-                                                      remainSellingTime(bidlist[index]['auction_end_date']),
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget> [
-                                                    const Text(
-                                                      "현재 입찰자 수",
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Text(
-                                                      "${bidlist[index]['count'].toString()}명",
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget> [
-                                                    const Text(
-                                                      "현재 최고 입찰가",
-                                                      style: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Text(
-                                                      "${bidlist[index]['max'].toString().replaceAllMapped(reg, mathFunc)} 원",
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ],
-                                            )
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                      )
+                                    ],
                                   ),
-                                ),
+                                )
                               );
-                            }
+                            },
+                            separatorBuilder: (BuildContext context, int index) {
+                              return Divider(
+                                height: 20,
+                                color: Colors.grey[400],
+                              );
+                            },
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ),
-                ],
-              )
+                  ],
+                ),
+              ),
+              // body: Column(
+              //   children: <Widget> [
+                  // Expanded(
+                  //   child: SingleChildScrollView(
+                  //     child: Center(
+                  //       child: ListView.builder(
+                  //         physics: const NeverScrollableScrollPhysics(),
+                  //         shrinkWrap: true,
+                  //         itemCount: bidlist.length,
+                  //           itemBuilder: (context, index) {
+                  //             return Card(
+                  //               elevation: 0,
+                  //               color: Colors.white24,
+                  //               shape: RoundedRectangleBorder(
+                  //                 borderRadius: BorderRadius.circular(8),
+                  //               ),
+                  //               margin: const EdgeInsets.symmetric(
+                  //                 vertical: 10,
+                  //                 horizontal: 10,
+                  //               ),
+                  //               child: InkWell(
+                  //                 highlightColor: Colors.transparent,
+                  //                 splashFactory: NoSplash.splashFactory,
+                  //                 onTap: () {
+                  //                   Navigator.of(context).push(
+                  //                     MaterialPageRoute(
+                  //                       builder: (context) => MarketDetails(
+                  //                         token_id: bidlist[index]['token_id'],
+                  //                         product_name: bidlist[index]['product_name'],
+                  //                         owner: bidlist[index]['owner'],
+                  //                         place: bidlist[index]['place'],
+                  //                         performance_date: bidlist[index]['performance_date'],
+                  //                         seat_class: bidlist[index]['seat_class'],
+                  //                         seat_No: bidlist[index]['seat_No'],
+                  //                       ),
+                  //                     ),
+                  //                   );
+                  //                 },
+                  //                 child: SizedBox(
+                  //                   width: double.infinity,
+                  //                   child: Row(
+                  //                     mainAxisSize: MainAxisSize.max,
+                  //                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //                     crossAxisAlignment: CrossAxisAlignment.center,
+                  //                     children: <Widget> [
+                  //                       Center(
+                  //                         child: Image.network(
+                  //                           'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
+                  //                           width: 80,
+                  //                           height: 117.93,
+                  //                           fit: BoxFit.fill,
+                  //                         ),
+                  //                       ),
+                  //                       // Container(
+                  //                       //   width: (width - 20) / 5 * 2,
+                  //                       //   height: 230,
+                  //                       //   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  //                       //   child: Center(
+                  //                       //     child: Image.network(
+                  //                       //       'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
+                  //                       //       width: 80,
+                  //                       //       height: 117.93,
+                  //                       //       fit: BoxFit.fill,
+                  //                       //     ),
+                  //                       //   ),
+                  //                       // ),
+                  //                       Container(
+                  //                           padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  //                           width: (width - 20) / 5 * 3,
+                  //                           height: 230,
+                  //                           child: GridView.count(
+                  //                             crossAxisCount: 2,
+                  //                             childAspectRatio: (width - 20) / 150,
+                  //                             children: <Widget> [
+                  //                               Column(
+                  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                                 children: <Widget> [
+                  //                                   const Text(
+                  //                                     "티켓명",
+                  //                                     style: TextStyle(
+                  //                                       color: Colors.grey,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                   const SizedBox(height: 4),
+                  //                                   Flexible(
+                  //                                       child : RichText(
+                  //                                         overflow: TextOverflow.ellipsis,
+                  //                                         maxLines: 2,
+                  //                                         text : TextSpan(text :bidlist[index]['product_name'], style: const TextStyle(
+                  //                                           color: Colors.black,
+                  //                                           fontSize: 12,
+                  //                                         ),),
+                  //                                       )
+                  //                                   ),
+                  //                                 ],
+                  //                               ),
+                  //                               Column(
+                  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                                 children: <Widget> [
+                  //                                   const Text(
+                  //                                     "장소",
+                  //                                     style: TextStyle(
+                  //                                       color: Colors.grey,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                   const SizedBox(height: 4),
+                  //                                   Flexible(
+                  //                                       child : RichText(
+                  //                                         overflow: TextOverflow.ellipsis,
+                  //                                         maxLines: 2,
+                  //                                         text : TextSpan(text :bidlist[index]['place'], style: const TextStyle(
+                  //                                           color: Colors.black,
+                  //                                           fontSize: 12,
+                  //                                         ),),
+                  //                                       )
+                  //                                   ),
+                  //                                 ],
+                  //                               ),
+                  //                               Column(
+                  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                                 children: <Widget> [
+                  //                                   const Text(
+                  //                                     "좌석 등급",
+                  //                                     style: TextStyle(
+                  //                                       color: Colors.grey,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                   const SizedBox(height: 4),
+                  //                                   Text(
+                  //                                     "${bidlist[index]['seat_class']}석",
+                  //                                     style: const TextStyle(
+                  //                                       color: Colors.black,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   )
+                  //                                 ],
+                  //                               ),
+                  //                               Column(
+                  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                                 children: <Widget> [
+                  //                                   const Text(
+                  //                                     "좌석 번호",
+                  //                                     style: TextStyle(
+                  //                                       color: Colors.grey,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                   const SizedBox(height: 4),
+                  //                                   Text(
+                  //                                     "${bidlist[index]['seat_No']}번",
+                  //                                     style: const TextStyle(
+                  //                                       color: Colors.black,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   )
+                  //                                 ],
+                  //                               ),
+                  //                               Column(
+                  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                                 children: <Widget> [
+                  //                                   const Text(
+                  //                                     "예매 날짜",
+                  //                                     style: TextStyle(
+                  //                                       color: Colors.grey,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                   const SizedBox(height: 4),
+                  //                                   Text(
+                  //                                     bidlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".")
+                  //                                         + " "
+                  //                                         + bidlist[index]['performance_date'].substring(11, 16),
+                  //                                     style: const TextStyle(
+                  //                                       color: Colors.black,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                 ],
+                  //                               ),
+                  //                               Column(
+                  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                                 children: [],
+                  //                               ),
+                  //                               Column(
+                  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                                 children: <Widget> [
+                  //                                   const Text(
+                  //                                     "경매 마감 날짜",
+                  //                                     style: TextStyle(
+                  //                                       color: Colors.grey,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                   const SizedBox(height: 4),
+                  //                                   Text(
+                  //                                     bidlist[index]['auction_end_date'].substring(0, 10).replaceAll("-", ".")
+                  //                                         + " " +
+                  //                                         bidlist[index]['auction_end_date'].substring(11, 16),
+                  //                                     style: const TextStyle(
+                  //                                       color: Colors.black,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                 ],
+                  //                               ),
+                  //                               Column(
+                  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                                 children: <Widget> [
+                  //                                   const Text(
+                  //                                     "남은 시간",
+                  //                                     style: TextStyle(
+                  //                                       color: Colors.grey,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                   const SizedBox(height: 4),
+                  //                                   Text(
+                  //                                     remainSellingTime(bidlist[index]['auction_end_date']),
+                  //                                     style: const TextStyle(
+                  //                                       color: Colors.black,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   )
+                  //                                 ],
+                  //                               ),
+                  //                               Column(
+                  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                                 children: <Widget> [
+                  //                                   const Text(
+                  //                                     "현재 입찰자 수",
+                  //                                     style: TextStyle(
+                  //                                       color: Colors.grey,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                   const SizedBox(height: 4),
+                  //                                   Text(
+                  //                                     "${bidlist[index]['count'].toString()}명",
+                  //                                     style: const TextStyle(
+                  //                                       color: Colors.black,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   )
+                  //                                 ],
+                  //                               ),
+                  //                               Column(
+                  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                                 children: <Widget> [
+                  //                                   const Text(
+                  //                                     "현재 최고 입찰가",
+                  //                                     style: TextStyle(
+                  //                                       color: Colors.grey,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   ),
+                  //                                   const SizedBox(height: 4),
+                  //                                   Text(
+                  //                                     "${bidlist[index]['max'].toString().replaceAllMapped(reg, mathFunc)} 원",
+                  //                                     style: const TextStyle(
+                  //                                       color: Colors.black,
+                  //                                       fontSize: 12,
+                  //                                     ),
+                  //                                   )
+                  //                                 ],
+                  //                               ),
+                  //                             ],
+                  //                           )
+                  //                       ),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             );
+                  //           }
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+              //   ],
+              // )
           );
         }
         return const Center(
@@ -454,4 +782,36 @@ class _Bid extends State<Bid> {
       }
      );
   }
+}
+
+Widget ticketDetailsWidget(String firstTitle, String firstDesc) {
+  return Padding(
+    padding: EdgeInsets.zero,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          firstTitle,
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontSize: 16,
+            fontFamily: "Pretendard",
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Text(
+            firstDesc,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: firstDesc.length >= 11 ? 15 : 17,
+              fontWeight: FontWeight.bold,
+              fontFamily: "Pretendard",
+            ),
+          ),
+        )
+      ],
+    ),
+  );
 }
