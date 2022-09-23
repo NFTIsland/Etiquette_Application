@@ -39,7 +39,7 @@ class _Wallet extends State<Wallet> {
 
   // 조회 선택에서 사용
   String selected_type = "전체";
-  String selected_span = "1주일";
+  String selected_period = "1주일";
 
   Future<bool> getTheme() async {
     var key = 'theme';
@@ -88,7 +88,7 @@ class _Wallet extends State<Wallet> {
 
   Future<void> loadTransactionHistory() async {
     transactions.clear();
-    final history = await getTransactionHistory(address, selected_type, selected_span);
+    final history = await getTransactionHistory(address, selected_type, selected_period);
     if (history['statusCode'] == 200) {
       for (var item in history['data']['items']) {
         if (item['transferType'] == 'klay') {
@@ -690,20 +690,20 @@ class _Wallet extends State<Wallet> {
                                                     padding: const EdgeInsets.only(left: 5, right: 5),
                                                     child: CupertinoButton( // 복사 버튼
                                                       borderRadius: BorderRadius.circular(15),
-                                                      color: selected_span == "1주일" ? Colors.lightBlue[50] : Colors.grey[200],
+                                                      color: selected_period == "1주일" ? Colors.lightBlue[50] : Colors.grey[200],
                                                       child: Text(
                                                         "1주일",
                                                         style: TextStyle(
                                                           fontFamily: "Pretendard",
                                                           fontSize: 16,
-                                                          color: selected_span == "1주일" ? Colors.black : Colors.grey[400],
+                                                          color: selected_period == "1주일" ? Colors.black : Colors.grey[400],
                                                         ),
                                                       ),
                                                       padding: const EdgeInsets.all(10),
                                                       onPressed: () {
                                                         bottomState(() {
                                                           setState(() {
-                                                            selected_span = "1주일";
+                                                            selected_period = "1주일";
                                                           });
                                                         });
                                                       },
@@ -716,20 +716,20 @@ class _Wallet extends State<Wallet> {
                                                     padding: const EdgeInsets.only(left: 5, right: 5),
                                                     child: CupertinoButton( // 복사 버튼
                                                       borderRadius: BorderRadius.circular(15),
-                                                      color: selected_span == "1개월" ? Colors.lightBlue[50] : Colors.grey[100],
+                                                      color: selected_period == "1개월" ? Colors.lightBlue[50] : Colors.grey[100],
                                                       child: Text(
                                                         "1개월",
                                                         style: TextStyle(
                                                           fontFamily: "Pretendard",
                                                           fontSize: 16,
-                                                          color: selected_span == "1개월" ? Colors.black : Colors.grey[400],
+                                                          color: selected_period == "1개월" ? Colors.black : Colors.grey[400],
                                                         ),
                                                       ),
                                                       padding: const EdgeInsets.all(10),
                                                       onPressed: () {
                                                         bottomState(() {
                                                           setState(() {
-                                                            selected_span = "1개월";
+                                                            selected_period = "1개월";
                                                           });
                                                         });
                                                       },
@@ -742,20 +742,20 @@ class _Wallet extends State<Wallet> {
                                                     padding: const EdgeInsets.only(left: 5, right: 5),
                                                     child: CupertinoButton( // 복사 버튼
                                                       borderRadius: BorderRadius.circular(15),
-                                                      color: selected_span == "3개월" ? Colors.lightBlue[50] : Colors.grey[100],
+                                                      color: selected_period == "3개월" ? Colors.lightBlue[50] : Colors.grey[100],
                                                       child: Text(
                                                         "3개월",
                                                         style: TextStyle(
                                                           fontFamily: "Pretendard",
                                                           fontSize: 16,
-                                                          color: selected_span == "3개월" ? Colors.black : Colors.grey[400],
+                                                          color: selected_period == "3개월" ? Colors.black : Colors.grey[400],
                                                         ),
                                                       ),
                                                       padding: const EdgeInsets.all(10),
                                                       onPressed: () {
                                                         bottomState(() {
                                                           setState(() {
-                                                            selected_span = "3개월";
+                                                            selected_period = "3개월";
                                                           });
                                                         });
                                                       },
