@@ -82,6 +82,7 @@ class _AuctionStatus extends State<AuctionStatus> {
           return Scaffold(
             appBar: appbarWithArrowBackButton("입찰 현황", theme),
             body: SingleChildScrollView(
+              padding: const EdgeInsets.only(left: 15, right: 15),
               child: Column(
                 children: <Widget> [
                   Visibility(
@@ -101,62 +102,72 @@ class _AuctionStatus extends State<AuctionStatus> {
                   Visibility(
                     visible: rows.isNotEmpty,
                     child: Container(
-                      width: width - 20,
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      width: width,
+                      padding: EdgeInsets.only(
+                        top: height * 0.01,
+                      ),
                       child: DataTable(
-                        columnSpacing: 0,
+                        columnSpacing: 10,
                         horizontalMargin: 0,
                         columns: <DataColumn> [
                           DataColumn(
                             label: SizedBox(
-                              width: (width - 20) / 10,
+                              width: (width / 7),
                               child: const Center(
                                 child: Text(
                                   '순위',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontFamily: "Pretendard",
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
-                              )
+                              ),
                             ),
                           ),
                           DataColumn(
                             label: SizedBox(
-                              width: (width - 20) / 10 * 3,
+                              width: (width / 6),
                               child: const Center(
                                 child: Text(
                                   '입찰자',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontFamily: "Pretendard",
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
                                   ),
                                 ),
-                              )
+                              ),
                             ),
                           ),
                           DataColumn(
                             label: SizedBox(
-                              width: (width - 20) / 10 * 4,
+                              width: (width / 3),
                               child: const Center(
                                 child: Text(
                                   '입찰 날짜',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontFamily: "Pretendard",
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
                                   ),
                                 ),
-                              )
+                              ),
                             ),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: SizedBox(
-                              width: (width - 20) / 10 * 2,
-                              child: const Center(
+                              child: Center(
                                 child: Text(
                                   '입찰가',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontFamily: "Pretendard",
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
                                   ),
                                 ),
-                              )
+                              ),
                             ),
                           ),
                         ],
@@ -175,65 +186,68 @@ class _AuctionStatus extends State<AuctionStatus> {
       }
     );
   }
-}
 
-DataRow dataRow(String ranking, String bidder, String bid_date, String bid_price) {
-  return DataRow(
-    cells: <DataCell> [
-      DataCell(
-        Container(
-          height: 50,
-          alignment: Alignment.center,
-          child: Text(
-            ranking,
-            style: const TextStyle(
-              fontFamily: 'FiraBold',
-              fontSize: 20,
-            ),
-          ),
-        )
-      ),
-      DataCell(
+  DataRow dataRow(String ranking, String bidder, String bid_date, String bid_price) {
+    return DataRow(
+      cells: <DataCell> [
+        DataCell(
+            Container(
+              height: 50,
+              width: width / 7,
+              alignment: Alignment.center,
+              child: Text(
+                ranking,
+                style: const TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 20,
+                ),
+              ),
+            )
+        ),
+        DataCell(
           Container(
             height: 50,
+            width: width / 6,
             alignment: Alignment.center,
             child: Text(
               bidder,
               style: const TextStyle(
-                fontFamily: 'FiraBold',
+                fontFamily: 'Pretendard',
                 fontSize: 12,
               ),
             ),
-          )
-      ),
-      DataCell(
-          Container(
-            height: 50,
-            alignment: Alignment.center,
-            child: Text(
-              bid_date,
-              style: const TextStyle(
-                fontFamily: 'FiraBold',
-                fontSize: 12,
+          ),
+        ),
+        DataCell(
+            Container(
+              height: 50,
+              width: width / 3,
+              alignment: Alignment.center,
+              child: Text(
+                bid_date,
+                style: const TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 12,
+                ),
               ),
-            ),
-          )
-      ),
-      DataCell(
-          Container(
-            height: 50,
-            alignment: Alignment.center,
-            child: Text(
-              bid_price,
-              style: const TextStyle(
-                fontFamily: 'FiraBold',
-                fontSize: 12,
+            )
+        ),
+        DataCell(
+            Container(
+              height: 50,
+              alignment: Alignment.center,
+              child: Text(
+                bid_price,
+                style: const TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 12,
+                ),
               ),
-            ),
-          )
-      ),
-    ],
-  );
+            )
+        ),
+      ],
+    );
+  }
 }
 
 // TableRow tableRow(String ranking, String bidder, String bid_date, String bid_price) {
