@@ -8,6 +8,7 @@ import 'package:Etiquette/widgets/event.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/time_picker_page.dart';
+
 /// Page with [dp.DayPicker].
 class DayPickerPage extends StatefulWidget {
   /// Custom events.
@@ -32,8 +33,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
   DateTime _selectedDate = DateTime.now();
   List notday = [];//되는 날짜 받기
   final DateTime _firstDate = DateTime.now();
-   DateTime? _lastDate;//마지막으로 되는 날짜가 언제까지인지. DateTime.now()가 아니라 DateTime형식으로 직접 날짜 지정해줘도 됨.
-
+  DateTime? _lastDate;//마지막으로 되는 날짜가 언제까지인지. DateTime.now()가 아니라 DateTime형식으로 직접 날짜 지정해줘도 됨.
 
   Color selectedDateStyleColor = Colors.blue;
   Color selectedSingleDateDecorationColor = Color(0xffFD6059);
@@ -51,16 +51,14 @@ class _DayPickerPageState extends State<DayPickerPage> {
   Widget build(BuildContext context) {
     // add selected colors to default settings
     dp.DatePickerRangeStyles styles = dp.DatePickerRangeStyles(
-      selectedDateStyle: Theme.of(context)
-          .textTheme
-          .bodyText1
-          ?.copyWith(color: selectedDateStyleColor),
+      selectedDateStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
+        color: selectedDateStyleColor,
+      ),
       selectedSingleDateDecoration: BoxDecoration(
         color: selectedSingleDateDecorationColor,
         shape: BoxShape.circle,
       ),
-
-      dayHeaderStyle: DayHeaderStyle(
+      dayHeaderStyle: const DayHeaderStyle(
         textStyle: TextStyle(
           color: Colors.black,
         ),
@@ -72,7 +70,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
       future : myFuture,
       builder: (context, snapshot){
         if (snapshot.hasError) {
-          return Text("통신 에러가 발생했습니다.");
+          return const Text("통신 에러가 발생했습니다.");
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return Flex(
@@ -80,7 +78,6 @@ class _DayPickerPageState extends State<DayPickerPage> {
             direction: MediaQuery.of(context).orientation == Orientation.portrait
                 ? Axis.vertical
                 : Axis.horizontal,
-
             children: <Widget>[
               Container(
                 //decoration: BoxDecoration(border: Border(bottom : BorderSide(width: 1, color: Color(0xffC4C4C4))),),
@@ -92,8 +89,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
                   firstDate: _firstDate,
                   lastDate: _lastDate!,
                   datePickerStyles: styles,
-                  datePickerLayoutSettings: dp.DatePickerLayoutSettings(
-
+                  datePickerLayoutSettings: const dp.DatePickerLayoutSettings(
                     maxDayPickerRowCount: 6,
                     showPrevMonthEnd: false,
                     showNextMonthStart: false,
@@ -104,24 +100,32 @@ class _DayPickerPageState extends State<DayPickerPage> {
               ),
               Expanded(
                   child : flag == 0 ?
-                  Center(child : Text("날짜를 선택해 주세요.")) : flag == 1 ?
-                  Text("티켓을 불러오고 있습니다!") :
+                  const Center(
+                    child : Text(
+                      "날짜를 선택해 주세요.",
+                    ),
+                  ) : flag == 1 ?
+                  const Text("티켓을 불러오고 있습니다!") :
                   SingleChildScrollView(
                     child: Column(
                       children: [
                         ListView.builder(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount: _totalinfo.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Container(
                                 //height : 200,
-                                  width: MediaQuery.of(context).size.width,
-                                  child :
-                                  Column(
+                                width: MediaQuery.of(context).size.width,
+                                  child : Column(
                                       children : <Widget>[
                                         Container(height : MediaQuery.of(context).size.height*0.01,decoration: BoxDecoration(
-                                            border: Border(top: BorderSide(width : 1, color: Color(0xffC4C4C4))),
+                                            border: const Border(
+                                                top: BorderSide(
+                                                    width : 1,
+                                                    color: Color(0xffC4C4C4)
+                                                )
+                                            ),
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Colors.black26.withOpacity(0.1),
@@ -132,54 +136,115 @@ class _DayPickerPageState extends State<DayPickerPage> {
                                             ]),
                                         ),
                                         Container(
-                                          padding : EdgeInsets.fromLTRB(20, 5, 20, 5),
+                                          padding : const EdgeInsets.fromLTRB(20, 5, 20, 5),
                                           color : Colors.white,
                                           child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children : <Widget>[
-                                                Text("${_totalinfo[index][0]}", style : TextStyle(color: Color(0xffF6635B), fontSize: 18)),
+                                                Text(
+                                                  "${_totalinfo[index][0]}",
+                                                  style: const TextStyle(
+                                                    color: Color(0xffF6635B),
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
                                                 ElevatedButton(
-                                                  onPressed: (){
+                                                  onPressed: () {
                                                     Navigator.push(
-                                                             context,
-                                                             MaterialPageRoute(
-                                                                 builder: (context) => TimePickerPage(place: widget.place!,date:_selectedDate.toString().substring(0,10)/*날:일:월*/,product_name: widget.product_name!,time: _totalinfo[index][0],)
-                                                             )
-                                                         );
-                                                    },
-                                                  style: ElevatedButton.styleFrom(primary: Color(0xffFD6059),elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)), minimumSize: Size(90, 32)), child: Row(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment : CrossAxisAlignment.center,children : <Widget> [Text("선택", style : TextStyle(fontSize: 14, fontWeight: FontWeight.w400)), Icon(Icons.keyboard_arrow_right_outlined,)]), )
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) => TimePickerPage(
+                                                          category: widget.category!,
+                                                          place: widget.place!,
+                                                          date:_selectedDate.toString().substring(0,10)/*날:일:월*/,
+                                                          product_name: widget.product_name!,
+                                                          time: _totalinfo[index][0],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    primary: const Color(0xffFD6059),
+                                                    elevation: 0,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(40),
+                                                    ),
+                                                    minimumSize: const Size(90, 32),
+                                                  ),
+                                                  child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      children : const <Widget> [
+                                                        Text(
+                                                          "선택",
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight: FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                        Icon(
+                                                          Icons.keyboard_arrow_right_outlined,
+                                                        )
+                                                      ]
+                                                  ),
+                                                ),
                                               ]
                                           ),
-
                                         ),
                                         Container(
-                                          decoration: BoxDecoration(border: Border(top: BorderSide(width : 0.5 , color : Colors.red)), color: Color(0xffF2f2f2)),
-
-                                          margin : EdgeInsets.fromLTRB(10, 0, 10, 5),
-                                          padding : EdgeInsets.fromLTRB(0, 10, 0, 5),
-                                          child : GridView.builder(
-                                            shrinkWrap: true,itemCount : _totalinfo[index][1].length, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
-                                            childAspectRatio: 6 / 1, //item 의 가로 1, 세로 2 의 비율
-                                            mainAxisSpacing: 15, //수평 Padding
-                                            crossAxisSpacing: 5, //수직 Padding
-                                          ), itemBuilder: (BuildContext context, int idx){
-                                            return Container(
-                                                height: 50,
-                                                margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                decoration: BoxDecoration(border: Border(bottom: BorderSide(width : 1, color: Color(0xffDADADA)))),
-                                                child : Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: <Widget>[
-                                                    Text("${_totalinfo[index][1][idx][0]} 석", style : TextStyle(color : Color(0xff595959), fontSize : 13)),
-                                                    Text("${_totalinfo[index][1][idx][1]} 석", style : TextStyle(color : Color(0xffEE7E7B), fontSize: 13))
-                                                  ],
-                                                )
-                                            );
-                                          },
+                                          decoration: const BoxDecoration(
+                                            border: Border(
+                                              top: BorderSide(
+                                                width: 0.5 ,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                            color: Color(0xffF2f2f2),
                                           ),
-                                        )
-
+                                          margin : const EdgeInsets.fromLTRB(10, 0, 10, 5),
+                                          padding : const EdgeInsets.fromLTRB(0, 10, 0, 5),
+                                          child : GridView.builder(
+                                            shrinkWrap: true,
+                                            itemCount : _totalinfo[index][1].length,
+                                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2, // 1 개의 행에 보여줄 item 개수
+                                            childAspectRatio: 6 / 1, // item 의 가로 1, 세로 2 의 비율
+                                            mainAxisSpacing: 15, // 수평 Padding
+                                            crossAxisSpacing: 5, // 수직 Padding
+                                          ), itemBuilder: (BuildContext context, int idx) {
+                                            return Container(
+                                              height: 50,
+                                              margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                              decoration: const BoxDecoration(
+                                                border: Border(
+                                                  bottom: BorderSide(
+                                                    width : 1,
+                                                    color: Color(0xffDADADA),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: <Widget> [
+                                                  Text(
+                                                    "${_totalinfo[index][1][idx][0]} 석",
+                                                    style: const TextStyle(
+                                                      color: Color(0xff595959),
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "${_totalinfo[index][1][idx][1]} 석",
+                                                    style: const TextStyle(
+                                                      color: Color(0xffEE7E7B),
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }),
+                                        ),
                                       ]
                                   )
                               );
@@ -189,7 +254,6 @@ class _DayPickerPageState extends State<DayPickerPage> {
                     ),
                   )
               )
-
             ],
           );
         }
@@ -228,13 +292,9 @@ class _DayPickerPageState extends State<DayPickerPage> {
     }
   }
 
-  Future<void> load_seat_no(String date_value, String time_value,
-      String seat_class_value) async {
-      final url = "$SERVER_IP/ticket/ticketSeatNo/${widget
-          .product_name!}/${widget
-          .place!}/${date_value}/${time_value}/${seat_class_value}";
+  Future<void> load_seat_no(String date_value, String time_value, String seat_class_value) async {
+      final url = "$SERVER_IP/ticket/ticketSeatNo/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}/${seat_class_value}";
       try {
-
         _seatNo = new List.empty(growable: true);
         var res = await http.get(Uri.parse(url));
         Map<String, dynamic> data = json.decode(res.body);
@@ -242,7 +302,6 @@ class _DayPickerPageState extends State<DayPickerPage> {
           _seatNo = data["data"];
           print("추가하는 값은 시간 : ${time_value}, 시트 클래스 종류는 : ${seat_class_value}, 크기는 ${_seatNo.length}");
           _timeseatClass.add([seat_class_value, _seatNo.length]);
-
         } else {
           _seatNo = [];
         }
@@ -255,8 +314,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
   List _performanceTime = new List.empty(growable: true);
 
   Future<void> load_performance_time(String date_value) async {
-    final url = "$SERVER_IP/ticket/ticketPerformanceTime/${widget
-        .product_name!}/${widget.place!}/${date_value}";
+    final url = "$SERVER_IP/ticket/ticketPerformanceTime/${widget.product_name!}/${widget.place!}/${date_value}";
     try {
       flag = 1;
       _performanceTime = new List.empty(growable: true);
@@ -308,8 +366,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
 
   }
   Future<void> init_PerformanceDate() async {
-    final url = "$SERVER_IP/ticket/ticketPerformanceDate/${widget
-        .product_name!}/${widget.place!}";
+    final url = "$SERVER_IP/ticket/ticketPerformanceDate/${widget.product_name!}/${widget.place!}";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
