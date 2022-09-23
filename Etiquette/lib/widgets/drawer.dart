@@ -58,7 +58,7 @@ Widget drawer(BuildContext context, bool theme, String? nickname) {
               title: const Text('Wallet'),
               onTap: () {
                 Get.to(
-                        () => const Wallet()
+                  () => const Wallet(),
                 );
                 // Navigator.push(
                 //     context,
@@ -71,7 +71,10 @@ Widget drawer(BuildContext context, bool theme, String? nickname) {
             ListTile(
               title: const Text('List of holding tickets'),
               onTap: () {
-                Get.to(() => const Hold());
+                Get.to(
+                  () => const Hold(),
+                  arguments: nickname
+                );
                 // Navigator.push(
                 //     context,
                 //     MaterialPageRoute(
