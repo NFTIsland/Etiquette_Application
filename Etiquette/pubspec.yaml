@@ -50,6 +50,7 @@ dependencies:
   timer_builder: ^2.0.0
   like_button: ^2.0.4
   flutter_date_pickers: ^0.4.0
+  ticket_widget: ^0.0.1
 
 
 dev_dependencies:
@@ -141,6 +142,15 @@ flutter:
           weight: 500
         - asset: assets/Font/HanSans/SpoqaHanSansNeo-Thin.ttf
           weight: 400
+
+    - family: Quicksand
+      fonts:
+        - asset: assets/Font/Quicksand/Quicksand-Bold.ttf
+          weight: 700
+        - asset: assets/Font/Quicksand/Quicksand-Regular.ttf
+          weight: 600
+        - asset: assets/Font/Quicksand/Quicksand-Light.ttf
+          weight: 100
 
 
   #   - family: Schyler
