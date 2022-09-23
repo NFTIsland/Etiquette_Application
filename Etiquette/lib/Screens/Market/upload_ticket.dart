@@ -218,7 +218,8 @@ class _UploadTicket extends State<UploadTicket>
               onTap: () => FocusScope.of(context).unfocus(),
               child: Scaffold(
                 appBar: defaultAppbar("티켓 상세 정보"),
-                body: Column(children: <Widget>[
+                body: Column(
+                    children: <Widget>[
                   Flexible(
                     fit: FlexFit.tight,
                     child: NestedScrollView(
@@ -226,8 +227,7 @@ class _UploadTicket extends State<UploadTicket>
                       return [
                         SliverToBoxAdapter(
                           child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Stack(
                                 children: <Widget>[
@@ -302,65 +302,67 @@ class _UploadTicket extends State<UploadTicket>
                                   ])
                               ),
                               SizedBox(height: height * 0.015),
-                              Container(
-                                key: _tabbar,
-                                alignment: Alignment.topCenter,
-                                width: width * 0.9,
-                                height: width * 0.09,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey, width: 1),
-                                  borderRadius:
-                                  BorderRadius.circular(10),
-                                  color: (theme ? const Color(0xffe8e8e8) : const Color(0xffffffff)),
-                                ),
-                                child: TabBar(
-                                  indicator: (tabcontroller!.index == 0) ?
-                                  BoxDecoration(
-                                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(9), topLeft: Radius.circular(9)),
-                                      color: Color(0xff333333)
-                                  ) :
-                                  BoxDecoration(
-                                      borderRadius: BorderRadius.only(bottomRight: Radius.circular(9), topRight: Radius.circular(9)),
-                                      color: Color(0xff333333)
+                              Center(
+                                child : Container(
+                                  key: _tabbar,
+                                  alignment: Alignment.topCenter,
+                                  width: width * 0.9,
+                                  height: width * 0.09,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey, width: 1),
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                    color: (theme ? const Color(0xffe8e8e8) : const Color(0xffffffff)),
                                   ),
-                                  indicatorPadding: EdgeInsets.zero,
-                                  labelPadding: EdgeInsets.zero,
-                                  controller: tabcontroller,
-                                  indicatorWeight: 0,
-                                  unselectedLabelStyle:
-                                  const TextStyle(fontFamily: 'NotoSans', fontWeight: FontWeight.w500),
-                                  unselectedLabelColor: Colors.black,
-                                  labelColor: Colors.white,
-                                  labelStyle: TextStyle(fontFamily: 'NotoSans', fontWeight: FontWeight.w700),
-                                  tabs: [
-                                    Tab(
-                                      //text: "코멘트",
-                                      child: Container(
-                                        child: const Text('코멘트'),
-                                        alignment: Alignment.center,
-                                        height: double.infinity,
-                                        decoration: const BoxDecoration(
-                                          //color: Colors.white,
-                                          border: Border(right: BorderSide(color: Colors.grey),),
-                                        ),
-                                      )
+                                  child: TabBar(
+                                    indicator: (tabcontroller!.index == 0) ?
+                                    BoxDecoration(
+                                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(9), topLeft: Radius.circular(9)),
+                                        color: Color(0xff333333)
+                                    ) :
+                                    BoxDecoration(
+                                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(9), topRight: Radius.circular(9)),
+                                        color: Color(0xff333333)
                                     ),
-                                    Tab(
-                                      //text: "경매 정보",
-                                      child: Container(
-                                        child: const Text('경매 정보'),
-                                        alignment: Alignment.center,
-                                        height: double.infinity,
-                                      )
-                                    ),
-                                  ],
-                                  onTap: (int idx) {
-                                    setState(() {
-                                      tabcontroller!.index = idx;
-                                      _scrollDown();
-                                    });
-                                  },
-                                ),
+                                    indicatorPadding: EdgeInsets.zero,
+                                    labelPadding: EdgeInsets.zero,
+                                    controller: tabcontroller,
+                                    indicatorWeight: 0,
+                                    unselectedLabelStyle:
+                                    const TextStyle(fontFamily: 'NotoSans', fontWeight: FontWeight.w500),
+                                    unselectedLabelColor: Colors.black,
+                                    labelColor: Colors.white,
+                                    labelStyle: TextStyle(fontFamily: 'NotoSans', fontWeight: FontWeight.w700),
+                                    tabs: [
+                                      Tab(
+                                        //text: "코멘트",
+                                          child: Container(
+                                            child: const Text('코멘트'),
+                                            alignment: Alignment.center,
+                                            height: double.infinity,
+                                            decoration: const BoxDecoration(
+                                              //color: Colors.white,
+                                              border: Border(right: BorderSide(color: Colors.grey),),
+                                            ),
+                                          )
+                                      ),
+                                      Tab(
+                                        //text: "경매 정보",
+                                          child: Container(
+                                            child: const Text('경매 정보'),
+                                            alignment: Alignment.center,
+                                            height: double.infinity,
+                                          )
+                                      ),
+                                    ],
+                                    onTap: (int idx) {
+                                      setState(() {
+                                        tabcontroller!.index = idx;
+                                        _scrollDown();
+                                      });
+                                    },
+                                  ),
+                                )
                               ),
                             ]
                           )
@@ -368,7 +370,7 @@ class _UploadTicket extends State<UploadTicket>
                       ];
                       },
                         body: Container(
-                          padding: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0),
+                          padding: EdgeInsets.fromLTRB(width * 0.05, 0, width*0.05, 0),
                           child: TabBarView(
                             key: _tabbarview,
                             physics: const NeverScrollableScrollPhysics(),
