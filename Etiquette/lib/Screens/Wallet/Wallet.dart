@@ -17,8 +17,7 @@ import 'package:Etiquette/Utilities/compare_strings_ignore_case.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/transaction_container.dart';
 import 'package:Etiquette/Providers/KAS/get_transaction_history.dart';
-
-import '../../Providers/DB/get_ticketInfo_by_token_id.dart';
+import 'package:Etiquette/Providers/DB/get_ticketInfo_by_token_id.dart';
 
 class Wallet extends StatefulWidget {
   const Wallet({Key? key}) : super(key: key);
@@ -94,14 +93,14 @@ class _Wallet extends State<Wallet> {
               "kind": "KLAY",
               "transferType": "KLAY 출금",
               "date": DateTime.fromMillisecondsSinceEpoch(item["timestamp"] * 1000).toString().substring(0, 19).replaceAll('-', '.'),
-              "value": roundDouble(pebToKlayConversion(hexToDouble(item["value"].substring(3, ))), 2)
+              "value": roundDouble(pebToKlayConversion(hexToDouble(item["value"].substring(2, ))), 2)
             });
           } else {
             transactions.add({
               "kind": "KLAY",
               "transferType": "KLAY 입금",
               "date": DateTime.fromMillisecondsSinceEpoch(item["timestamp"] * 1000).toString().substring(0, 19).replaceAll('-', '.'),
-              "value": roundDouble(pebToKlayConversion(hexToDouble(item["value"].substring(3, ))), 2)
+              "value": roundDouble(pebToKlayConversion(hexToDouble(item["value"].substring(2, ))), 2)
             });
           }
           // print("${item['transferType']}, ${item['timestamp']}, ${DateTime.fromMillisecondsSinceEpoch(item['timestamp'] * 1000)}, ${item['from']}, ${item['to']}, ${item['value']}");
@@ -393,7 +392,12 @@ class _Wallet extends State<Wallet> {
                                     ),
                                   ),
                                   onPressed: () {
-
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const KlayWithdraw()
+                                      )
+                                    );
                                   },
                                   child: const Text(
                                     'KLAY 출금',
