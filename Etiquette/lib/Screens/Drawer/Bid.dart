@@ -568,7 +568,7 @@ class _Bid extends State<Bid> {
                                                     Icons.location_on_outlined,
                                                     size: 18,
                                                   ),
-                                                  const SizedBox(width: 7),
+                                                  const SizedBox(width: 5),
                                                   Text(
                                                     bidlist[i]['place'],
                                                     style: TextStyle(

@@ -559,7 +559,7 @@ class _Selling extends State<Selling> {
                                                     Icons.location_on_outlined,
                                                     size: 18,
                                                   ),
-                                                  const SizedBox(width: 7),
+                                                  const SizedBox(width: 5),
                                                   Text(
                                                     sellinglist[i]['place'],
                                                     style: TextStyle(
