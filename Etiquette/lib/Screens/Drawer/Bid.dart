@@ -1,15 +1,14 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Providers/DB/get_kas_address.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
-import 'package:Etiquette/Utilities/add_comma_to_number.dart';
+import 'package:Etiquette/widgets/show_ticket_details_dialog.dart';
 import 'package:Etiquette/Screens/Market/market_details.dart';
-import 'package:get/get.dart';
 
 class Bid extends StatefulWidget {
   const Bid({Key? key}) : super(key: key);
@@ -81,16 +80,6 @@ class _Bid extends State<Bid> {
     } catch (ex) {
       print("입찰 티켓 목록 --> ${ex.toString()}");
     }
-  }
-
-  String remainSellingTime(String auction_end_date) {
-    final end_year = int.parse(auction_end_date.substring(0, 4));
-    final end_month = int.parse(auction_end_date.substring(5, 7));
-    final end_day = int.parse(auction_end_date.substring(8, 10));
-    final end_hour = int.parse(auction_end_date.substring(11, 13));
-    final end_minute = int.parse(auction_end_date.substring(14, 16));
-    final remaining = DateTime(end_year, end_month, end_day, end_hour, end_minute).difference(DateTime.now());
-    return "${remaining.inDays}일 ${remaining.inHours % 24}시간 ${remaining.inMinutes % 60}분";
   }
 
   Future<bool> getTheme() async {
@@ -223,7 +212,6 @@ class _Bid extends State<Bid> {
                                       Image.network(
                                         bidlist[i]['poster_url'],
                                         // 'https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fkbo_logo.png?alt=media&token=b3a5372d-1e5c-4013-b2d5-1dad86ff4060',
-                                        // height: 117.93,
                                         width: 88.18,
                                         height: 130,
                                         fit: BoxFit.fill,
@@ -253,308 +241,19 @@ class _Bid extends State<Bid> {
                                                   onPressed: () {
                                                     final _width = MediaQuery.of(context).size.width;
                                                     final _height = MediaQuery.of(context).size.height;
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return AlertDialog(
-                                                            title: const Center(
-                                                              child: Text(
-                                                                "티켓 정보",
-                                                                style: TextStyle(
-                                                                  fontFamily: "Pretendard",
-                                                                  fontWeight: FontWeight.bold,
-                                                                  fontSize: 19,
-                                                                  color: Colors.black,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            shape: const RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.all(
-                                                                Radius.circular(32.0),
-                                                              ),
-                                                            ),
-                                                            content: SizedBox(
-                                                              height: 360,
-                                                              width: _width - 10,
-                                                              child: Column(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                children: <Widget> [
-                                                                  Text(
-                                                                    bidlist[i]['product_name'],
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      fontFamily: 'Pretendard',
-                                                                      fontSize: bidlist[i]['product_name'].length >= 11 ? 15 : 20,
-                                                                      color: Colors.black,
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(top: 14.0),
-                                                                    child: Row(
-                                                                      children: <Widget> [
-                                                                        const Icon(
-                                                                          Icons.location_on_outlined,
-                                                                          size: 18,
-                                                                        ),
-                                                                        const SizedBox(width: 7),
-                                                                        Text(
-                                                                          bidlist[i]['place'],
-                                                                          style: TextStyle(
-                                                                            color: Colors.grey[600],
-                                                                            fontWeight: FontWeight.bold,
-                                                                            fontSize: 13,
-                                                                            fontFamily: 'Pretendard',
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(top: 14.0),
-                                                                    child: Row(
-                                                                      children: <Widget> [
-                                                                        const Icon(
-                                                                          Icons.calendar_month,
-                                                                          size: 18,
-                                                                        ),
-                                                                        const SizedBox(width: 7),
-                                                                        Text(
-                                                                          bidlist[i]['performance_date'].substring(0, 10).replaceAll("-", ".") + " "
-                                                                              + bidlist[i]['performance_date'].substring(11, 16),
-                                                                          style: TextStyle(
-                                                                            color: Colors.grey[600],
-                                                                            fontWeight: FontWeight.bold,
-                                                                            fontSize: 13,
-                                                                            fontFamily: 'Pretendard',
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(top: 14.0),
-                                                                    child: Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                      children: <Widget> [
-                                                                        const Icon(
-                                                                          Icons.event_seat_outlined,
-                                                                          size: 18,
-                                                                        ),
-                                                                        const SizedBox(width: 5),
-                                                                        Expanded(
-                                                                          flex: 1,
-                                                                          child: Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: <Widget> [
-                                                                              Text(
-                                                                                "좌석 정보",
-                                                                                style: TextStyle(
-                                                                                  fontFamily: 'Pretendard',
-                                                                                  color: Colors.grey[600],
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                              Text(
-                                                                                "${bidlist[i]['seat_class']}석 ${bidlist[i]['seat_No']}번",
-                                                                                style: const TextStyle(
-                                                                                  fontFamily: 'Pretendard',
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color: Colors.black,
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(top: 15.0),
-                                                                    child: Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                      children: <Widget> [
-                                                                        const Icon(
-                                                                          Icons.access_alarms_outlined,
-                                                                          size: 18,
-                                                                        ),
-                                                                        const SizedBox(width: 5),
-                                                                        Expanded(
-                                                                          flex: 1,
-                                                                          child: Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: <Widget> [
-                                                                              Text(
-                                                                                "경매 마감 날짜",
-                                                                                style: TextStyle(
-                                                                                  fontFamily: 'Pretendard',
-                                                                                  color: Colors.grey[600],
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                              Text(
-                                                                                bidlist[i]['auction_end_date'].substring(0, 10).replaceAll("-", ".") + " "
-                                                                                    + bidlist[i]['auction_end_date'].substring(11, 16),
-                                                                                style: const TextStyle(
-                                                                                  fontFamily: 'Pretendard',
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color: Colors.black,
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(top: 15.0),
-                                                                    child: Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                      children: <Widget> [
-                                                                        const Icon(
-                                                                          Icons.access_time_rounded,
-                                                                          size: 18,
-                                                                        ),
-                                                                        const SizedBox(width: 5),
-                                                                        Expanded(
-                                                                          flex: 1,
-                                                                          child: Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: <Widget> [
-                                                                              Text(
-                                                                                "남은 시간",
-                                                                                style: TextStyle(
-                                                                                  fontFamily: 'Pretendard',
-                                                                                  color: Colors.grey[600],
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                              Text(
-                                                                                remainSellingTime(bidlist[i]['auction_end_date']),
-                                                                                style: TextStyle(
-                                                                                  fontFamily: 'Pretendard',
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color: (int.parse(remainSellingTime(bidlist[i]['auction_end_date']).split("일")[0])) < 1 ? Colors.red : Colors.black,
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        )
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(top: 15.0),
-                                                                    child: Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                      children: <Widget> [
-                                                                        bidlist[i]['count'] >= 2 ?
-                                                                        const Icon(
-                                                                          Icons.people,
-                                                                          size: 18,
-                                                                        ) :
-                                                                        const Icon(
-                                                                          Icons.person,
-                                                                          size: 18,
-                                                                        ),
-                                                                        const SizedBox(width: 5),
-                                                                        Expanded(
-                                                                          flex: 1,
-                                                                          child: Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: <Widget> [
-                                                                              Text(
-                                                                                "현재 입찰자 수",
-                                                                                style: TextStyle(
-                                                                                  fontFamily: 'Pretendard',
-                                                                                  color: Colors.grey[600],
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                              Text(
-                                                                                "${bidlist[i]['count'].toString()}명",
-                                                                                style: const TextStyle(
-                                                                                  fontFamily: 'Pretendard',
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color: Colors.black,
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(top: 15.0),
-                                                                    child: Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                      children: <Widget> [
-                                                                        const Icon(
-                                                                          Icons.money,
-                                                                          size: 18,
-                                                                        ),
-                                                                        const SizedBox(width: 5),
-                                                                        Expanded(
-                                                                          flex: 1,
-                                                                          child: Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: <Widget> [
-                                                                              Text(
-                                                                                "현재 최고 입찰가",
-                                                                                style: TextStyle(
-                                                                                  fontFamily: 'Pretendard',
-                                                                                  color: Colors.grey[600],
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                              Text(
-                                                                                "${bidlist[i]['max'].toString().replaceAllMapped(reg, mathFunc)} 원",
-                                                                                style: const TextStyle(
-                                                                                  fontFamily: 'Pretendard',
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color: Colors.black,
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(height: 10),
-                                                                  Container(
-                                                                    padding: EdgeInsets.fromLTRB(_width * 0.03, _height * 0.01, _width * 0.03, _height * 0.011),
-                                                                    width: _width,
-                                                                    height: 80,
-                                                                    child: CupertinoButton(
-                                                                      padding: const EdgeInsets.all(10),
-                                                                      borderRadius: BorderRadius.circular(50),
-                                                                      color: Colors.cyan,
-                                                                      onPressed: () {
-                                                                        Navigator.of(context).pop();
-                                                                      },
-                                                                      child: const Text(
-                                                                        "확인",
-                                                                        style: TextStyle(
-                                                                          fontFamily: "Pretendard",
-                                                                          fontWeight: FontWeight.bold,
-                                                                          fontSize: 16,
-                                                                          color: Colors.white,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }
+                                                    showTicketDetailsDialog(
+                                                      context,
+                                                      _width,
+                                                      _height,
+                                                      bidlist[i]['product_name'],
+                                                      bidlist[i]['place'],
+                                                      bidlist[i]['performance_date'],
+                                                      bidlist[i]['seat_class'],
+                                                      bidlist[i]['seat_No'],
+                                                      bidlist[i]['auction_end_date'],
+                                                      bidlist[i]['count'],
+                                                      bidlist[i]['max'],
+                                                      Colors.cyan
                                                     );
                                                   },
                                                 ),
@@ -581,28 +280,6 @@ class _Bid extends State<Bid> {
                                                 ],
                                               ),
                                             ),
-                                            // Padding(
-                                            //   padding: const EdgeInsets.only(top: 14.0),
-                                            //   child: Row(
-                                            //     children: <Widget> [
-                                            //       const Icon(
-                                            //         Icons.calendar_month,
-                                            //         size: 18,
-                                            //       ),
-                                            //       const SizedBox(width: 7),
-                                            //       Text(
-                                            //         bidlist[i]['performance_date'].substring(0, 10).replaceAll("-", ".") + " "
-                                            //             + bidlist[i]['performance_date'].substring(11, 16),
-                                            //         style: TextStyle(
-                                            //           color: Colors.grey[600],
-                                            //           fontWeight: FontWeight.bold,
-                                            //           fontSize: 13,
-                                            //           fontFamily: 'Pretendard',
-                                            //         ),
-                                            //       ),
-                                            //     ],
-                                            //   ),
-                                            // ),
                                             Padding(
                                               padding: const EdgeInsets.only(top: 14.0),
                                               child: Row(
@@ -709,40 +386,4 @@ class _Bid extends State<Bid> {
       }
      );
   }
-}
-
-Widget ticketDetailsWidget(String firstTitle, String firstDesc) {
-  return Padding(
-    padding: EdgeInsets.zero,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          firstTitle,
-          style: TextStyle(
-            color: Colors.grey[500],
-            fontSize: 16,
-            fontFamily: "Pretendard",
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Text(
-            firstDesc,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: firstDesc.length >= 11 ? 15 : 17,
-              fontWeight: FontWeight.bold,
-              fontFamily: "Pretendard",
-            ),
-          ),
-        )
-      ],
-    ),
-  );
-}
-
-Future<void> showTicketDetailsDialog(BuildContext context) async {
-
 }
