@@ -172,6 +172,7 @@ class _Bid extends State<Bid> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget> [
@@ -180,7 +181,7 @@ class _Bid extends State<Bid> {
                           color: Colors.grey[400],
                         ),
                         SizedBox(
-                          height: height - 200,
+                          height: height - 220,
                           child: ListView.separated(
                             itemCount: bidlist.length,
                             itemBuilder: (ctx, i) {
@@ -373,6 +374,7 @@ class _Bid extends State<Bid> {
                             },
                           ),
                         ),
+                        const SizedBox(height: 15),
                       ],
                     ),
                   ],

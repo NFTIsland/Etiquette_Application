@@ -186,7 +186,7 @@ class _Selling extends State<Selling> {
                           color: Colors.grey[400],
                         ),
                         SizedBox(
-                          height: height - 200,
+                          height: height - 220,
                           child: ListView.separated(
                             itemCount: sellinglist.length,
                             itemBuilder: (ctx, i) {
@@ -372,7 +372,8 @@ class _Selling extends State<Selling> {
                               );
                             },
                           ),
-                        )
+                        ),
+                        const SizedBox(height: 15),
                       ],
                     ),
                   ]
