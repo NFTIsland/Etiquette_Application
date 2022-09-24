@@ -452,10 +452,7 @@ class _Wallet extends State<Wallet> {
                             ],
                           ),
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0,
-                              vertical: 11.0,
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 11.0),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(9.0),
                               side: const BorderSide(
