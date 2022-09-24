@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Screens/TabController.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +27,7 @@ class _MyApp extends State<MyApp>{
   Future<String> get jwtOrEmpty async {
     var jwt = await storage.read(key: "jwt");
     if (jwt == null) return "";
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return jwt;
   }
   @override

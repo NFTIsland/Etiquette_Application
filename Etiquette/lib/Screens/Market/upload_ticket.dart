@@ -472,7 +472,7 @@ class _UploadTicket extends State<UploadTicket>
                                                           setState(() {
                                                             auction_end_date =
                                                             "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} "
-                                                            "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:00";
+                                                            "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
                                                           });
                                                         } else {
                                                           displayDialog_checkonly(
@@ -489,6 +489,15 @@ class _UploadTicket extends State<UploadTicket>
                                                         "업로드 할 티켓을 선택해 주세요.");
                                                   }
                                                 },
+                                              style: ElevatedButton.styleFrom(
+                                                  elevation: 0,
+                                                  shadowColor: Colors.transparent,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                      BorderRadius.circular(9.5)),
+                                                  primary: (theme ? const Color(0xffe8e8e8) : Color(0xffEE3D43)
+                                                  )
+                                              ),
                                                 child: const Text(
                                                   '경매 마감 시각 선택',
                                                   style: TextStyle(
@@ -544,6 +553,15 @@ class _UploadTicket extends State<UploadTicket>
                                                               "업로드 할 티켓을 선택해 주세요.");
                                                         }
                                                       },
+                                                      style: ElevatedButton.styleFrom(
+                                                          elevation: 0,
+                                                          shadowColor: Colors.transparent,
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius.circular(9.5)),
+                                                          primary: (theme ? const Color(0xffe8e8e8) : Color(0xffEE3D43)
+                                                          )
+                                                      ),
                                                       child: const Text('수정',
                                                         style: TextStyle(
                                                           color: Colors.white,
@@ -655,7 +673,8 @@ class _UploadTicket extends State<UploadTicket>
                     )
                   ),
                 ]),
-                bottomNavigationBar: SizedBox(
+                bottomNavigationBar: Container(
+                  padding : EdgeInsets.fromLTRB(width*0.03, 0, width*0.03, 0),
                   child: ElevatedButton(
                     child: const Text("티켓 업로드"),
                     style: ElevatedButton.styleFrom(
