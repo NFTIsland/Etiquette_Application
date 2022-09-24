@@ -535,7 +535,7 @@ class _UploadTicket extends State<UploadTicket>
                                                                   auction_end_date =
                                                                   "${date.year}-${date.month.toString().padLeft(2, '0')}"
                                                                   "-${date.day.toString().padLeft(2, '0')} "
-                                                                  "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:00";
+                                                                  "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
                                                                 });
                                                               } else {
                                                                 displayDialog_checkonly(
