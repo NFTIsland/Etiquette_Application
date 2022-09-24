@@ -21,12 +21,6 @@ Widget drawer(BuildContext context, bool theme, String? nickname) {
             GestureDetector(
               onTap: () {
                 Get.to(() => Account());
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => Account()
-                //     )
-                // );
               },
               child: UserAccountsDrawerHeader(
                 currentAccountPicture: const CircleAvatar(
@@ -54,95 +48,146 @@ Widget drawer(BuildContext context, bool theme, String? nickname) {
                 ),
               ),
             ),
+            const Padding(
+              padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0, bottom: 5.0),
+              child: Text(
+                '자산',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
+              ),
+            ),
             ListTile(
-              title: const Text('Wallet'),
+              leading: const Icon(Icons.account_balance,),
+              title: const Text(
+                '보유자산',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: () {
                 Get.to(
                   () => const Wallet(),
                 );
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => Wallet()
-                //     )
-                // ); // 네비게이션 필요
               },
             ),
+            Divider(
+              height: 20,
+              color: Colors.grey[600],
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0, bottom: 5.0),
+              child: Text(
+                '티켓',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
+              ),
+            ),
             ListTile(
-              title: const Text('List of holding tickets'),
+              leading: const Icon(Icons.shopping_bag_outlined),
+              title: const Text(
+                '보유 티켓',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: () {
                 Get.to(
                   () => const Hold(),
-                  arguments: nickname
+                    arguments: nickname,
                 );
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => Hold()
-                //     )
-                // ); // 네비게이션 필요
               },
             ),
             ListTile(
-              title: const Text('Interest Tickets'),
+              leading: const Icon(Icons.favorite),
+              title: const Text(
+                '관심 티켓',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: () {
-                Get.to(() => Interest());
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => Interest()
-                //     )
-                // );
+                Get.to(
+                  () => const Interest(),
+                );
               },
             ),
             ListTile(
-              title: const Text('Bid Tickets'),
+              leading: const Icon(Icons.back_hand),
+              title: const Text(
+                '입찰 티켓',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: () {
-                Get.to(() => Bid());
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => Bid()
-                //     )
-                // );
+                Get.to(
+                  () => const Bid(),
+                );
               },
             ),
             ListTile(
-              title: const Text('Selling Tickets'),
+              leading: const Icon(Icons.monetization_on_outlined),
+              title: const Text(
+                '판매 중 티켓',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: () {
-                Get.to(() => Selling());
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => Selling()
-                //     )
-                // );
+                Get.to(
+                  () => const Selling(),
+                );
               },
             ),
             ListTile(
-              title: const Text('List of used tickets'),
+              leading: const Icon(Icons.archive),
+              title: const Text(
+                '사용 만료 티켓',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: () {
-                Get.to(() => const Used());
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => Used()
-                //     )
-                // );
+                Get.to(
+                  () => const Used(),
+                );
               },
             ),
+            Divider(
+              height: 20,
+              color: Colors.grey[600],
+            ),
             ListTile(
-              title: const Text('Logout'),
+              leading: const Icon(Icons.logout),
+              title: const Text(
+                '로그아웃',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: () async {
                 try {
                   final selected = await displayDialog_YesOrNo(context, "로그아웃", "로그아웃 하시겠습니까?");
                   if (selected) {
                     await storage.deleteAll();
                     Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Login(),
-                        ), (route) => false
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Login(),
+                      ), (route) => false,
                     );
                   }
                 } catch (ex) {
@@ -153,5 +198,20 @@ Widget drawer(BuildContext context, bool theme, String? nickname) {
           ]
       ),
     ),
+  );
+}
+
+Widget _createDrawerItem(IconData icon, String text, GestureTapCallback onTap) {
+  return ListTile(
+    title: Row(
+      children: <Widget> [
+        Icon(icon),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(text),
+        )
+      ],
+    ),
+    onTap: onTap,
   );
 }
