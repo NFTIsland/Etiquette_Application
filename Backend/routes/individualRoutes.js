@@ -3,6 +3,8 @@ const router = express.Router();
 const individualController = require("../controller/individualController");
 
 router.post('/holdlist', individualController.holdlist);
+router.post('/holdCounts', individualController.holdCounts);
+router.post('/auctionCounts', individualController.auctionCounts);
 router.post('/sellinglist', individualController.sellinglist);
 router.post('/usedlist', individualController.usedlist);
 router.post('/interestTicketing', individualController.interestTicketing);
