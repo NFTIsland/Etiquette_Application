@@ -29,7 +29,7 @@ class DayPickerPage extends StatefulWidget {
 }
 
 class _DayPickerPageState extends State<DayPickerPage> {
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate = DateTime.now().subtract(Duration(days: 1));
   List notday = [];//되는 날짜 받기
   final DateTime _firstDate = DateTime.now();
   DateTime? _lastDate;//마지막으로 되는 날짜가 언제까지인지. DateTime.now()가 아니라 DateTime형식으로 직접 날짜 지정해줘도 됨.
@@ -141,7 +141,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children : <Widget>[
                                                 Text(
-                                                  "${_totalinfo[index][0]}",
+                                                  "${_performanceTime[index]}",
                                                   style: const TextStyle(
                                                     color: Color(0xffF6635B),
                                                     fontSize: 18,
@@ -299,7 +299,6 @@ class _DayPickerPageState extends State<DayPickerPage> {
         Map<String, dynamic> data = json.decode(res.body);
         if (res.statusCode == 200) {
           _seatNo = data["data"];
-          print("추가하는 값은 시간 : ${time_value}, 시트 클래스 종류는 : ${seat_class_value}, 크기는 ${_seatNo.length}");
           _timeseatClass.add([seat_class_value, _seatNo.length]);
         } else {
           _seatNo = [];
@@ -329,14 +328,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
           set_performanceTime.add(item["time"]);
           await load_seat_class(date_value.substring(0,10), item["time"]);
           _totalinfo.add([item["time"], _timeseatClass]);
-          print(date_value);
-          print("a;lskdjfasdf");
-          //print(_timeseatClass.length);
-          /*
-          for(int i = 0; i < _totalinfo[0][1].length; i++){
-            print(_totalinfo[0][1][idx][0]);
-          }
-          */
+
         }
         List list_performanceTime = set_performanceTime.toList();
         _performanceTime = new List.empty(growable: true);
@@ -402,7 +394,6 @@ class _DayPickerPageState extends State<DayPickerPage> {
 
         }
         _lastDate = _max;
-        print("실행됨");
       } else {
         _compareDate = [];
       }
