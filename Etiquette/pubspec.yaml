@@ -95,6 +95,17 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
+    - family: Square
+      fonts:
+       - asset: assets/Font/Square/NanumSquareRoundEB.ttf
+         weight: 800
+       - asset: assets/Font/Square/NanumSquareRoundB.ttf
+         weight: 700
+       - asset: assets/Font/Square/NanumSquareRoundR.ttf
+         weight: 600
+       - asset: assets/Font/Square/NanumSquareRoundL.ttf
+         weight: 500
+
     - family: NotoSans
       fonts :
         - asset : assets/Font/NotoSans/NotoSansKR-Black.otf

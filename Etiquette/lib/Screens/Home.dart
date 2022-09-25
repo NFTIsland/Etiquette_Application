@@ -437,14 +437,14 @@ class _Home extends State<Home> {
                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: <Widget>[
                                       Text(nickname!, style: TextStyle(
-                                          fontFamily: "Pretendard",
+                                          fontFamily: "Square",
                                           fontWeight: FontWeight.w600,
                                           fontSize: 30,
                                           color: (theme
                                               ? const Color(0xffffffff)
                                               : const Color(0xff000000))),),
                                       Text(" 님의 Etiquette", style: TextStyle(
-                                          fontFamily: "Pretendard",
+                                          fontFamily: "Square",
                                           fontWeight: FontWeight.w500,
                                           fontSize: 20,
                                           color: (theme
@@ -462,9 +462,9 @@ class _Home extends State<Home> {
                                     child: Column(
                                       children: <Widget>[
                                         Text("보유 중인 티켓", style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 15,
+                                            fontFamily: "Square",
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
                                             color: (theme
                                                 ? const Color(0xffffffff)
                                                 : Color(0xff000000)))),
@@ -483,9 +483,9 @@ class _Home extends State<Home> {
                                     child: Column(
                                       children: <Widget>[
                                         Text("옥션 참여중인 티켓", style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 15,
+                                            fontFamily: "Square",
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
                                             color: (theme
                                                 ? const Color(0xffffffff)
                                                 : Color(0xff000000)))),
@@ -504,9 +504,9 @@ class _Home extends State<Home> {
                                     child: Column(
                                       children: <Widget>[
                                         Text("보유 중인 KLAY", style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 15,
+                                            fontFamily: "Square",
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
                                             color: (theme
                                                 ? const Color(0xffffffff)
                                                 : Color(0xff000000)))),
