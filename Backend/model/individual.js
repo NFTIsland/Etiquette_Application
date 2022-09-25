@@ -106,4 +106,21 @@ module.exports = {
         AND kas_address = (?);";
         connection.query(sql, [product_name, place, seat_class, seat_No, kas_address], callback);
     },
+    
+    getNumberOfHoldingTickets: function (kas_address, callback) {
+        const sql = "\
+        select count(*) as counts \
+        from user_db.tickets \
+        where owner = (?) \
+        and now() < performance_date;";
+        connection.query(sql, [kas_address], callback);
+    },
+
+    getNumberOfAuctionTickets: function (kas_address, callback) {
+        const sql = "\
+        SELECT count(distinct(token_id)) as counts \
+        FROM user_db.auction \
+        where bidder = (?);";
+        connection.query(sql, [kas_address], callback);
+    },
 }
