@@ -389,7 +389,7 @@ class _Home extends State<Home> {
                   Container(
                     width: width * 0.91,
                     height: height * 0.2,
-                    margin: const EdgeInsets.fromLTRB(21, 20, 21, 10),
+                    margin: const EdgeInsets.fromLTRB(21, 20, 21, 0),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         begin: Alignment.topRight,
@@ -454,8 +454,8 @@ class _Home extends State<Home> {
                                                 ? const Color(0xffffffff)
                                                 : Color(0xff000000)))),
                                         Text(hold_counts.toString(), style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            fontWeight: FontWeight.w500,
+                                            fontFamily: "Quicksand",
+                                            fontWeight: FontWeight.bold,
                                             fontSize: 15,
                                             color: (theme
                                                 ? const Color(0xffffffff)
@@ -475,8 +475,8 @@ class _Home extends State<Home> {
                                                 ? const Color(0xffffffff)
                                                 : Color(0xff000000)))),
                                         Text(auction_counts.toString(), style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            fontWeight: FontWeight.w500,
+                                            fontFamily: "Quicksand",
+                                            fontWeight: FontWeight.bold,
                                             fontSize: 15,
                                             color: (theme
                                                 ? const Color(0xffffffff)
@@ -496,8 +496,8 @@ class _Home extends State<Home> {
                                                 ? const Color(0xffffffff)
                                                 : Color(0xff000000)))),
                                         Text(current_klay.toString(), style: TextStyle(
-                                            fontFamily: "Pretendard",
-                                            fontWeight: FontWeight.w500,
+                                            fontFamily: "Quicksand",
+                                            fontWeight: FontWeight.bold,
                                             fontSize: 15,
                                             color: (theme
                                                 ? const Color(0xffffffff)
@@ -515,7 +515,7 @@ class _Home extends State<Home> {
                   Container(
                     width: width * 0.91,
                     height: height * 0.08,
-                    margin: const EdgeInsets.fromLTRB(21, 20, 21, 10),
+                    margin: const EdgeInsets.fromLTRB(21, 10, 21, 10),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         begin: Alignment.topRight,
