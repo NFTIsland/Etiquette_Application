@@ -14,6 +14,8 @@ import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/round.dart';
+import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:Etiquette/Providers/KAS/Wallet/get_balance.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -35,11 +37,16 @@ class _Home extends State<Home> {
   String klayCurrency = "Loading...";
   String yesterday_last = "";
   String? nickname = "";
+  late final String address;
 
   List home_posters = [];
   List titles = [];
   List contents = [];
   List upload_times = [];
+
+  int hold_counts = 0;
+  int auction_counts = 0;
+  double current_klay = 0.0;
 
   void _setData(bool value) async {
     var key = 'ala';
@@ -74,6 +81,29 @@ class _Home extends State<Home> {
     final now = DateTime.now();
     // currentTime = "${now.year}년 ${now.month}월 ${now.day}일 ${now.hour}시 ${now.minute}분 ${now.second}초";
     return "${now.year}.${now.month.toString().padLeft(2, "0")}.${now.day.toString().padLeft(2, "0")}. ${now.hour.toString().padLeft(2, "0")}:${now.minute.toString().padLeft(2, "0")}:${now.second.toString().padLeft(2, "0")}";
+  }
+
+  Future<void> loadKlayBalance() async {
+    Map<String, dynamic> kas_address_data = await getKasAddress();
+    if (kas_address_data['statusCode'] == 200) {
+      address = kas_address_data['data'][0]['kas_address'];
+      Map<String, dynamic> data = await getBalance(address);
+      if (data["statusCode"] == 200) {
+        double _klay = double.parse(data["data"]);
+        _klay = roundDouble(_klay, 2);
+        setState(() {
+          current_klay = _klay;
+        });
+      } else {
+        String message = data["msg"];
+        String errorMessage = "잔액 정보를 가져오지 못했습니다.\n\n$message";
+        displayDialog_checkonly(context, "통신 오류", errorMessage);
+      }
+    } else {
+      String message = kas_address_data["msg"];
+      String errorMessage = "잔액 정보를 가져오지 못했습니다.\n\n$message";
+      displayDialog_checkonly(context, "통신 오류", errorMessage);
+    }
   }
 
   Future<void> getKlayCurrency() async {
@@ -157,12 +187,69 @@ class _Home extends State<Home> {
     nickname = await storage.read(key: "nickname");
   }
 
+  Future<void> getHoldCounts() async {
+    const url = "$SERVER_IP/individual/holdCounts";
+    try {
+      final kas_address_data = await getKasAddress();
+      if (kas_address_data['statusCode'] == 200) {
+        var res = await http.post(Uri.parse(url), body: {
+          'kas_address': kas_address_data['data'][0]['kas_address'],
+        });
+        Map<String, dynamic> data = json.decode(res.body);
+        if (res.statusCode == 200) {
+          var counter = data["data"][0]['counts'];
+          setState(() {
+            hold_counts = counter;
+          }
+            );
+        } else {
+          String msg = data['msg'];
+          displayDialog_checkonly(context, "보유 티켓의 수", msg);
+        }
+      } else {
+        displayDialog_checkonly(context, "보유 티켓의 수", "보유 티켓의 수를 불러오는 데에 실패했습니다.");
+      }
+    } catch (ex) {
+      print("보유 티켓의 수 --> ${ex.toString()}");
+    }
+  }
+
+  Future<void> getAuctionCounts() async {
+    const url = "$SERVER_IP/individual/auctionCounts";
+    try {
+      final kas_address_data = await getKasAddress();
+      if (kas_address_data['statusCode'] == 200) {
+        var res = await http.post(Uri.parse(url), body: {
+          'kas_address': kas_address_data['data'][0]['kas_address'],
+        });
+        Map<String, dynamic> data = json.decode(res.body);
+        if (res.statusCode == 200) {
+          var counter = data["data"][0]['counts'];
+          setState(() {
+            auction_counts = counter;
+          }
+          );
+        } else {
+          String msg = data['msg'];
+          displayDialog_checkonly(context, "옥션 참여 티켓의 수", msg);
+        }
+      } else {
+        displayDialog_checkonly(context, "옥션 참여 티켓의 수", "옥션에 참여 중인 티켓의 수를 불러오는 데에 실패했습니다.");
+      }
+    } catch (ex) {
+      print("옥션 참여 티켓의 수 --> ${ex.toString()}");
+    }
+  }
+
   _fetchData() async {
     return this._memoizer.runOnce(() async {
       _loadData();
       loadHomePosters();
       getHomeNotices();
       getNickname();
+      getHoldCounts();
+      getAuctionCounts();
+      loadKlayBalance();
       await Future.delayed(const Duration(milliseconds: 1000));
       return;
     });
@@ -222,7 +309,9 @@ class _Home extends State<Home> {
                             (theme ? const Color(0xffe8e8e8) : Colors.black)),
                     title: Text("Etiquette",
                         style: TextStyle(
-                            color: (theme ? const Color(0xffe8e8e8) : Colors.black))),
+                            color: (theme
+                                ? const Color(0xffe8e8e8)
+                                : Colors.black))),
                     backgroundColor: Colors.white24,
                     foregroundColor: Colors.black,
                     elevation: 0,
@@ -252,6 +341,13 @@ class _Home extends State<Home> {
                 drawer: drawer(context, theme, nickname),
                 body: SingleChildScrollView(
                     child: Column(children: <Widget>[
+                  Center(
+                    child: SizedBox(
+                      width: width * 0.3,
+                      height: height * 0.1,
+                      child: Image.asset('assets/image/today_pick.png', fit: BoxFit.contain),
+                    ),
+                  ),
                   SizedBox(
                     width: width,
                     height: height * 0.55,
@@ -288,6 +384,132 @@ class _Home extends State<Home> {
                           );
                         });
                       }).toList(),
+                    ),
+                  ),
+                  Container(
+                    width: width * 0.91,
+                    height: height * 0.2,
+                    margin: const EdgeInsets.fromLTRB(21, 20, 21, 10),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          Color(0xffFFDAB9),
+                          Color(0xffFF7F50),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black87.withOpacity(0.4),
+                            spreadRadius: 1,
+                            blurRadius: 1,
+                            offset: const Offset(1, 1), // changes position of shadow
+                      ),
+                    ]
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15, bottom: 20),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Text(nickname!, style: TextStyle(
+                                      fontFamily: "Pretendard",
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 45,
+                                      color: (theme
+                                          ? const Color(0xffffffff)
+                                          : const Color(0xff000000))),),
+                                  Text(" 님의 Etiquette", style: TextStyle(
+                                      fontFamily: "Pretendard",
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 20,
+                                      color: (theme
+                                          ? const Color(0xffffffff)
+                                          : const Color(0xff000000))),)
+                                ],
+                              ),
+                            ),
+                          ),
+                            Flexible(
+                              fit: FlexFit.tight,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Flexible(
+                                    fit: FlexFit.tight,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Text("보유 중인 티켓", style: TextStyle(
+                                            fontFamily: "Pretendard",
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15,
+                                            color: (theme
+                                                ? const Color(0xffffffff)
+                                                : Color(0xff000000)))),
+                                        Text(hold_counts.toString(), style: TextStyle(
+                                            fontFamily: "Pretendard",
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15,
+                                            color: (theme
+                                                ? const Color(0xffffffff)
+                                                : Color(0xff5a5a5a))))
+                                      ],
+                                    ),
+                                  ),
+                                  Flexible(
+                                    fit: FlexFit.tight,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Text("옥션 참여중인 티켓", style: TextStyle(
+                                            fontFamily: "Pretendard",
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15,
+                                            color: (theme
+                                                ? const Color(0xffffffff)
+                                                : Color(0xff000000)))),
+                                        Text(auction_counts.toString(), style: TextStyle(
+                                            fontFamily: "Pretendard",
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15,
+                                            color: (theme
+                                                ? const Color(0xffffffff)
+                                                : Color(0xff5a5a5a))))
+                                      ],
+                                    ),
+                                  ),
+                                  Flexible(
+                                    fit: FlexFit.tight,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Text("보유 중인 KLAY", style: TextStyle(
+                                            fontFamily: "Pretendard",
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15,
+                                            color: (theme
+                                                ? const Color(0xffffffff)
+                                                : Color(0xff000000)))),
+                                        Text(current_klay.toString(), style: TextStyle(
+                                            fontFamily: "Pretendard",
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15,
+                                            color: (theme
+                                                ? const Color(0xffffffff)
+                                                : Color(0xff5a5a5a))))
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                      ],
+                  ),
                     ),
                   ),
                   Container(
@@ -337,7 +559,10 @@ class _Home extends State<Home> {
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w700,
-                                                color: (theme ? const Color(0xffffffff) : const Color(0xff000000))))),
+                                                color: (theme
+                                                    ? const Color(0xffffffff)
+                                                    : const Color(
+                                                        0xff000000))))),
                                     const SizedBox(width: 5),
                                     TimerBuilder.periodic(
                                       const Duration(seconds: 1),
@@ -348,7 +573,10 @@ class _Home extends State<Home> {
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w600,
-                                                color: (theme ? const Color(0xffffffff) : const Color(0xff000000))));
+                                                color: (theme
+                                                    ? const Color(0xffffffff)
+                                                    : const Color(
+                                                        0xff000000))));
                                       },
                                     ),
                                   ],
@@ -362,7 +590,9 @@ class _Home extends State<Home> {
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                               fontSize: 16,
-                                              color: (theme ? const Color(0xffffffff) : Color(0xff6e6e6e)))),
+                                              color: (theme
+                                                  ? const Color(0xffffffff)
+                                                  : Color(0xff5a5a5a)))),
                                     ),
                                     TimerBuilder.periodic(
                                         const Duration(seconds: 1),
@@ -434,7 +664,9 @@ class _Home extends State<Home> {
                                             fontFamily: "Pretendard",
                                             fontWeight: FontWeight.w700,
                                             fontSize: 16,
-                                            color: (theme ? const Color(0xff000000) : const Color(0xff2d386b))),
+                                            color: (theme
+                                                ? const Color(0xff000000)
+                                                : const Color(0xff2d386b))),
                                       );
                                     },
                                   ),
@@ -459,7 +691,9 @@ class _Home extends State<Home> {
                                     fontFamily: "Pretendard",
                                     fontWeight: FontWeight.w500,
                                     fontSize: 20,
-                                    color: (theme ? const Color(0xffffffff) : const Color(0xff000000)))),
+                                    color: (theme
+                                        ? const Color(0xffffffff)
+                                        : const Color(0xff000000)))),
                             TextButton(
                               onPressed: () {
                                 // Navigator.push(
@@ -483,7 +717,9 @@ class _Home extends State<Home> {
                         width: width * 0.91,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(9),
-                          color: (theme ? const Color(0xffe8e8e8) : const Color(0xffffffff)),
+                          color: (theme
+                              ? const Color(0xffe8e8e8)
+                              : const Color(0xffffffff)),
                         ),
                         child: ListView.separated(
                             separatorBuilder:
@@ -494,7 +730,8 @@ class _Home extends State<Home> {
                             itemCount: contents.length,
                             itemBuilder: (context, index) {
                               return Theme(
-                                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                                  data: Theme.of(context).copyWith(
+                                      dividerColor: Colors.transparent),
                                   child: ExpansionTile(
                                       backgroundColor: Colors.white,
                                       collapsedBackgroundColor: Colors.white,
@@ -503,42 +740,48 @@ class _Home extends State<Home> {
                                               fontFamily: "NotoSans",
                                               fontWeight: FontWeight.w400,
                                               fontSize: 20,
-                                              color: (theme ? const Color(0xff000000) : const Color(0xff000000)),
+                                              color: (theme
+                                                  ? const Color(0xff000000)
+                                                  : const Color(0xff000000)),
                                               overflow: TextOverflow.ellipsis)),
                                       subtitle: Text(upload_times[index],
                                           style: TextStyle(
                                               fontFamily: "NotoSans",
                                               fontWeight: FontWeight.w400,
                                               fontSize: 10,
-                                              color: (theme ? const Color(0xff000000) : const Color(0xff000000)),
+                                              color: (theme
+                                                  ? const Color(0xff000000)
+                                                  : const Color(0xff000000)),
                                               overflow: TextOverflow.ellipsis)),
                                       children: <Widget>[
                                         Container(
                                             width: width * 0.8,
                                             child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
                                                 children: <Widget>[
                                                   Flexible(
                                                       child: Text(
                                                           contents[index],
                                                           softWrap: true,
                                                           maxLines: 40,
-                                                          style: TextStyle(fontFamily: "NotoSans", fontWeight: FontWeight.w400, fontSize: 15,
-                                                              color: (theme ? const Color(0xff000000) : const Color(0xff000000)))))
-                                                ]
-                                            )
-                                        )
-                                      ]
-                                  )
-                              );
-                            }
-                            )
-                    ),
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  "NotoSans",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              fontSize: 15,
+                                                              color: (theme
+                                                                  ? const Color(
+                                                                      0xff000000)
+                                                                  : const Color(
+                                                                      0xff000000)))))
+                                                ]))
+                                      ]));
+                            })),
                   ),
-                ]
-                    )
-                )
-            );
+                ])));
           }
           return const Center(
             child: CircularProgressIndicator(),
