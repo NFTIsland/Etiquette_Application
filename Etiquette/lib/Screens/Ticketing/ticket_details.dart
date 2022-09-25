@@ -277,7 +277,7 @@ class _TicketDetails extends State<TicketDetails>
                                             ),
                                             Positioned(
                                                 left: width * 0.05,
-                                                top: width * 0.05,
+                                                top: width * 0.1,
                                                 child: Image.network(
                                                     detail['poster_url'],
                                                     width: width * 0.25,
@@ -289,7 +289,7 @@ class _TicketDetails extends State<TicketDetails>
                                           clipBehavior: Clip.none,
                                         ),
                                         Padding(
-                                          padding: EdgeInsets.fromLTRB(width * 0.05, width * 0.15, width * 0.05, 0),
+                                          padding: EdgeInsets.fromLTRB(width * 0.05, width * 0.1, width * 0.05, 0),
                                           child: Text("${widget.product_name!}",
                                               style: TextStyle(
                                                   fontSize: 20,

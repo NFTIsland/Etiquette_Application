@@ -442,11 +442,11 @@ class _MarketDetails extends State<MarketDetails>
                                               image: AssetImage(
                                                   "assets/image/mainlogo.png"),
                                               width: width,
-                                              height: width * 0.33,
+                                              height: width * 0.4,
                                               fit: BoxFit.fill),
                                           Positioned(
                                               left: width * 0.05,
-                                              top: width * 0.05,
+                                              top:  width * 0.1,
                                               child: Image.network(
                                                   "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
                                                   width: width * 0.25,
@@ -460,7 +460,7 @@ class _MarketDetails extends State<MarketDetails>
                                       Padding(
                                         padding: EdgeInsets.fromLTRB(
                                             width * 0.05,
-                                            width * 0.15,
+                                            width * 0.1,
                                             width * 0.05,
                                             0
                                         ),
