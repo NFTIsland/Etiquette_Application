@@ -13,6 +13,30 @@ module.exports = {
         });
     },
 
+    holdCounts: function (req, res) {
+        Individual.getNumberOfHoldingTickets(req.body.kas_address, function (err, row) {
+            if (row != undefined) {
+                res.status(200);
+                res.json({statusCode: 200, data: row});
+            } else {
+                res.status(405)
+                res.json({statusCode: 405, msg: "Failed to retrieve number of holding tickets from DB"});
+            }
+        });
+    },
+
+    auctionCounts: function (req, res) {
+        Individual.getNumberOfAuctionTickets(req.body.kas_address, function (err, row) {
+            if (row != undefined) {
+                res.status(200);
+                res.json({statusCode: 200, data: row});
+            } else {
+                res.status(405)
+                res.json({statusCode: 405, msg: "Failed to retrieve number of auction tickets from DB"});
+            }
+        });
+    },
+
     sellinglist: function (req, res) {
         Individual.getSellinglist(req.body.kas_address, function (err, row) {
             if (row != undefined) {
