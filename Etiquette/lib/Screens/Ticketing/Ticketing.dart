@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +10,7 @@ import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Screens/Ticketing/total_imminent.dart';
 import 'package:Etiquette/Screens/Ticketing/search_ticket.dart';
+import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
@@ -25,6 +27,7 @@ class _Ticketing extends State<Ticketing> {
   late bool theme;
   var img = const Icon(Icons.notifications);
   List hotpick = [];
+  List commingsoon = [];
   List deadline = [];
   List banner_posters = [];
   String? nickname = "";
@@ -73,12 +76,67 @@ class _Ticketing extends State<Ticketing> {
           Map<String, dynamic> ex = {
             'product_name': item['product_name'],
             'place': item['place'],
+            'poster_url': item['poster_url'],
           };
+
+          if (item['poster_url'] == null) {
+            if (item['category'] == 'movie') {
+              ex['poster_url'] = 'https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fsample_movie_poster.png?alt=media&token=536aeb85-7b8f-4f1d-b99f-340abc2259c4';
+            } else {
+              ex['poster_url'] = 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg';
+            }
+          }
+
           hotpick.add(ex);
           setState(() {});
         }
       } else {
         displayDialog_checkonly(context, "Hot Pick", "서버와의 상태가 원활하지 않습니다.");
+      }
+    } catch (ex) {
+      String msg = ex.toString();
+      displayDialog_checkonly(context, "티켓팅", msg);
+    }
+  }
+
+  Future<void> getCommingSoonFromDB() async {
+    const url = "$SERVER_IP/ticketing/commingSoon";
+    try {
+      var res = await http.get(Uri.parse(url));
+      Map<String, dynamic> data = json.decode(res.body);
+      if (data['statusCode'] == 200) {
+        List _commingsoon = data["data"];
+        for (Map<String, dynamic> item in _commingsoon) {
+          final booking_start_date = item['booking_start_date'];
+
+          Map<String, dynamic> ex = {
+            'product_name': item['product_name'],
+            'booking_start_date': booking_start_date,
+            'booking_start_day_of_the_week': DateFormat.E('ko_KR').format(
+              DateTime(
+                int.parse(booking_start_date.substring(0, 4)),
+                int.parse(booking_start_date.substring(5, 7)),
+                int.parse(booking_start_date.substring(8, 10)),
+              ),
+            ),
+            'performance_date': item['performance_date'],
+            'place': item['place'],
+            'poster_url': item['poster_url'],
+          };
+
+          if (item['poster_url'] == null) {
+            if (item['category'] == 'movie') {
+              ex['poster_url'] = 'https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fsample_movie_poster.png?alt=media&token=536aeb85-7b8f-4f1d-b99f-340abc2259c4';
+            } else {
+              ex['poster_url'] = 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg';
+            }
+          }
+
+          commingsoon.add(ex);
+          setState(() {});
+        }
+      } else {
+        displayDialog_checkonly(context, "Comming Soon", "서버와의 상태가 원활하지 않습니다.");
       }
     } catch (ex) {
       String msg = ex.toString();
@@ -114,11 +172,6 @@ class _Ticketing extends State<Ticketing> {
     nickname = await storage.read(key: "nickname");
   }
 
-  Future<void> getTicketingDataFromDB() async {
-    getHotPickFromDB();
-    getImminentDeadlineFromDB();
-  }
-
   Future<void> loadBannerPosters() async {
     const url = "$SERVER_IP/screen/backdropImages";
     try {
@@ -137,13 +190,19 @@ class _Ticketing extends State<Ticketing> {
     }
   }
 
+  Future<void> getTicketingDataFromDB() async {
+    loadBannerPosters();
+    getHotPickFromDB();
+    getCommingSoonFromDB();
+    // getImminentDeadlineFromDB();
+  }
+
   @override
   void initState() {
     super.initState();
     _loadData();
     getTheme();
     getNickname();
-    loadBannerPosters();
     future = getTicketingDataFromDB();
   }
 
@@ -212,108 +271,133 @@ class _Ticketing extends State<Ticketing> {
                                 children: <Widget> [
                                   SizedBox(height: height*0.025),
                                   const Text(
-                                      "Comming soon",
-                                      style: TextStyle(
-                                        fontSize: 25,
-                                        fontFamily: "Pretendard",
-                                        fontWeight: FontWeight.bold,
-                                      )
+                                    "Comming soon",
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontFamily: "Pretendard",
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   const Text(
-                                      "곧 티켓팅이 시작됩니다!",
-                                      style: TextStyle(
+                                    "곧 티켓팅이 시작됩니다!",
+                                    style: TextStyle(
+                                      fontFamily: "Pretendard",
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  SizedBox(height: height*0.025),
+                                  (commingsoon.isEmpty) ? Container(
+                                    padding : EdgeInsets.fromLTRB(width * 0.05, 0, width * 0.05, 0),
+                                    width : width * 0.9,
+                                    height : width * 0.5,
+                                    alignment: Alignment.center,
+                                    child : const Text(
+                                      "예정된 티켓팅이 없습니다!",
+                                      style : TextStyle(
                                         fontFamily: "Pretendard",
                                         fontWeight: FontWeight.w500,
                                         fontSize: 15,
-                                      )
-                                  ),
-                                  SizedBox(height: height*0.025),
-                                  (deadline.length! == 0) ?
-                                  (
-                                      Container(
-                                          padding : EdgeInsets.fromLTRB(width*0.05, 0, width*0.05, 0),
-                                          width : width*0.9,
-                                          height : width*0.5,
-                                          alignment: Alignment.center,
-                                          child : const Text("예정된 티켓팅이 없습니다!",
-                                              style : TextStyle(
-                                                fontFamily: "Pretendard",
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 15,
-                                          ))
-                                      ))
-                                      :
-                                  (
-                                      GridView.builder(
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
-                                            childAspectRatio: 3/5,
-                                            mainAxisSpacing: height*0.01, //수평 Padding
-                                            crossAxisSpacing: width*0.05, //수직 Padding
-                                          ),
-                                          shrinkWrap: true,
-                                          itemCount: deadline.length,
-                                          itemBuilder: (context, index) {
-                                            return
-                                              Card(
-                                                  color: Colors.white24,
-                                                  elevation : 0,
-                                                  child: InkWell(
+                                      ),
+                                    ),
+                                  ) : GridView.builder(
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
+                                        childAspectRatio: 3 / 5,
+                                        mainAxisSpacing: height * 0.01, //수평 Padding
+                                        crossAxisSpacing: width * 0.05, //수직 Padding
+                                      ),
+                                      shrinkWrap: true,
+                                      itemCount: commingsoon.length,
+                                      itemBuilder: (context, index) {
+                                        return Card(
+                                          color: Colors.white24,
+                                          elevation : 0,
+                                          child: InkWell(
+                                            highlightColor: Colors.transparent,
+                                            splashFactory: InkRipple.splashFactory,
+                                            // splashFactory: NoSplash.splashFactory,
+                                            onTap: () {
 
-                                                    highlightColor: Colors.transparent,
-                                                    splashFactory: NoSplash.splashFactory,
-                                                    onTap:(){},
-                                                    child :
-                                                    Column(
+                                            },
+                                            child : Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children : <Widget> [
+                                                  Expanded(
+                                                    flex : 4,
+                                                    child: Image.network(
+                                                      // "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
+                                                      commingsoon[index]['poster_url'],
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
                                                         crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children : <Widget>[
-                                                          Expanded(flex : 4,child: Image.network(
-                                                            "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
-                                                            fit: BoxFit.fill,
-                                                            //color: Colors.blue,
-                                                          ),),
-                                                          Expanded(
-                                                              flex: 1,
-                                                              child: Column(
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
-                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                  children : <Widget> [
-                                                                    Row(
-                                                                        children : const <Widget>[
-                                                                          Text("14:00", style : TextStyle(fontSize: 13, fontWeight: FontWeight.bold, ),),
-                                                                          Text(" | 12.31", style : TextStyle(fontSize: 12, ))
-                                                                        ]
-                                                                    ),
-                                                                    Text(deadline[index]['product_name'], style: const TextStyle(
-                                                                      fontFamily: "NotoSans",
-                                                                      fontSize: 13,
-                                                                      fontWeight: FontWeight.bold,
-                                                                      overflow: TextOverflow.ellipsis,
-                                                                    )
-                                                                    ),
-                                                                    Text(deadline[index]['place'].toString(), style : const TextStyle(
-                                                                      fontSize: 10,
-                                                                      fontFamily: "NotoSans",
-                                                                      color: Colors.grey,
-                                                                      overflow: TextOverflow.ellipsis,
-                                                                    ),
-                                                                    ),
-                                                                  ]
-                                                              )
-                                                          )
-
+                                                        children : <Widget> [
+                                                          Row(
+                                                              children: <Widget> [
+                                                                Text(
+                                                                  "${commingsoon[index]['booking_start_date'].substring(5, 10).replaceAll("-", ".")}",
+                                                                  style: TextStyle(
+                                                                    fontSize: 13,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontFamily: 'Quicksand',
+                                                                    color: Colors.grey[600],
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "(${commingsoon[index]['booking_start_day_of_the_week']}) ",
+                                                                  style: TextStyle(
+                                                                    fontSize: 13,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontFamily: 'Quicksand',
+                                                                    color: Colors.grey[600],
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "${commingsoon[index]['booking_start_date'].substring(11, 16)}에 오픈",
+                                                                  style: TextStyle(
+                                                                    fontSize: 13,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontFamily: 'Quicksand',
+                                                                    color: Colors.grey[600],
+                                                                  ),
+                                                                ),
+                                                              ]
+                                                          ),
+                                                          Text(
+                                                            commingsoon[index]['product_name'],
+                                                            style: const TextStyle(
+                                                              fontFamily: "NotoSans",
+                                                              fontSize: 13,
+                                                              fontWeight: FontWeight.bold,
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            commingsoon[index]['place'].toString(),
+                                                            style: const TextStyle(
+                                                              fontSize: 10,
+                                                              fontFamily: "NotoSans",
+                                                              color: Colors.grey,
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
                                                         ]
                                                     ),
-                                                  )
-                                              );
-
-
-                                          }
-                                      )
+                                                  ),
+                                                ]
+                                            ),
+                                          ),
+                                        );
+                                      }
                                   ),
                                   SizedBox(height: height*0.05),
-
                                 ]
                             )
                         ),
@@ -336,95 +420,133 @@ class _Ticketing extends State<Ticketing> {
                             });
                           }).toList(),
                         ),
-
-                        SizedBox(height: height*0.05),
+                        SizedBox(height: height * 0.05),
+                        const Text(
+                          "Hot Pick",
+                          style: TextStyle(
+                            fontSize: 25,
+                            fontFamily: "Pretendard",
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Text(
+                          "사람들의 관심도가 높은 티켓을 보여드립니다.",
+                          style: TextStyle(
+                            fontFamily: "Pretendard",
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                          ),
+                        ),
+                        SizedBox(height: height * 0.025),
                         Container(
                             width: double.infinity,
-                            padding: EdgeInsets.only(left: width*0.05, right: width*0.05),
+                            padding: EdgeInsets.only(left: width * 0.05, right: width * 0.05),
                             child : Column(
-                                children : <Widget>[
-                                  const Text(
-                                      "Hot Pick",
-                                      style: TextStyle(
-                                        fontSize: 25,
-                                        fontFamily: "Pretendard",
-                                        fontWeight: FontWeight.bold,
-                                      )
-                                  ),
-                                  const Text(
-                                      "사람들의 관심도가 높은 티켓을 보여드립니다.",
-                                      style: TextStyle(
-                                        fontFamily: "Pretendard",
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15,
-                                      )
-                                  ),
-                                  SizedBox(height: height*0.025),
+                                children : <Widget> [
                                   ListView.builder(
                                       physics: const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemCount: hotpick.length,
                                       itemBuilder: (context, index) {
                                         return Card(
-                                            color: Colors.white24,
-                                            elevation : 0,
-                                            child:InkWell(
-                                                highlightColor: Colors.transparent,
-                                                splashFactory: NoSplash.splashFactory,
-                                                onTap : (){ },
-                                                child :
-                                                SizedBox(
-                                                    width: double.infinity,
-                                                    height : height*0.07,
-                                                    child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                                        children: <Widget>[
-                                                          Image.network(
-                                                            "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
-                                                            width: height*0.07,
-                                                            height: height*0.07,
-                                                            fit: BoxFit.fill,
-                                                          ),
-
-                                                          Container(
-                                                            width: height*0.07,
-                                                            height: height*0.07,
-                                                            alignment: Alignment.center,
-                                                            child : Text(
-                                                              (index + 1).toString(),
-                                                              style: const TextStyle(
-                                                                fontFamily: "Pretendard",
-                                                                fontWeight: FontWeight.w400,
-                                                                fontSize: 15,
+                                          color: Colors.white24,
+                                          elevation : 0,
+                                          child: InkWell(
+                                            highlightColor: Colors.transparent,
+                                            splashFactory: InkRipple.splashFactory,
+                                            // splashFactory: NoSplash.splashFactory,
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => TicketDetails(
+                                                    product_name: hotpick[index]['product_name'],
+                                                    place: hotpick[index]['place'],
+                                                    showPurchaseButton: true,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(bottom: 10),
+                                              child: SizedBox(
+                                                width: double.infinity,
+                                                // height: height * 0.07,
+                                                height: 70,
+                                                child: Row(
+                                                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      Image.network(
+                                                        hotpick[index]['poster_url'],
+                                                        // width: height*0.07,
+                                                        // height: height*0.07,
+                                                        width: 47.48,
+                                                        height: 70,
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          children: <Widget> [
+                                                            Container(
+                                                              width: height*0.07,
+                                                              // height: height*0.07,
+                                                              alignment: Alignment.center,
+                                                              child : Text(
+                                                                (index + 1).toString(),
+                                                                style: const TextStyle(
+                                                                  // fontFamily: "Pretendard",
+                                                                  // fontWeight: FontWeight.w400,
+                                                                  // fontSize: 15,
+                                                                  fontFamily: "Quicksand",
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 25,
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
-                                                          Expanded(
-                                                              child: Column(
-                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                  children: <Widget>[
-                                                                    Text(hotpick[index]['product_name'], overflow: TextOverflow.ellipsis, style: const TextStyle(
+                                                            Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: <Widget> [
+                                                                  Text(
+                                                                    hotpick[index]['product_name'],
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                    style: const TextStyle(
                                                                       fontFamily: 'NotoSans',
                                                                       fontWeight: FontWeight.w500,
                                                                       fontSize: 12,
                                                                       overflow: TextOverflow.ellipsis,
-                                                                    ),),
-                                                                    Text(hotpick[index]['place'].toString(), overflow: TextOverflow.ellipsis, style : const TextStyle(
-                                                                      color: Color(0xff7E7E7E),
-                                                                      fontFamily: 'NotoSans',
-                                                                      fontWeight: FontWeight.w500,
-                                                                      fontSize: 10,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.only(top: 8),
+                                                                    child: Text(
+                                                                      hotpick[index]['place'].toString(),
                                                                       overflow: TextOverflow.ellipsis,
-                                                                    ),),
-                                                                  ]
-                                                              )
-                                                          )
-                                                        ]
-                                                    )
-                                                )
-                                            )
+                                                                      style : const TextStyle(
+                                                                        color: Color(0xff7E7E7E),
+                                                                        fontFamily: 'NotoSans',
+                                                                        fontWeight: FontWeight.w500,
+                                                                        fontSize: 10,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ]
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ]
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         );
                                       }
                                   ),
