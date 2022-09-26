@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
@@ -12,6 +13,8 @@ import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
+
+import '../../Utilities/time_remaining_until_end.dart';
 
 class Market extends StatefulWidget {
   const Market({Key? key}) : super(key: key);
@@ -102,13 +105,33 @@ class _Market extends State<Market> {
       if (data['statusCode'] == 200) {
         List _deadline = data["data"];
         for (Map<String, dynamic> item in _deadline) {
+          final auction_end_date = item['auction_end_date'];
+
           Map<String, dynamic> ex = {
+            'token_id': item['token_id'],
             'product_name': item['product_name'],
             'place': item['place'],
             'seat_class': item['seat_class'],
             'seat_No': item['seat_No'],
-            'performance_date': item['performance_date'],
+            'auction_end_date': item['auction_end_date'],
+            'auction_end_date_day_of_the_week': DateFormat.E('ko_KR').format(
+              DateTime(
+                int.parse(auction_end_date.substring(0, 4)),
+                int.parse(auction_end_date.substring(5, 7)),
+                int.parse(auction_end_date.substring(8, 10)),
+              ),
+            ),
+            'poster_url': item['poster_url'],
           };
+
+          if (item['poster_url'] == null) {
+            if (item['category'] == 'movie') {
+              ex['poster_url'] = 'https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fsample_movie_poster.png?alt=media&token=536aeb85-7b8f-4f1d-b99f-340abc2259c4';
+            } else {
+              ex['poster_url'] = 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg';
+            }
+          }
+
           deadline.add(ex);
           setState(() {});
         }
@@ -376,27 +399,27 @@ class _Market extends State<Market> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children : <Widget>[
                               const Text(
-                                  "Deadline Imminent",
-                                  style: TextStyle(
-                                    fontSize: 25,
-                                    fontFamily: "Pretendard",
-                                    fontWeight: FontWeight.bold,
-                                  )
+                                "Deadline Imminent",
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               TextButton(
                                 child: const Text(
-                                    "+ 더보기",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Color(0xff5D5D5D),
-                                    )
+                                  "+ 더보기",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xff5D5D5D),
+                                  ),
                                 ),
                                 onPressed: () {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const TotalImminentAuction()
-                                      )
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const TotalImminentAuction()
+                                    ),
                                   );
                                 },
                               )
@@ -411,118 +434,176 @@ class _Market extends State<Market> {
                           ),
                         ),
                         SizedBox(height: height * 0.025),
-                        (deadline.length! == 0) ?
-                        (
-                            Container(
-                              padding : EdgeInsets.fromLTRB(width * 0.05, 0, width * 0.05, 0),
-                              width : width*0.9,
-                              height : width*0.5,
-                              alignment: Alignment.center,
-                              child : const Text(
-                                "마감이 임박한 티켓이 없습니다!",
-                                style : TextStyle(
-                                  fontFamily: "Pretendard",
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            )
-                        )
-                            :
-                        (
-                            GridView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
-                                  childAspectRatio: 3 / 5.5,
-                                  mainAxisSpacing: height * 0.01, //수평 Padding
-                                  crossAxisSpacing: width * 0.05, //수직 Padding
-                                ),
-                                shrinkWrap: true,
-                                itemCount: deadline.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    color: Colors.white24,
-                                    elevation : 0,
-                                    child: InkWell(
-                                      highlightColor: Colors.transparent,
-                                      splashFactory: NoSplash.splashFactory,
-                                      onTap: () {
-
-                                      },
-                                      child : Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children : <Widget> [
-                                            Expanded(
-                                              flex : 3,
-                                              child: Image.network(
-                                                "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
-                                                fit: BoxFit.fill,
-                                                //color: Colors.blue,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                        (deadline.isEmpty) ? Container(
+                          padding : EdgeInsets.fromLTRB(width * 0.05, 0, width * 0.05, 0),
+                          width : width * 0.9,
+                          height : width * 0.5,
+                          alignment: Alignment.center,
+                          child : const Text(
+                            "마감이 임박한 티켓이 없습니다!",
+                            style : TextStyle(
+                              fontFamily: "Pretendard",
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ) : GridView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
+                              // childAspectRatio: 3 / 5.5,
+                              childAspectRatio: 1 / 1.8,
+                              mainAxisSpacing: height * 0.01, //수평 Padding
+                              crossAxisSpacing: width * 0.05, //수직 Padding
+                            ),
+                            shrinkWrap: true,
+                            itemCount: deadline.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                color: Colors.white24,
+                                elevation : 0,
+                                child: InkWell(
+                                  highlightColor: Colors.transparent,
+                                  splashFactory: InkRipple.splashFactory,
+                                  // splashFactory: NoSplash.splashFactory,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MarketDetails(
+                                          token_id: deadline[index]['token_id'],
+                                          product_name: deadline[index]['product_name'],
+                                          owner: deadline[index]['owner'],
+                                          place: deadline[index]['place'],
+                                          performance_date: deadline[index]['performance_date'],
+                                          seat_class: deadline[index]['seat_class'],
+                                          seat_No: deadline[index]['seat_No'],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children : <Widget> [
+                                        Image.network(
+                                          deadline[index]['poster_url'],
+                                          width: 110,
+                                          height: 162.17,
+                                          // width: 88.18,
+                                          // height: 130,
+                                          fit: BoxFit.fill,
+                                        ),
+                                        // Expanded(
+                                        //   flex : 3,
+                                        //   child: Image.network(
+                                        //     deadline[index]['poster_url'],
+                                        //     fit: BoxFit.fill,
+                                        //     //color: Colors.blue,
+                                        //   ),
+                                        // ),
+                                        const SizedBox(height: 5),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget> [
+                                                Row(
                                                   children : <Widget> [
-                                                    Row(
-                                                        children : <Widget> [
-                                                          //Text(deadline[index]['performance_date'])
-                                                          Text(
-                                                            "14:00",
-                                                            style: TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.bold,
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            " | 12.31",
-                                                            style: TextStyle(
-                                                              fontSize: 12,
-                                                            ),
-                                                          ),
-                                                        ]
+                                                    Icon(
+                                                      Icons.alarm,
+                                                      size: 15,
+                                                      color: Colors.grey[600],
                                                     ),
+                                                    const SizedBox(width: 4),
                                                     Text(
-                                                      deadline[index]['product_name'],
-                                                      style: const TextStyle(
-                                                        fontFamily: "NotoSans",
+                                                      "${deadline[index]['auction_end_date'].substring(5, 10).replaceAll("-", ".")}",
+                                                      style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight: FontWeight.bold,
-                                                        overflow: TextOverflow.ellipsis,
+                                                        fontFamily: 'Quicksand',
+                                                        color: Colors.grey[600],
                                                       ),
                                                     ),
                                                     Text(
-                                                      deadline[index]['place'].toString(),
-                                                      style: const TextStyle(
-                                                        fontSize: 10,
-                                                        fontFamily: "NotoSans",
-                                                        color: Colors.grey,
-                                                        overflow: TextOverflow.ellipsis,
+                                                      "(${deadline[index]['auction_end_date_day_of_the_week']}) ",
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontFamily: 'Quicksand',
+                                                        color: Colors.grey[600],
                                                       ),
                                                     ),
                                                     Text(
-                                                      "${deadline[index]['seat_class']}석 ${deadline[index]['seat_No']}번",
-                                                      style : const TextStyle(
-                                                        fontFamily: "NotoSans",
-                                                        fontSize: 10,
-                                                        color: Colors.grey,
-                                                        overflow: TextOverflow.ellipsis,
+                                                      "${deadline[index]['auction_end_date'].substring(11, 16)}",
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontFamily: 'Quicksand',
+                                                        color: Colors.grey[600],
                                                       ),
                                                     ),
                                                   ]
-                                              ),
-                                            ),
-                                          ]
-                                      ),
-                                    ),
-                                  );
-                                }
-                            )
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: <Widget> [
+                                                    Icon(
+                                                      Icons.access_time_rounded,
+                                                      size: 15,
+                                                      color: Colors.grey[600],
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      timeRemainingUntilEndUnderOneDay(deadline[index]['auction_end_date']),
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontFamily: 'Quicksand',
+                                                        color: Colors.grey[600],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Text(
+                                                  deadline[index]['product_name'],
+                                                  style: const TextStyle(
+                                                    fontFamily: "NotoSans",
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  deadline[index]['place'].toString(),
+                                                  style: const TextStyle(
+                                                    fontSize: 10,
+                                                    fontFamily: "NotoSans",
+                                                    color: Colors.grey,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "${deadline[index]['seat_class']}석 ${deadline[index]['seat_No']}번",
+                                                  style : const TextStyle(
+                                                    fontFamily: "NotoSans",
+                                                    fontSize: 10,
+                                                    color: Colors.grey,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ]
+                                          ),
+                                        ),
+                                      ]
+                                  ),
+                                ),
+                              );
+                            }
                         ),
-                        SizedBox(height: height*0.05),
+                        SizedBox(height: height * 0.05),
                                 /*
                                                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
