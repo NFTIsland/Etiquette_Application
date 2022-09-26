@@ -253,10 +253,11 @@ class _Hold extends State<Hold> {
                                                 children: <Widget> [
                                                   Text(
                                                     holdlist[index]['product_name'],
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontFamily: 'NotoSans',
                                                       fontWeight: FontWeight.w500,
-                                                      fontSize: holdlist[index]['product_name'].length >= 21 ? 13 : 16,
+                                                      fontSize: 16,
+                                                      overflow: TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                   Padding(
@@ -267,6 +268,7 @@ class _Hold extends State<Hold> {
                                                         fontSize: 13,
                                                         fontFamily: 'Pretendard',
                                                         fontWeight: FontWeight.w400,
+                                                        overflow: TextOverflow.ellipsis,
                                                       ),
                                                     ),
                                                   ),
@@ -278,6 +280,7 @@ class _Hold extends State<Hold> {
                                                         fontFamily: 'Pretendard',
                                                         fontWeight: FontWeight.w400,
                                                         fontSize: 13,
+                                                        overflow: TextOverflow.ellipsis,
                                                       ),
                                                     ),
                                                   ),
@@ -291,6 +294,7 @@ class _Hold extends State<Hold> {
                                                         fontFamily: 'Quicksand',
                                                         fontWeight: FontWeight.w600,
                                                         fontSize: 13,
+                                                        overflow: TextOverflow.ellipsis,
                                                       ),
                                                     ),
                                                   ),
