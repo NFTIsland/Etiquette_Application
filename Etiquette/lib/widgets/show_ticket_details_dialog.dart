@@ -14,7 +14,7 @@ Future<void> showTicketDetailsDialog(
     String seat_No,
     String auction_end_date,
     int count,
-    int max,
+    int? max,
     Color confirmedButtonColor
     ) async {
   showDialog(
@@ -213,7 +213,7 @@ Future<void> showTicketDetailsDialog(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget> [
-                      count >= 2 ?
+                      count! >= 2 ?
                       const Icon(
                         Icons.people,
                         size: 18,
@@ -275,7 +275,7 @@ Future<void> showTicketDetailsDialog(
                               ),
                             ),
                             Text(
-                              "${max.toString().replaceAllMapped(reg, mathFunc)} 원",
+                              max != null ? "${max.toString().replaceAllMapped(reg, mathFunc)} 원" : "-",
                               style: const TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.bold,
