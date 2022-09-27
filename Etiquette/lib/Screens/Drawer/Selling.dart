@@ -57,7 +57,7 @@ class _Selling extends State<Selling> {
               'performance_date': ticket['performance_date'],
               'auction_end_date': ticket['auction_end_date'],
               'poster_url': ticket['poster_url'],
-              'count': ticket['count'],
+              'count': ticket['count'] ?? 0,
               'max': ticket['max'],
             };
 
