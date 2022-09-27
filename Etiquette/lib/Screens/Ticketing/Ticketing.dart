@@ -223,7 +223,6 @@ class _Ticketing extends State<Ticketing> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-
               appBar: AppBar(
                   iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
                   title: Text("Ticketing", style : TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),
@@ -261,11 +260,11 @@ class _Ticketing extends State<Ticketing> {
               ),
               drawer: drawer(context, theme, nickname),
               body: SingleChildScrollView(
-                  child : Column(
-                      children : <Widget> [
+                  child: Column(
+                      children: <Widget> [
                         Container(
                             width: double.infinity,
-                            padding: EdgeInsets.only(left: width*0.05, right: width*0.05),
+                            padding: EdgeInsets.only(left: width * 0.05, right: width * 0.05),
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽에 딱 붙도록 설정
                                 children: <Widget> [
@@ -286,7 +285,7 @@ class _Ticketing extends State<Ticketing> {
                                       fontSize: 15,
                                     ),
                                   ),
-                                  SizedBox(height: height*0.025),
+                                  SizedBox(height: height * 0.025),
                                   (commingsoon.isEmpty) ? Container(
                                     padding : EdgeInsets.fromLTRB(width * 0.05, 0, width * 0.05, 0),
                                     width : width * 0.9,
@@ -319,7 +318,18 @@ class _Ticketing extends State<Ticketing> {
                                             splashFactory: InkRipple.splashFactory,
                                             // splashFactory: NoSplash.splashFactory,
                                             onTap: () {
-
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => TicketDetails(
+                                                    product_name: commingsoon[index]['product_name'],
+                                                    place: commingsoon[index]['place'],
+                                                    booking_start_date: commingsoon[index]['booking_start_date'],
+                                                    booking_start_day_of_the_week: commingsoon[index]['booking_start_day_of_the_week'],
+                                                    bottomButtonType: 0,
+                                                  ),
+                                                ),
+                                              );
                                             },
                                             child : Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -462,7 +472,7 @@ class _Ticketing extends State<Ticketing> {
                                                   builder: (context) => TicketDetails(
                                                     product_name: hotpick[index]['product_name'],
                                                     place: hotpick[index]['place'],
-                                                    showPurchaseButton: true,
+                                                    bottomButtonType: 1,
                                                   ),
                                                 ),
                                               );
@@ -550,87 +560,13 @@ class _Ticketing extends State<Ticketing> {
                                         );
                                       }
                                   ),
-
-                                  SizedBox(height: height*0.05),
-                                  /*
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget> [
-                                const Text(
-                                    "Deadline Imminent",
-                                    style: TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold
-                                    )
-                                ),
-                                TextButton(
-                                  child: const Text(
-                                      "+ 더보기",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.grey,
-                                      )
-                                  ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => const TotalImminent()
-                                        )
-                                    );
-                                  },
-                                )
-                              ],
-                            ),
-                            const Text(
-                                "마감 시각이 임박한 티켓들을 보여드립니다. (24시간 이내)",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                )
-                            ),
-                            const SizedBox(height: 10),
-                            ListView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: deadline.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                      child: SizedBox(
-                                          width: double.infinity,
-                                          child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: <Widget> [
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Image.network(
-                                                      "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
-                                                      width: 40,
-                                                      height: 40
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Column(
-                                                      children: <Widget>[
-                                                        Text(deadline[index]['product_name']),
-                                                        Text(deadline[index]['place']),
-                                                      ]
-                                                  ),
-                                                )
-                                              ]
-                                          )
-                                      )
-                                  );
-                                }
-                            ),
-                            */
+                                  SizedBox(height: height * 0.05),
                                 ]
                             )
                         )
                       ]
                   )
               ),
-
             );
           }
           return const Center(
