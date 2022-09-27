@@ -51,7 +51,17 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
             'performance_date': ticket['performance_date'],
             'seat_class': ticket['seat_class'],
             'seat_No': ticket['seat_No'],
+            'poster_url': ticket['poster_url'],
           };
+
+          if (ticket['poster_url'] == null) {
+            if (ticket['category'] == 'movie') {
+              ex['poster_url'] = 'https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fsample_movie_poster.png?alt=media&token=536aeb85-7b8f-4f1d-b99f-340abc2259c4';
+            } else {
+              ex['poster_url'] = 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg';
+            }
+          }
+
           list.add(ex);
           setState(() {});
         }
@@ -102,7 +112,7 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
                               Column(
                                 children: <Widget> [
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                                     child: TextField(
                                       keyboardType: TextInputType.emailAddress,
                                       controller: inputTicketNameController,
@@ -148,6 +158,8 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
                                     itemCount: list.length,
                                     itemBuilder: (context, index) {
                                       return Card(
+                                        elevation: 0,
+                                        color: Colors.white24,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8),
                                         ),
@@ -168,77 +180,90 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
                                               return;
                                             }
                                             Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) => MarketDetails(
-                                                      token_id: list[index]['token_id'],
-                                                      product_name: list[index]['product_name'],
-                                                      owner: list[index]['owner'],
-                                                      place: list[index]['place'],
-                                                      performance_date: list[index]['performance_date'],
-                                                      seat_class: list[index]['seat_class'],
-                                                      seat_No: list[index]['seat_No'],
-                                                    )
-                                                )
+                                              MaterialPageRoute(
+                                                builder: (context) => MarketDetails(
+                                                  token_id: list[index]['token_id'],
+                                                  product_name: list[index]['product_name'],
+                                                  owner: list[index]['owner'],
+                                                  place: list[index]['place'],
+                                                  performance_date: list[index]['performance_date'],
+                                                  seat_class: list[index]['seat_class'],
+                                                  seat_No: list[index]['seat_No'],
+                                                ),
+                                              ),
                                             );
                                           },
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: <Widget> [
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Image.network(
-                                                      'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg',
-                                                      width: 50,
-                                                      height: 50
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(bottom: 10),
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: <Widget> [
+                                                  Image.network(
+                                                    list[index]['poster_url'],
+                                                    // width: 88.18,
+                                                    // height: 130,
+                                                    width: 71.22,
+                                                    height: 105,
+                                                    fit: BoxFit.fill,
                                                   ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Column(
-                                                    children: <Widget> [
-                                                      const SizedBox(height: 5),
-                                                      Text(
-                                                        list[index]['product_name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 17,
-                                                        ),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(left: 20),
+                                                      child: Column(
+                                                        children: <Widget> [
+                                                          const SizedBox(height: 5),
+                                                          Text(
+                                                            list[index]['product_name'],
+                                                            style: const TextStyle(
+                                                              fontSize: 14,
+                                                              fontFamily: "Pretendard",
+                                                              fontWeight: FontWeight.bold,
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(height: 10),
+                                                          Text(
+                                                            list[index]['place'],
+                                                            style: const TextStyle(
+                                                              fontSize: 13,
+                                                              fontFamily: "Pretendard",
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(height: 10),
+                                                          Text(
+                                                            "${list[index]['seat_class']}석 ${list[index]['seat_No']}번",
+                                                            style: const TextStyle(
+                                                              fontSize: 13,
+                                                              fontFamily: "Pretendard",
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(height: 10),
+                                                          // Text(
+                                                          //   "${list[index]['first_date']} ~ ${list[index]['last_date']}",
+                                                          //   style: const TextStyle(
+                                                          //     fontSize: 15,
+                                                          //   ),
+                                                          // ),
+                                                          // const SizedBox(height: 5),
+                                                          // Text(
+                                                          //   list[index]['place'],
+                                                          //   style: const TextStyle(
+                                                          //     fontSize: 20,
+                                                          //   ),
+                                                          // ),
+                                                          // const SizedBox(height: 5),
+                                                        ],
                                                       ),
-                                                      const SizedBox(height: 10),
-                                                      Text(
-                                                        list[index]['place'],
-                                                        style: const TextStyle(
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                      Text(
-                                                        "${list[index]['seat_class']}석 ${list[index]['seat_No']}번",
-                                                        style: const TextStyle(
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 10),
-                                                      // Text(
-                                                      //   "${list[index]['first_date']} ~ ${list[index]['last_date']}",
-                                                      //   style: const TextStyle(
-                                                      //     fontSize: 15,
-                                                      //   ),
-                                                      // ),
-                                                      // const SizedBox(height: 5),
-                                                      // Text(
-                                                      //   list[index]['place'],
-                                                      //   style: const TextStyle(
-                                                      //     fontSize: 20,
-                                                      //   ),
-                                                      // ),
-                                                      // const SizedBox(height: 5),
-                                                    ],
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
