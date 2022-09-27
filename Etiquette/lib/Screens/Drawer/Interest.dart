@@ -290,7 +290,7 @@ class _Interest extends State<Interest> with SingleTickerProviderStateMixin {
                                             builder: (context) => TicketDetails(
                                               product_name: interest_ticketing_list[index]['product_name'],
                                               place: interest_ticketing_list[index]['place'],
-                                              showPurchaseButton: true,
+                                              bottomButtonType: 1,
                                             ),
                                           ),
                                         );
