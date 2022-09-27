@@ -415,7 +415,8 @@ class _Ticketing extends State<Ticketing> {
                           options: CarouselOptions(
                             viewportFraction: 1,
                             // height: height * 0.125,
-                            height: height * 0.2,
+                            // height: height * 0.2,
+                            height: height * 0.3,
                             autoPlay: true, //자동재생 여부
                           ),
                           items: banner_posters.map((item) {
