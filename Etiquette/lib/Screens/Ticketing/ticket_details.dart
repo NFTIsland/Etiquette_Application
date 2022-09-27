@@ -286,7 +286,7 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
                                                     height: width * 0.38,
                                                     fit: BoxFit.fill,
                                                   ),
-                                                )
+                                                ),
                                             ),
                                           ],
                                           clipBehavior: Clip.none,
@@ -575,6 +575,8 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
                               performance_date: widget.performance_date,
                               original_price: original_price.toString(),
                               category: detail['category'],
+                              poster_url: detail['poster_url'],
+                              backdrop_url: detail['backdrop_url'],
                             ),
                           ),
                         );
