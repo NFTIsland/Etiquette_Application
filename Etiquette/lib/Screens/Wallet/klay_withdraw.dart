@@ -145,7 +145,7 @@ class _KlayWithdraw extends State<KlayWithdraw> {
                     TextField(
                         keyboardType: TextInputType.text,
                         maxLines: 1,
-                        maxLength: 11,
+                        maxLength: 42,
                         controller: inputReceiverAddressController,
                         style: const TextStyle(
                           color: Colors.black,
@@ -198,7 +198,7 @@ class _KlayWithdraw extends State<KlayWithdraw> {
                       },
                       keyboardType: TextInputType.number,
                       maxLines: 1,
-                      maxLength: 42,
+                      maxLength: 11,
                       controller: inputValueController,
                       style: const TextStyle(
                         color: Colors.black,
@@ -248,7 +248,7 @@ class _KlayWithdraw extends State<KlayWithdraw> {
                               ),
                             ),
                             Text(
-                              "${klay.toString().replaceAllMapped(reg, mathFunc)} KLAY",
+                              "${(klay - 0.01).toString().replaceAllMapped(reg, mathFunc)} KLAY",
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
