@@ -423,24 +423,25 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                       children: <Widget> [
                                         Stack(
                                           children: <Widget> [
-                                            Image(
-                                              image: AssetImage(
-                                                  "assets/image/mainlogo.png"
-                                              ),
+                                            Image.network(
+                                              details['backdrop_url'],
                                               width: width,
                                               height: width * 0.4,
                                               fit: BoxFit.fill,
                                             ),
-                                            Positioned(
-                                              left: width * 0.05,
-                                              top:  width * 0.1,
-                                              child: Image.network(
-                                                "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
-                                                width: width * 0.25,
-                                                height: width * 0.38,
-                                                fit: BoxFit.fill,
+                                            Visibility(
+                                              visible: details['category'] != 'sports',
+                                              child: Positioned(
+                                                left: width * 0.05,
+                                                top:  width * 0.1,
+                                                child: Image.network(
+                                                  details['poster_url'],
+                                                  width: width * 0.25,
+                                                  height: width * 0.38,
+                                                  fit: BoxFit.fill,
+                                                ),
                                               ),
-                                            ),
+                                            )
                                           ],
                                           clipBehavior: Clip.none,
                                         ),
