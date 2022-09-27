@@ -17,25 +17,25 @@ class TicketDetails extends StatefulWidget {
   String? token_id;
   String? product_name;
   String? place;
-  bool? showPurchaseButton;
+  // bool? showPurchaseButton;
+  int? bottomButtonType;
   String? seat_class;
   String? seat_No;
+  String? booking_start_date;
+  String? booking_start_day_of_the_week;
   String? performance_date;
 
-  TicketDetails(
-      {Key? key, this.owner, this.token_id, this.product_name, this.place, this.showPurchaseButton, this.seat_class, this.seat_No, this.performance_date})
-      : super(key: key);
+  TicketDetails({Key? key, this.owner, this.token_id, this.product_name, this.place, this.bottomButtonType, this.seat_class, this.seat_No, this.booking_start_date, this.booking_start_day_of_the_week, this.performance_date}) : super(key: key);
 
   @override
   State createState() => _TicketDetails();
 }
 
-class _TicketDetails extends State<TicketDetails>
-    with SingleTickerProviderStateMixin {
+class _TicketDetails extends State<TicketDetails> with SingleTickerProviderStateMixin {
   late bool theme;
   late double width;
   late double height;
-  int ? original_price;
+  int? original_price;
   String? remain;
   bool like = false;
   List tab = ["내용 요약", "가격 정보"];
@@ -223,11 +223,11 @@ class _TicketDetails extends State<TicketDetails>
   }
 
   void _scrollDown() {
-    Scrollable.ensureVisible(_tabbar.currentContext!,
-        duration: Duration(
-          milliseconds: 500,
-        ),
-        curve: Curves.ease);
+    Scrollable.ensureVisible(
+      _tabbar.currentContext!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.ease,
+    );
   }
 
   @override
@@ -266,7 +266,7 @@ class _TicketDetails extends State<TicketDetails>
                                   SliverToBoxAdapter(
                                       child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
+                                          children: <Widget> [
                                         Stack(
                                           children: <Widget>[
                                             Image.network(
@@ -278,85 +278,92 @@ class _TicketDetails extends State<TicketDetails>
                                             Positioned(
                                                 left: width * 0.05,
                                                 top: width * 0.1,
-                                                child: Image.network(
+                                                child: Visibility(
+                                                  visible: detail['category'] != "sports",
+                                                  child: Image.network(
                                                     detail['poster_url'],
                                                     width: width * 0.25,
                                                     height: width * 0.38,
-                                                    fit: BoxFit.fill
+                                                    fit: BoxFit.fill,
+                                                  ),
                                                 )
-                                            )
+                                            ),
                                           ],
                                           clipBehavior: Clip.none,
                                         ),
                                         Padding(
                                           padding: EdgeInsets.fromLTRB(width * 0.05, width * 0.1, width * 0.05, 0),
-                                          child: Text("${widget.product_name!}",
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontFamily: 'NotoSans',
-                                                  fontWeight: FontWeight.w800
-                                              )
+                                          child: Text(
+                                            widget.product_name!,
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontFamily: 'NotoSans',
+                                              fontWeight: FontWeight.w800,
+                                            ),
                                           ),
                                         ),
                                         Padding(
                                           padding: EdgeInsets.fromLTRB(width * 0.04, width * 0.01, width * 0.04, 0),
-                                          child:
-                                          Column(
-                                          children : [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Row(children: <Widget>[
-                                                Icon(Icons.location_on_outlined, size: 20),
-                                                SizedBox(width: width * 0.01),
-                                                Text("${widget.place!}",
-                                                    style: TextStyle(
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: <Widget> [
+                                                  Row(
+                                                    children: <Widget> [
+                                                      const Icon(Icons.location_on_outlined, size: 20),
+                                                      SizedBox(width: width * 0.01),
+                                                      Text(
+                                                        widget.place!,
+                                                        style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontFamily: 'Pretendard',
+                                                          fontWeight: FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  LikeButton(
+                                                    circleColor: const CircleColor(
+                                                        start: Color(0xff00ddff),
+                                                        end: Color(0xff0099cc)
+                                                    ),
+                                                    bubblesColor: const BubblesColor(
+                                                      dotPrimaryColor: Color(0xff33b5e5),
+                                                      dotSecondaryColor: Color(0xff0099cc),
+                                                    ),
+                                                    likeBuilder: (like) {
+                                                      return Icon(
+                                                        Icons.favorite,
+                                                        color: like ? Colors.red : Colors.grey,
+                                                        size: 30,
+                                                      );
+                                                    },
+                                                    isLiked: like,
+                                                    onTap: onLikeButtonTapped,
+                                                  )
+                                                ],
+                                              ),
+                                              Visibility(
+                                                // visible: widget.showPurchaseButton!,
+                                                visible: widget.bottomButtonType! == 2,
+                                                child: Row(
+                                                  children: [
+                                                    const Icon(Icons.event_seat_outlined, size : 20),
+                                                    SizedBox(width: width * 0.01),
+                                                    Text(
+                                                      "${widget.seat_class}석 ${widget.seat_No}번",
+                                                      style: const TextStyle(
                                                         fontSize: 15,
                                                         fontFamily: 'Pretendard',
-                                                        fontWeight: FontWeight.w400
-                                                    )
-                                                )
-                                              ]
+                                                        fontWeight: FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                              LikeButton(
-                                                circleColor: const CircleColor(
-                                                    start: Color(0xff00ddff),
-                                                    end: Color(0xff0099cc)
-                                                ),
-                                                bubblesColor: const BubblesColor(
-                                                  dotPrimaryColor: Color(0xff33b5e5),
-                                                  dotSecondaryColor: Color(0xff0099cc),
-                                                ),
-                                                likeBuilder: (like) {
-                                                  return Icon(
-                                                    Icons.favorite,
-                                                    color: like ? Colors.red : Colors.grey,
-                                                    size: 30,
-                                                  );
-                                                },
-                                                isLiked: like,
-                                                onTap: onLikeButtonTapped,
-                                              )
                                             ],
                                           ),
-                                            Visibility(
-                                              visible: !widget.showPurchaseButton!,
-                                                child: Row(
-                                                    children : [
-                                                      Icon(Icons.event_seat_outlined, size : 20),
-                                                      SizedBox(width: width * 0.01),
-                                                      Text("${widget.seat_class}석 ${widget.seat_No}번",
-                                                          style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontFamily: 'Pretendard',
-                                                              fontWeight: FontWeight.w400
-                                                          )
-                                                      )
-                                                    ]
-                                                )
-                                            )
-                                          ]
-                                          )
                                         ),
                                         SizedBox(height: height * 0.015),
                                         Center(
@@ -372,36 +379,34 @@ class _TicketDetails extends State<TicketDetails>
                                             ),
                                             child: TabBar(
                                               indicator: (tabcontroller!.index == 0) ?
-                                              BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius.only(
-                                                      bottomLeft: Radius.circular(9),
-                                                      topLeft: Radius.circular(9)
-                                                  ),
-                                                  color: Color(0xff333333)
+                                              const BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                  bottomLeft: Radius.circular(9),
+                                                  topLeft: Radius.circular(9),
+                                                ),
+                                                color: Color(0xff333333),
                                               ) :
-                                              BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius.only(
-                                                      bottomRight: Radius.circular(9),
-                                                      topRight: Radius.circular(9)
-                                                  ),
-                                                  color: Color(0xff333333)
+                                              const BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                  bottomRight: Radius.circular(9),
+                                                  topRight: Radius.circular(9),
+                                                ),
+                                                color: Color(0xff333333),
                                               ),
                                               indicatorPadding: EdgeInsets.zero,
                                               labelPadding: EdgeInsets.zero,
                                               controller: tabcontroller,
-                                              unselectedLabelStyle:
-                                                  const TextStyle(
-                                                      fontFamily: 'NotoSans',
-                                                      fontWeight: FontWeight.w500
-                                                  ),
+                                              unselectedLabelStyle: const TextStyle(
+                                                fontFamily: 'NotoSans',
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                               unselectedLabelColor: Colors.black,
                                               labelColor: Colors.white,
-                                              labelStyle: TextStyle(
-                                                  fontFamily: 'NotoSans',
-                                                  fontWeight: FontWeight.w700),
-                                              tabs: [
+                                              labelStyle: const TextStyle(
+                                                fontFamily: 'NotoSans',
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                              tabs: const [
                                                 Tab(
                                                   text: "내용 요약",
                                                 ),
@@ -419,8 +424,8 @@ class _TicketDetails extends State<TicketDetails>
                                             ),
                                           ),
                                         ),
-                                      ]
-                                      )
+                                      ],
+                                      ),
                                   ),
                                 ];
                               },
@@ -441,122 +446,225 @@ class _TicketDetails extends State<TicketDetails>
                                                 const Text(
                                                   "\n상세 설명\n",
                                                   style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontFamily: "NotoSans",
-                                                      fontWeight: FontWeight.w600
+                                                    fontSize: 18,
+                                                    fontFamily: "NotoSans",
+                                                    fontWeight: FontWeight.w600,
                                                   ),
                                                   overflow: TextOverflow.clip,
                                                 ),
                                                 Text(
-                                                    detail['description'].replaceAll("...", "‡").replaceAll('\\n', '\n')
-                                                        .replaceAll(".", ".\n\n").replaceAll("‡", "..."),
-                                                    style: const TextStyle(
-                                                        fontSize: 15,
-                                                        fontFamily: "Pretendard",
-                                                        fontWeight: FontWeight.w400
-                                                    ),
-                                                    overflow: TextOverflow.clip
-                                                )
-                                              ]
+                                                  detail['description'].replaceAll("...", "‡").replaceAll('\\n', '\n').replaceAll(".", ".\n\n").replaceAll("‡", "..."),
+                                                  style: const TextStyle(
+                                                    fontSize: 15,
+                                                    fontFamily: "Pretendard",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                  overflow: TextOverflow.clip,
+                                                ),
+                                              ],
                                           ),
-                                        ]
+                                        ],
                                     ),
                                     ListView(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        children: [
-                                          Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text("\n좌석 별 가격",
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontFamily: "NotoSans",
-                                                        fontWeight: FontWeight.w600)
-                                                ),
-                                                Text(
-                                                    "\n${price_description.replaceAll("\n", "\n\n")}",
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontFamily: "Pretendard",
-                                                        fontWeight: FontWeight.w400
-                                                    )
-                                                )
-                                              ]
-                                          ),
-                                        ]
-                                    )
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Text("\n좌석 별 가격",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontFamily: "NotoSans",
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            Text(
+                                              "\n${price_description.replaceAll("\n", "\n\n")}",
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                                fontFamily: "Pretendard",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
-                              )
-                          )
-                      )
+                              ),
+                          ),
+                      ),
                   ),
                   Container(
                     padding: EdgeInsets.fromLTRB(width * 0.03, height * 0.01, width * 0.03, height * 0.011),
                     color: Colors.white24,
-                    child: Visibility(
-                        child: widget.showPurchaseButton! ?
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(9.5)),
-                              minimumSize: Size.fromHeight(height * 0.062),
-                              primary: (theme ? const Color(0xffe8e8e8) : Color(0xffEE3D43))
+                    child: widget.bottomButtonType! == 0 ?
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(9.5),
+                        ),
+                        minimumSize: Size.fromHeight(height * 0.062),
+                        primary: theme ? const Color(0xffe8e8e8) : Colors.grey[300],
+                      ),
+                      onPressed: () {
+
+                      },
+                      child: Text(
+                        "${widget.booking_start_date!.substring(5, 10).replaceAll("-", ".")}(${widget.booking_start_day_of_the_week!}) ${widget.booking_start_date!.substring(11, 16)}에 오픈",
+                        style: const TextStyle(
+                          // color: theme ? const Color(0xff000000) : const Color(0xff000000),
+                          color: Colors.black,
+                        ),
+                      ),
+                    ) : widget.bottomButtonType! == 1 ?
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(9.5),
+                        ),
+                        minimumSize: Size.fromHeight(height * 0.062),
+                        primary: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SelectTicket(
+                              product_name: widget.product_name!,
+                              place: widget.place!,
+                              category: detail['category'],
+                            ),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SelectTicket(
-                                      product_name: widget.product_name!,
-                                      place: widget.place!,
-                                      category: detail['category'],
-                                    )
-                                )
-                            );
-                            },
-                          child: Text("예매하기",
-                              style: TextStyle(
-                                color: (theme ? Color(0xff000000) : Color(0xffffffff)),
-                              )
+                        );
+                      },
+                      child: Text(
+                        "예매하기",
+                        style: TextStyle(
+                          color: theme ? const Color(0xff000000) : const Color(0xffffffff),
+                        ),
+                      ),
+                    ) : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(9.5),
+                        ),
+                        minimumSize: Size.fromHeight(height * 0.062),
+                        primary: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
+                      ),
+                      onPressed: () async{
+                        original_price =  await load_price(widget.product_name!, widget.seat_class!);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UploadTicket(
+                              token_id: widget.token_id,
+                              product_name: widget.product_name,
+                              owner: widget.owner,
+                              place: widget.place,
+                              seat_class: widget.seat_class,
+                              seat_No: widget.seat_No,
+                              performance_date: widget.performance_date,
+                              original_price: original_price.toString(),
+                              category: detail['category'],
+                            ),
                           ),
-                        ) :
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(9.5)
-                              ),
-                              minimumSize: Size.fromHeight(height * 0.062),
-                              primary: (theme ? const Color(0xffe8e8e8) : Color(0xffEE3D43))
-                          ),
-                          onPressed: () async{
-                            original_price =  await load_price(widget.product_name!, widget.seat_class!);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => UploadTicket(token_id: widget.token_id, product_name: widget.product_name, owner: widget.owner,place: widget.place,seat_class: widget.seat_class, seat_No: widget.seat_No,performance_date: widget.performance_date,original_price: original_price.toString(),category: detail['category'],)
-                                )
-                            );
-                            },
-                          child: Text("판매하기",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'NotoSans',
-                                fontWeight: FontWeight.w600,
-                                color: (theme ? const Color(0xff000000) : const Color(0xffffffff)),
-                              )
-                          ),
-                        )
+                        );
+                      },
+                      child: Text(
+                        "판매하기",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'NotoSans',
+                          fontWeight: FontWeight.w600,
+                          color: theme ? const Color(0xff000000) : const Color(0xffffffff),
+                        ),
+                      ),
                     ),
+                    // child: Visibility(
+                    //   visible: widget.bottomButtonType! > 0,
+                    //   // child: widget.showPurchaseButton! ?
+                    //   child: widget.bottomButtonType! == 1 ?
+                    //   ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(
+                    //       elevation: 0,
+                    //       shadowColor: Colors.transparent,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(9.5),
+                    //       ),
+                    //       minimumSize: Size.fromHeight(height * 0.062),
+                    //       primary: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
+                    //     ),
+                    //     onPressed: () {
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (context) => SelectTicket(
+                    //             product_name: widget.product_name!,
+                    //             place: widget.place!,
+                    //             category: detail['category'],
+                    //           ),
+                    //         ),
+                    //       );
+                    //     },
+                    //     child: Text(
+                    //       "예매하기",
+                    //       style: TextStyle(
+                    //         color: theme ? const Color(0xff000000) : const Color(0xffffffff),
+                    //       ),
+                    //     ),
+                    //   ) :
+                    //   ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(
+                    //       elevation: 0,
+                    //       shadowColor: Colors.transparent,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(9.5),
+                    //       ),
+                    //       minimumSize: Size.fromHeight(height * 0.062),
+                    //       primary: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
+                    //     ),
+                    //     onPressed: () async{
+                    //       original_price =  await load_price(widget.product_name!, widget.seat_class!);
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (context) => UploadTicket(
+                    //             token_id: widget.token_id,
+                    //             product_name: widget.product_name,
+                    //             owner: widget.owner,
+                    //             place: widget.place,
+                    //             seat_class: widget.seat_class,
+                    //             seat_No: widget.seat_No,
+                    //             performance_date: widget.performance_date,
+                    //             original_price: original_price.toString(),
+                    //             category: detail['category'],
+                    //           ),
+                    //         ),
+                    //       );
+                    //     },
+                    //     child: Text(
+                    //       "판매하기",
+                    //       style: TextStyle(
+                    //         fontSize: 15,
+                    //         fontFamily: 'NotoSans',
+                    //         fontWeight: FontWeight.w600,
+                    //         color: theme ? const Color(0xff000000) : const Color(0xffffffff),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ),
-                ]
-                )
+                ],
+                ),
             );
           }
           return const Center(
