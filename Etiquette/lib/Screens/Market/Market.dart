@@ -556,7 +556,7 @@ class _Market extends State<Market> {
                                                     ),
                                                     const SizedBox(width: 4),
                                                     Text(
-                                                      timeRemainingUntilEndUnderOneDay(deadline[index]['auction_end_date']),
+                                                      "${timeRemainingUntilEndUnderOneDay(deadline[index]['auction_end_date'])} 남음",
                                                       style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight: FontWeight.bold,
