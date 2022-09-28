@@ -25,7 +25,19 @@ class TicketDetails extends StatefulWidget {
   String? booking_start_day_of_the_week;
   String? performance_date;
 
-  TicketDetails({Key? key, this.owner, this.token_id, this.product_name, this.place, this.bottomButtonType, this.seat_class, this.seat_No, this.booking_start_date, this.booking_start_day_of_the_week, this.performance_date}) : super(key: key);
+  TicketDetails({
+    Key? key,
+    this.owner,
+    this.token_id,
+    this.product_name,
+    this.place,
+    this.bottomButtonType,
+    this.seat_class,
+    this.seat_No,
+    this.booking_start_date,
+    this.booking_start_day_of_the_week,
+    this.performance_date
+  }) : super(key: key);
 
   @override
   State createState() => _TicketDetails();
@@ -344,6 +356,25 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
                                                   )
                                                 ],
                                               ),
+                                              Visibility(
+                                                visible: widget.bottomButtonType! == 2,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: <Widget> [
+                                                    const Icon(Icons.calendar_month, size: 20),
+                                                    SizedBox(width: width * 0.01),
+                                                    Text(
+                                                      widget.performance_date ?? "",
+                                                      style: const TextStyle(
+                                                        fontSize: 15,
+                                                        fontFamily: 'Pretendard',
+                                                        fontWeight: FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(height: 5),
                                               Visibility(
                                                 // visible: widget.showPurchaseButton!,
                                                 visible: widget.bottomButtonType! == 2,

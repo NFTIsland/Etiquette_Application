@@ -209,7 +209,7 @@ class _UploadTicket extends State<UploadTicket> with SingleTickerProviderStateMi
                                         clipBehavior: Clip.none,
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.fromLTRB(width * 0.05, width * 0.15, width * 0.05, 0),
+                                        padding: EdgeInsets.fromLTRB(width * 0.05, width * 0.1, width * 0.05, 0),
                                         child: Text(
                                           widget.product_name!,
                                           style: const TextStyle(
@@ -238,7 +238,23 @@ class _UploadTicket extends State<UploadTicket> with SingleTickerProviderStateMi
                                                 ),
                                               ],
                                             ),
-                                            const SizedBox(height: 7),
+                                            const SizedBox(height: 5),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: <Widget> [
+                                                const Icon(Icons.calendar_month, size: 20),
+                                                SizedBox(width: width * 0.01),
+                                                Text(
+                                                  widget.performance_date ?? "",
+                                                  style: const TextStyle(
+                                                    fontSize: 15,
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 5),
                                             Row(
                                               children: [
                                                 const Icon(Icons.event_seat_outlined, size: 20),
