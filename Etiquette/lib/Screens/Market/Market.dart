@@ -329,17 +329,14 @@ class _Market extends State<Market> {
                                                             overflow: TextOverflow.ellipsis,
                                                           ),
                                                         ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(top: 5),
-                                                          child: Text(
-                                                            top5RankBid[index]['place'].toString(),
-                                                            style: const TextStyle(
-                                                              color: Color(0xff7E7E7E),
-                                                              fontFamily: 'NotoSans',
-                                                              fontWeight: FontWeight.w500,
-                                                              fontSize: 9,
-                                                              overflow: TextOverflow.ellipsis,
-                                                            ),
+                                                        Text(
+                                                          top5RankBid[index]['place'].toString(),
+                                                          style: const TextStyle(
+                                                            color: Color(0xff7E7E7E),
+                                                            fontFamily: 'NotoSans',
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 10,
+                                                            overflow: TextOverflow.ellipsis,
                                                           ),
                                                         ),
                                                         Text(
@@ -353,7 +350,7 @@ class _Market extends State<Market> {
                                                             ),
                                                         ),
                                                         Text(
-                                                            "${top5RankBid[index]['performance_date']}",
+                                                            "${top5RankBid[index]['performance_date'].substring(0, 10).replaceAll("-", ".")}  ${top5RankBid[index]['performance_date'].substring(11, 16)}",
                                                             style: const TextStyle(
                                                               color: Color(0xff7E7E7E),
                                                               fontFamily: 'NotoSans',

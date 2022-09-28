@@ -519,6 +519,7 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                                   ),
                                                 ],
                                               ),
+                                              const SizedBox(height: 4),
                                               Row(
                                                 children: [
                                                   const Icon(
@@ -526,7 +527,8 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                                     size: 20,
                                                   ),
                                                   SizedBox(width: width * 0.01),
-                                                  Text("${widget.performance_date}",
+                                                  Text(
+                                                    "${widget.performance_date!.substring(0, 10).replaceAll("-", ".")} ${widget.performance_date!.substring(11, 16)}",
                                                     style: const TextStyle(
                                                       fontSize: 15,
                                                       fontFamily: 'Pretendard',
