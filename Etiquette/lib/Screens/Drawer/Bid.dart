@@ -21,8 +21,8 @@ class _Bid extends State<Bid> {
   late double width;
   late double height;
 
-  List<String> filter = ['All', 'High', 'Row', 'Recent', 'Old'];
-  String _selected = 'All';
+  List<String> filter = ['경매 마감 날짜 (오름차순)', '경매 마감 날짜 (내림차순)', '이름 (오름차순)', '이름 (내림차순)'];
+  String _selected = '경매 마감 날짜 (오름차순)';
   late bool theme;
   late final Future future;
 
@@ -119,7 +119,7 @@ class _Bid extends State<Bid> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget> [
                     SizedBox(
-                      width: 150,
+                      width: 250,
                       height: 60,
                       child: DropdownButtonFormField(
                         icon: const Icon(Icons.expand_more),

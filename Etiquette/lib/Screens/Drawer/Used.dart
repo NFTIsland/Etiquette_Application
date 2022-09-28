@@ -16,8 +16,8 @@ class Used extends StatefulWidget {
 }
 
 class _Used extends State<Used> {
-  List<String> filter = ['All', 'High', 'Row', 'Recent', 'Old'];
-  String _selected = 'All';
+  List<String> filter = ['예매날짜 (오름차순)', '예매날짜 (내림차순)', '이름 (오름차순)', '이름 (내림차순)'];
+  String _selected = '예매날짜 (오름차순)';
   late final Future future;
 
   List<Map<String, dynamic>> usedlist = [];
@@ -108,7 +108,7 @@ class _Used extends State<Used> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget> [
                   SizedBox(
-                    width: 150,
+                    width: 200,
                     height: 60,
                     child: DropdownButtonFormField(
                       icon: const Icon(Icons.expand_more),

@@ -26,8 +26,8 @@ class _Selling extends State<Selling> {
 
   List<Map<String, dynamic>> sellinglist = [];
 
-  List<String> filter = ['All', 'High', 'Row', 'Recent', 'Old'];
-  String _selected = 'All';
+  List<String> filter = ['경매 마감 날짜 (오름차순)', '경매 마감 날짜 (내림차순)', '이름 (오름차순)', '이름 (내림차순)'];
+  String _selected = '경매 마감 날짜 (오름차순)';
 
   Future<bool> getTheme() async {
     var key = 'theme';
@@ -125,7 +125,7 @@ class _Selling extends State<Selling> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget> [
                     SizedBox(
-                        width: 150,
+                        width: 250,
                         height: 60,
                         child: DropdownButtonFormField(
                           icon: const Icon(Icons.expand_more),
