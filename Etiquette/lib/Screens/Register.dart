@@ -219,14 +219,14 @@ class _Register extends State<Register> {
                                             labelText: "HP(ID)",
                                             counterText: "",
                                             filled: true,
-                                            fillColor: Colors.grey[200],
-                                            focusColor: Colors.grey[200],
-                                            hoverColor: Colors.grey[200],
+                                            fillColor: Colors.grey[100],
+                                            focusColor: Colors.grey[100],
+                                            hoverColor: Colors.grey[100],
                                             border: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(8),
                                             ),
-                                            labelStyle: const TextStyle(
-                                              color: Colors.black,
+                                            labelStyle: TextStyle(
+                                              color: Colors.grey[600],
                                               fontSize: 18,
                                               fontFamily: 'Quicksand',
                                             ),
@@ -276,16 +276,16 @@ class _Register extends State<Register> {
                                             labelText: "인증번호", // 인증번호 입력하는 공간
                                             counterText: "",
                                             filled: true,
-                                            fillColor: Colors.grey[200],
-                                            focusColor: Colors.grey[200],
-                                            hoverColor: Colors.grey[200],
+                                            fillColor: Colors.grey[100],
+                                            focusColor: Colors.grey[100],
+                                            hoverColor: Colors.grey[100],
                                             border: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(8),
                                             ),
-                                            labelStyle: const TextStyle(
-                                              color: Colors.black,
+                                            labelStyle: TextStyle(
+                                              color: Colors.grey[600],
                                               fontSize: 18,
-                                              fontFamily: 'Quicksand',
+                                              fontFamily: 'Pretendard',
                                             ),
                                           ),
                                         ),
@@ -324,14 +324,14 @@ class _Register extends State<Register> {
                                       labelText: "Password (최소 8글자)", // PW 입력하는 공간
                                       counterText: "",
                                       filled: true,
-                                      fillColor: Colors.grey[200],
-                                      focusColor: Colors.grey[200],
-                                      hoverColor: Colors.grey[200],
+                                      fillColor: Colors.grey[100],
+                                      focusColor: Colors.grey[100],
+                                      hoverColor: Colors.grey[100],
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      labelStyle: const TextStyle(
-                                        color: Colors.black,
+                                      labelStyle: TextStyle(
+                                        color: Colors.grey[600],
                                         fontSize: 18,
                                         fontFamily: 'Quicksand',
                                       ),
@@ -356,16 +356,16 @@ class _Register extends State<Register> {
                                       labelText: "재확인", // PW 다시 입력하는 공간
                                       counterText: "",
                                       filled: true,
-                                      fillColor: Colors.grey[200],
-                                      focusColor: Colors.grey[200],
-                                      hoverColor: Colors.grey[200],
+                                      fillColor: Colors.grey[100],
+                                      focusColor: Colors.grey[100],
+                                      hoverColor: Colors.grey[100],
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      labelStyle: const TextStyle(
-                                        color: Colors.black,
+                                      labelStyle: TextStyle(
+                                        color: Colors.grey[600],
                                         fontSize: 18,
-                                        fontFamily: 'Quicksand',
+                                        fontFamily: 'Pretendard',
                                       ),
                                     ),
                                   ),
@@ -390,16 +390,16 @@ class _Register extends State<Register> {
                                             labelText: "닉네임", // 이름 입력하는 공간
                                             counterText: "",
                                             filled: true,
-                                            fillColor: Colors.grey[200],
-                                            focusColor: Colors.grey[200],
-                                            hoverColor: Colors.grey[200],
+                                            fillColor: Colors.grey[100],
+                                            focusColor: Colors.grey[100],
+                                            hoverColor: Colors.grey[100],
                                             border: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(8),
                                             ),
-                                            labelStyle: const TextStyle(
-                                              color: Colors.black,
+                                            labelStyle: TextStyle(
+                                              color: Colors.grey[600],
                                               fontSize: 18,
-                                              fontFamily: 'Quicksand',
+                                              fontFamily: 'Pretendard',
                                             ),
                                           ),
                                         ),
@@ -439,14 +439,14 @@ class _Register extends State<Register> {
                                       labelText: "KAS 주소",
                                       counterText: "",
                                       filled: true,
-                                      fillColor: Colors.grey[200],
-                                      focusColor: Colors.grey[200],
-                                      hoverColor: Colors.grey[200],
+                                      fillColor: Colors.grey[100],
+                                      focusColor: Colors.grey[100],
+                                      hoverColor: Colors.grey[100],
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      labelStyle: const TextStyle(
-                                        color: Colors.black,
+                                      labelStyle: TextStyle(
+                                        color: Colors.grey[600],
                                         fontSize: 18,
                                         fontFamily: 'Quicksand',
                                       ),
