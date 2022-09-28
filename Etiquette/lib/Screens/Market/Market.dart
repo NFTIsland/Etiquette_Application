@@ -318,7 +318,7 @@ class _Market extends State<Market> {
                                                     width: width * 0.5,
                                                     child: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: <Widget> [
                                                         Text(
                                                           top5RankBid[index]['product_name'],
@@ -330,7 +330,7 @@ class _Market extends State<Market> {
                                                           ),
                                                         ),
                                                         Padding(
-                                                          padding: const EdgeInsets.only(top: 8),
+                                                          padding: const EdgeInsets.only(top: 5),
                                                           child: Text(
                                                             top5RankBid[index]['place'].toString(),
                                                             style: const TextStyle(
@@ -342,9 +342,7 @@ class _Market extends State<Market> {
                                                             ),
                                                           ),
                                                         ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(top: 8),
-                                                          child: Text(
+                                                        Text(
                                                             "${top5RankBid[index]['seat_class']}석 ${top5RankBid[index]['seat_No']}번",
                                                             style: const TextStyle(
                                                               color: Color(0xff7E7E7E),
@@ -353,7 +351,16 @@ class _Market extends State<Market> {
                                                               fontSize: 10,
                                                               overflow: TextOverflow.ellipsis,
                                                             ),
-                                                          ),
+                                                        ),
+                                                        Text(
+                                                            "${top5RankBid[index]['performance_date']}",
+                                                            style: const TextStyle(
+                                                              color: Color(0xff7E7E7E),
+                                                              fontFamily: 'NotoSans',
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: 10,
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
                                                         ),
                                                       ],
                                                     ),

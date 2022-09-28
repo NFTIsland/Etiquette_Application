@@ -519,6 +519,22 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                                   ),
                                                 ],
                                               ),
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.calendar_month_outlined,
+                                                    size: 20,
+                                                  ),
+                                                  SizedBox(width: width * 0.01),
+                                                  Text("${widget.performance_date}",
+                                                    style: const TextStyle(
+                                                      fontSize: 15,
+                                                      fontFamily: 'Pretendard',
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ],
                                           ),
                                         ),
