@@ -21,8 +21,8 @@ class Hold extends StatefulWidget {
 }
 
 class _Hold extends State<Hold> {
-  List<String> filter = ['All', 'High', 'Low', 'Recent', 'Old'];
-  String _selected = 'All';
+  List<String> filter = ['예매날짜 (오름차순)', '예매날짜 (내림차순)', '이름 (오름차순)', '이름 (내림차순)'];
+  String _selected = '예매날짜 (오름차순)';
   late final Future future;
   late bool theme;
 
@@ -39,7 +39,17 @@ class _Hold extends State<Hold> {
   }
 
   Future<void> getHoldlistFromDB() async {
-    const url = "$SERVER_IP/individual/holdlist";
+    String url = "";
+    if (_selected == '예매날짜 (오름차순)') {
+      url = "$SERVER_IP/individual/holdlist/holdlistAscPerformanceDate";
+    } else if (_selected == '예매날짜 (내림차순)') {
+      url = "$SERVER_IP/individual/holdlist/holdlistDescPerformanceDate";
+    } else if (_selected == '이름 (오름차순)') {
+      url = "$SERVER_IP/individual/holdlist/holdlistAscProductName";
+    } else if (_selected == '이름 (내림차순)') {
+      url = "$SERVER_IP/individual/holdlist/holdlistDescProductName";
+    }
+
     try {
       final kas_address_data = await getKasAddress();
       if (kas_address_data['statusCode'] == 200) {
@@ -48,6 +58,7 @@ class _Hold extends State<Hold> {
         });
         Map<String, dynamic> data = json.decode(res.body);
         if (res.statusCode == 200) {
+          holdlist.clear();
           List tickets = data["data"];
           for (Map<String, dynamic> ticket in tickets) {
             Map<String, dynamic> ex = {
@@ -136,7 +147,7 @@ class _Hold extends State<Hold> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget> [
                     SizedBox(
-                      width: 150,
+                      width: 200,
                       height: 60,
                       child: DropdownButtonFormField(
                         icon: const Icon(Icons.expand_more),
@@ -171,6 +182,7 @@ class _Hold extends State<Hold> {
                         onChanged: (dynamic value) {
                           setState(() {
                             _selected = value;
+                            getHoldlistFromDB();
                           });
                         },
                       ),
