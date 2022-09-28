@@ -161,6 +161,8 @@ class _Register extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -195,20 +197,39 @@ class _Register extends State<Register> {
                               )
                           ),
                           Column(
-                              children: <Widget>[
+                              children: <Widget> [
                                 const SizedBox(height: 30),
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(80, 0, 80, 0),
+                                  padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                                   child: Row(
-                                    children: <Widget>[
+                                    children: <Widget> [
                                       Flexible(
                                         child: TextField(
                                           maxLines: 1,
                                           maxLength: 11,
                                           controller: idController,
                                           keyboardType: TextInputType.number, // 기본으로 숫자 모양의 키보드가 호출되도록 설정
-                                          decoration: const InputDecoration(
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 20,
+                                            fontFamily: 'Quicksand',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          decoration: InputDecoration(
                                             labelText: "HP(ID)",
+                                            counterText: "",
+                                            filled: true,
+                                            fillColor: Colors.grey[200],
+                                            focusColor: Colors.grey[200],
+                                            hoverColor: Colors.grey[200],
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            labelStyle: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                              fontFamily: 'Quicksand',
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -218,9 +239,17 @@ class _Register extends State<Register> {
                                           onPressed: () {
                                             loginWithPhone();
                                           },
-                                          child: const Text("인증"),
+                                          child: const Text(
+                                            "인증",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontFamily: 'Pretendard',
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                           style: ElevatedButton.styleFrom(
-                                              primary: Colors.deepPurpleAccent // 버튼 색깔 설정
+                                            elevation: 0,
+                                            primary: Colors.deepPurpleAccent, // 버튼 색깔 설정
                                           ),
                                         ),
                                       ),
@@ -228,102 +257,212 @@ class _Register extends State<Register> {
                                   ),
                                 ),
                                 Padding( // 인증번호를 위한 공간
-                                    padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
-                                    child: Row(
-                                        children: <Widget>[
-                                          Flexible(
-                                              child: TextField(
-                                                maxLines: 1,
-                                                maxLength: 6,
-                                                keyboardType: TextInputType.number, // 기본으로 숫자 모양의 키보드가 호출되도록 설정
-                                                controller: inputOtpController,
-                                                decoration: const InputDecoration(
-                                                  labelText: "인증번호", // 인증번호 입력하는 공간
-                                                ),
-                                              )
+                                  padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Flexible(
+                                        child: TextField(
+                                          maxLines: 1,
+                                          maxLength: 6,
+                                          keyboardType: TextInputType.number, // 기본으로 숫자 모양의 키보드가 호출되도록 설정
+                                          controller: inputOtpController,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 20,
+                                            fontFamily: 'Quicksand',
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          Container(
-                                            padding: const EdgeInsets.only(left: 10),
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  verifyOTP();
-                                                }, // OTP 인증
-                                                child: const Text("확인"),
-                                                style: ElevatedButton.styleFrom(
-                                                    primary: Colors.deepPurpleAccent //버튼 색깔 설정
-                                                )
+                                          decoration: InputDecoration(
+                                            labelText: "인증번호", // 인증번호 입력하는 공간
+                                            counterText: "",
+                                            filled: true,
+                                            fillColor: Colors.grey[200],
+                                            focusColor: Colors.grey[200],
+                                            hoverColor: Colors.grey[200],
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(8),
                                             ),
-                                          )
-                                        ]
-                                    )
-                                ),
-                                Padding(
-                                    padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
-                                    child: TextField(
-                                      maxLines: 1,
-                                      maxLength: 20,
-                                      controller: pwController,
-                                      obscureText: true, // pw 안보이도록 가림
-                                      keyboardType: TextInputType.text, // 기본으로 자판 모양의 키보드가 호출되도록 설정
-                                      decoration: const InputDecoration(
-                                        labelText: "Password (최소 8글자)", // PW 입력하는 공간
-                                      ),
-                                    )
-                                ),
-                                Padding(
-                                    padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
-                                    child: TextField(
-                                      maxLines: 1,
-                                      maxLength: 20,
-                                      controller: repwController,
-                                      keyboardType: TextInputType.text,
-                                      obscureText: true,
-                                      decoration: const InputDecoration(
-                                        labelText: "재확인", // PW 다시 입력하는 공간
-                                      ),
-                                    )
-                                ),
-                                Padding(
-                                    padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
-                                    child: Row(
-                                      children: <Widget> [
-                                        Flexible(
-                                          child: TextFormField(
-                                            maxLines: 1,
-                                            maxLength: 20,
-                                            controller: nicknameController,
-                                            keyboardType: TextInputType.text,
-                                            decoration: const InputDecoration(
-                                              labelText: "닉네임", // 이름 입력하는 공간
+                                            labelStyle: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                              fontFamily: 'Quicksand',
                                             ),
                                           ),
                                         ),
-                                        Container(
-                                          padding: const EdgeInsets.only(left: 10),
-                                          child: ElevatedButton(
-                                              onPressed: () async {
-                                                final res = await checkNicknameIsDuplicate();
-                                                displayDialog_checkonly(context, "닉네임 중복 확인", res["msg"]);
-                                              }, // OTP 인증
-                                              child: const Text("중복확인"),
-                                              style: ElevatedButton.styleFrom(
-                                                  primary: Colors.deepPurpleAccent // 버튼 색깔 설정
-                                              )
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.only(left: 10),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            verifyOTP();
+                                          }, // OTP 인증
+                                          child: const Text("확인"),
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            primary: Colors.deepPurpleAccent, //버튼 색깔 설정
                                           ),
-                                        )
-                                      ],
-                                    )
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(80, 5, 80, 0),
+                                  padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
+                                  child: TextField(
+                                    maxLines: 1,
+                                    maxLength: 20,
+                                    controller: pwController,
+                                    obscureText: true, // pw 안보이도록 가림
+                                    keyboardType: TextInputType.text, // 기본으로 자판 모양의 키보드가 호출되도록 설정
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontFamily: 'Quicksand',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    decoration: InputDecoration(
+                                      labelText: "Password (최소 8글자)", // PW 입력하는 공간
+                                      counterText: "",
+                                      filled: true,
+                                      fillColor: Colors.grey[200],
+                                      focusColor: Colors.grey[200],
+                                      hoverColor: Colors.grey[200],
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      labelStyle: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontFamily: 'Quicksand',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
+                                  child: TextField(
+                                    maxLines: 1,
+                                    maxLength: 20,
+                                    controller: repwController,
+                                    keyboardType: TextInputType.text,
+                                    obscureText: true,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontFamily: 'Quicksand',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    decoration: InputDecoration(
+                                      labelText: "재확인", // PW 다시 입력하는 공간
+                                      counterText: "",
+                                      filled: true,
+                                      fillColor: Colors.grey[200],
+                                      focusColor: Colors.grey[200],
+                                      hoverColor: Colors.grey[200],
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      labelStyle: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontFamily: 'Quicksand',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
+                                  child: Row(
+                                    children: <Widget> [
+                                      Flexible(
+                                        child: TextFormField(
+                                          maxLines: 1,
+                                          maxLength: 20,
+                                          controller: nicknameController,
+                                          keyboardType: TextInputType.text,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 20,
+                                            fontFamily: 'Quicksand',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          decoration: InputDecoration(
+                                            labelText: "닉네임", // 이름 입력하는 공간
+                                            counterText: "",
+                                            filled: true,
+                                            fillColor: Colors.grey[200],
+                                            focusColor: Colors.grey[200],
+                                            hoverColor: Colors.grey[200],
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            labelStyle: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                              fontFamily: 'Quicksand',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.only(left: 10),
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            final res = await checkNicknameIsDuplicate();
+                                            displayDialog_checkonly(context, "닉네임 중복 확인", res["msg"]);
+                                          }, // OTP 인증
+                                          child: const Text("중복확인"),
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            primary: Colors.deepPurpleAccent, // 버튼 색깔 설정
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
                                   child: TextField(
                                     maxLines: 1,
                                     maxLength: 42,
                                     enabled: allow_change_kas_address,
                                     keyboardType: TextInputType.text,
                                     controller: inputKlaytnAddressController,
-                                    decoration: const InputDecoration(
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontFamily: 'Quicksand',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    decoration: InputDecoration(
                                       labelText: "KAS 주소",
+                                      counterText: "",
+                                      filled: true,
+                                      fillColor: Colors.grey[200],
+                                      focusColor: Colors.grey[200],
+                                      hoverColor: Colors.grey[200],
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      labelStyle: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontFamily: 'Quicksand',
+                                      ),
+                                      suffixIcon: IconButton(
+                                        icon: const Icon(Icons.qr_code),
+                                        onPressed: () async {
+                                          final qrCodeScanResult = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                const QRCodeScanner()
+                                            ),
+                                          );
+                                          inputKlaytnAddressController.text = qrCodeScanResult!;
+                                        },
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -332,26 +471,27 @@ class _Register extends State<Register> {
                                     child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: <Widget>[
-                                          ElevatedButton(
-                                            child: const Icon(Icons.qr_code),
-                                            style: ElevatedButton.styleFrom(
-                                                primary: Colors.deepPurpleAccent
-                                            ),
-                                            onPressed: () async {
-                                              final qrCodeScanResult = await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                    const QRCodeScanner()
-                                                ),
-                                              );
-                                              inputKlaytnAddressController.text = qrCodeScanResult!;
-                                            },
-                                          ),
+                                          // ElevatedButton(
+                                          //   child: const Icon(Icons.qr_code),
+                                          //   style: ElevatedButton.styleFrom(
+                                          //       primary: Colors.deepPurpleAccent
+                                          //   ),
+                                          //   onPressed: () async {
+                                          //     final qrCodeScanResult = await Navigator.push(
+                                          //       context,
+                                          //       MaterialPageRoute(
+                                          //           builder: (context) =>
+                                          //           const QRCodeScanner()
+                                          //       ),
+                                          //     );
+                                          //     inputKlaytnAddressController.text = qrCodeScanResult!;
+                                          //   },
+                                          // ),
                                           ElevatedButton(
                                             child: const Text("생성"),
                                             style: ElevatedButton.styleFrom(
-                                                primary: Colors.deepPurpleAccent
+                                              elevation: 0,
+                                              primary: Colors.deepPurpleAccent,
                                             ),
                                             onPressed: () async {
                                               await createKlaytnAddress();
@@ -361,7 +501,8 @@ class _Register extends State<Register> {
                                           ElevatedButton(
                                             child: const Text("확인"),
                                             style: ElevatedButton.styleFrom(
-                                                primary: Colors.deepPurpleAccent
+                                              elevation: 0,
+                                              primary: Colors.deepPurpleAccent,
                                             ),
                                             onPressed: () async {
                                               await checkKlaytnAddress();
@@ -370,53 +511,82 @@ class _Register extends State<Register> {
                                         ]
                                     )
                                 ),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    var _id = idController.text;
-                                    var _pw = pwController.text;
-                                    var _repw = repwController.text;
-                                    var _nickname = nicknameController.text;
-                                    var _address = inputKlaytnAddressController.text;
-                                    if (_pw.length < 8) {
-                                      displayDialog(context, "Invalid Password", "The password should be at least 8 characters long");
-                                    } else if (_pw != _repw) {
-                                      displayDialog(context, "Check Password", "Two Password Is Different");
-                                    } else if (!flag_auth) {
-                                      displayDialog(context, "Not Authenticated", "Not Authenticated");
-                                    } else if (!flag_KAS) {
-                                      displayDialog(context, "KAS Address", "The KAS account is not yet linked.");
-                                    } else {
-                                      var res = await attemptSignUp(_id, _pw, _nickname, _address);
-                                      if (res == 201) {
-                                        await displayDialog_checkonly(context, "Success", "The user was created. Log in now.");
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => const Login(),
-                                            ), (route) => false
-                                        );
-                                      } else if (res == 409) {
-                                        displayDialog(context, "That user is already registered", "Please try to sign up using another id or log in if you already have an account.");
-                                      } else {
-                                        displayDialog(context, "Error", "An unknown error occurred.");
-                                      }
-                                    }
-                                  },
-                                  child: const Text("가입"),
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.purpleAccent.shade100,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12)
-                                      )
-                                  ),
-                                )
                               ]
-                          )
+                          ),
                         ]
-                    )
-                )
-            )
-        )
+                    ),
+                ),
+          ),
+          bottomNavigationBar: Container(
+            padding: EdgeInsets.fromLTRB(width * 0.03, height * 0.01, width * 0.03, height * 0.011),
+            child: ElevatedButton(
+              onPressed: () async {
+                var _id = idController.text;
+                var _pw = pwController.text;
+                var _repw = repwController.text;
+                var _nickname = nicknameController.text;
+                var _address = inputKlaytnAddressController.text;
+                if (_pw.length < 8) {
+                  displayDialog(context, "Invalid Password", "The password should be at least 8 characters long");
+                } else if (_pw != _repw) {
+                  displayDialog(context, "Check Password", "Two Password Is Different");
+                } else if (!flag_auth) {
+                  displayDialog(context, "Not Authenticated", "Not Authenticated");
+                } else if (!flag_KAS) {
+                  displayDialog(context, "KAS Address", "The KAS account is not yet linked.");
+                } else {
+                  var res = await attemptSignUp(_id, _pw, _nickname, _address);
+                  if (res == 201) {
+                    await displayDialog_checkonly(context, "회원가입", "회원가입이 완료되었습니다.");
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Login(),
+                        ), (route) => false
+                    );
+                  } else if (res == 409) {
+                    displayDialog(context, "That user is already registered", "Please try to sign up using another id or log in if you already have an account.");
+                  } else {
+                    displayDialog(context, "Error", "An unknown error occurred.");
+                  }
+                }
+              },
+              // child: const Text("가입"),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const <Widget> [
+                  Icon(
+                    Icons.login,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    " 가입",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontFamily: 'Pretendard',
+                    ),
+                  ),
+                ],
+              ),
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(9.5)
+                ),
+                minimumSize: Size.fromHeight(height * 0.062),
+                primary: Colors.cyan,
+              ),
+              // style: ElevatedButton.styleFrom(
+              //   primary: Colors.purpleAccent.shade100,
+              //   shape: RoundedRectangleBorder(
+              //     borderRadius: BorderRadius.circular(12),
+              //   ),
+              // ),
+            ),
+          ),
+        ),
     );
   }
 }
