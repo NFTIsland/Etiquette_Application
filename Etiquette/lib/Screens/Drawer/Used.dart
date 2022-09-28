@@ -93,7 +93,7 @@ class _Used extends State<Used> {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Scaffold(
-            appBar: appbarWithArrowBackButton("기간 만료 티켓 목록", theme),
+            appBar: appbarWithArrowBackButton("사용 만료 티켓 목록", theme),
             body: const Center(
               child: Text("통신 에러가 발생했습니다."),
             ),
@@ -101,7 +101,7 @@ class _Used extends State<Used> {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
-            appBar: appbarWithArrowBackButton("기간 만료 티켓", theme),
+            appBar: appbarWithArrowBackButton("사용 만료 티켓", theme),
             body: SingleChildScrollView(
               padding: const EdgeInsets.all(15.0),
               child: Column(
