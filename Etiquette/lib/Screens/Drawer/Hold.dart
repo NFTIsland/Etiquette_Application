@@ -21,7 +21,7 @@ class Hold extends StatefulWidget {
 }
 
 class _Hold extends State<Hold> {
-  List<String> filter = ['예매날짜 (오름차순)', '예매날짜 (내림차순)', '이름 (오름차순)', '이름 (내림차순)'];
+  List<String> filter = ['예매날짜 (오름차순)', '예매날짜 (내림차순)', '이름 (오름차순)', '이름 (내림차순)', '장소 (오름차순)', '장소 (내림차순)'];
   String _selected = '예매날짜 (오름차순)';
   late final Future future;
   late bool theme;
@@ -39,16 +39,7 @@ class _Hold extends State<Hold> {
   }
 
   Future<void> getHoldlistFromDB() async {
-    String url = "";
-    if (_selected == '예매날짜 (오름차순)') {
-      url = "$SERVER_IP/individual/holdlist/holdlistAscPerformanceDate";
-    } else if (_selected == '예매날짜 (내림차순)') {
-      url = "$SERVER_IP/individual/holdlist/holdlistDescPerformanceDate";
-    } else if (_selected == '이름 (오름차순)') {
-      url = "$SERVER_IP/individual/holdlist/holdlistAscProductName";
-    } else if (_selected == '이름 (내림차순)') {
-      url = "$SERVER_IP/individual/holdlist/holdlistDescProductName";
-    }
+    const url = "$SERVER_IP/individual/holdlist";
 
     try {
       final kas_address_data = await getKasAddress();
@@ -58,7 +49,6 @@ class _Hold extends State<Hold> {
         });
         Map<String, dynamic> data = json.decode(res.body);
         if (res.statusCode == 200) {
-          holdlist.clear();
           List tickets = data["data"];
           for (Map<String, dynamic> ticket in tickets) {
             Map<String, dynamic> ex = {
@@ -79,7 +69,6 @@ class _Hold extends State<Hold> {
                 ex['poster_url'] = 'https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg';
               }
             }
-
             holdlist.add(ex);
             setState(() {});
           }
@@ -92,6 +81,34 @@ class _Hold extends State<Hold> {
       }
     } catch (ex) {
       print("보유 티켓 목록 --> ${ex.toString()}");
+    }
+  }
+
+  Future<void> sortHoldlist() async {
+    if (_selected == '예매날짜 (오름차순)') {
+      holdlist.sort((a, b) => (a['performance_date'].compareTo(b['performance_date'])));
+    } else if (_selected == '예매날짜 (내림차순)') {
+      holdlist.sort((a, b) => (b['performance_date'].compareTo(a['performance_date'])));
+    } else if (_selected == '이름 (오름차순)') {
+      holdlist.sort((a, b) => (a['product_name'].compareTo(b['product_name'])));
+    } else if (_selected == '이름 (내림차순)') {
+      holdlist.sort((a, b) => (b['product_name'].compareTo(a['product_name'])));
+    } else if (_selected == '장소 (오름차순)') {
+      holdlist.sort((a, b) {
+        var r = a['place'].compareTo(b['place']);
+        if (r != 0) {
+          return r;
+        }
+        return a['product_name'].compareTo(b['product_name']);
+      });
+    } else if (_selected == '장소 (내림차순)') {
+      holdlist.sort((a, b) {
+        var r = b['place'].compareTo(a['place']);
+        if (r != 0) {
+          return r;
+        }
+        return a['product_name'].compareTo(b['product_name']);
+      });
     }
   }
 
@@ -182,7 +199,7 @@ class _Hold extends State<Hold> {
                         onChanged: (dynamic value) {
                           setState(() {
                             _selected = value;
-                            getHoldlistFromDB();
+                            sortHoldlist();
                           });
                         },
                       ),
