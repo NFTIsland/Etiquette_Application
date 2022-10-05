@@ -29,11 +29,9 @@ class DayPickerPage extends StatefulWidget {
 }
 
 class _DayPickerPageState extends State<DayPickerPage> {
-  DateTime _selectedDate = DateTime.utc(2022,09,20);
-  //DateTime _selectedDate = DateTime.now().subtract(Duration(days: 1));
+  DateTime _selectedDate = DateTime.now().subtract(Duration(days: 1));
   List notday = [];//되는 날짜 받기
-  final DateTime _firstDate = DateTime.utc(2022,09,20);
-  //final DateTime _firstDate = DateTime.now();
+  final DateTime _firstDate = DateTime.now();
   DateTime? _lastDate;//마지막으로 되는 날짜가 언제까지인지. DateTime.now()가 아니라 DateTime형식으로 직접 날짜 지정해줘도 됨.
 
   Color selectedDateStyleColor = Colors.blue;
