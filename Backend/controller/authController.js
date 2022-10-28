@@ -13,7 +13,7 @@ module.exports = {
                 var token = jwt.sign(payload, KEY, { algorithm: 'HS256', expiresIn: "1h" });
                 res.send(token);
             } else {
-                res.status(401)
+                res.status(401);
                 res.send("There's no user matching that");
             }
         })
@@ -52,6 +52,32 @@ module.exports = {
         })
     },
 
+    updatePassword: function (req, res) {
+        Auth.updatePW(req.body.id, req.body.pw, function (err, row) {
+            if (!err) {
+                res.status(200);
+                res.json({statusCode: 200});
+            } else {
+                res.status(401);
+                res.json({statusCode: 401, msg: "Failed to update PW"});
+                console.log(`updatePassword: ${err}`);
+            }
+        })
+    },
+
+    updateNickname: function (req, res) {
+        Auth.updateNickName(req.body.id, req.body.nickname, function (err, row) {
+            if (!err) {
+                res.status(200);
+                res.json({statusCode: 200});
+            } else {
+                res.status(401);
+                res.json({statusCode: 401, msg: "Failed to update Nickname"});
+                console.log(`updateNickname: ${err}`);
+            }
+        })
+    },
+
     checkNickname: function(req, res) {
         Auth.selectNickname(req.body.nickname, function (err, row) {
             if (row != undefined && row.length) {
@@ -64,13 +90,25 @@ module.exports = {
         });
     },
 
+    checkPassword: function (req, res) {
+        Auth.selectLogIn(req.body.id, req.body.pw, function (err, row) {
+            if (row != undefined && row.length) {
+                res.status(200);
+                res.json({statusCode: 200});
+            } else {
+                res.status(401);
+                res.send("There's no user matching that");
+            }
+        })
+    },
+
     kasAddress: function(req, res) {
         Auth.getKasAddress(req.body.id, function (err, row) {
             if (row != undefined && row.length) {
                 res.status(200);
                 res.json({statusCode: 200, data: row});
             } else {
-                res.status(404)
+                res.status(404);
                 res.json({statusCode: 404, msg: "Failed to retrieve kas address from DB"});
             }
         })
