@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
-import 'package:Etiquette/Screens/Change_id.dart';
 import 'package:Etiquette/Screens/Drawer/Change_pw.dart';
 
 class Account extends StatefulWidget {
@@ -124,7 +123,7 @@ class _Account extends State<Account> {
                                           fontWeight: FontWeight.bold)),
                                   subtitle: Text("Guest1"),
                                   onTap: () {
-                                    Get.to(ChangeID());
+                                    //Get.to(ChangeID());
                                     /*
                                     Navigator.push(
                                         context,
