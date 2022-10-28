@@ -7,6 +7,10 @@ import 'package:Etiquette/Screens/Setting.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/widgets/drawer.dart';
+import 'package:Etiquette/Screens/Notice.dart';
+import 'package:Etiquette/Screens/CustomerService.dart';
+import 'package:Etiquette/Screens/Guide.dart';
+import 'package:Etiquette/Screens/FAQ.dart';
 
 class More extends StatefulWidget {
   const More({Key? key}) : super(key: key);
@@ -115,23 +119,52 @@ class _More extends State<More> {
                       ),
                     ]
                 ),
-                drawer: drawer(context, true, nickname),
+                drawer: drawer(context, theme, nickname),
                 body: ListView(padding: EdgeInsets.only(left: 10), children: <
                     Widget>[
                   ListTile(
                       title: Text("Application Guide",
                           style: TextStyle(fontSize: 20)),
-                      onTap: () {}),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Guide(),
+                          ),
+                        );
+                      }),
                   ListTile(
                       title: Text("Notice", style: TextStyle(fontSize: 20)),
-                      onTap: () {}),
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Notice(),
+                          ),
+                        );
+                      }
+                  ),
                   ListTile(
                       title: Text("1:1 Customer Service",
                           style: TextStyle(fontSize: 20)),
-                      onTap: () {}),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Customer(),
+                          ),
+                        );
+                      }),
                   ListTile(
                       title: Text("FAQ", style: TextStyle(fontSize: 20)),
-                      onTap: () {}),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FAQ(),
+                          ),
+                        );
+                      }),
                   ListTile(
                       title: Text("Setting", style: TextStyle(fontSize: 20)),
                       onTap: () {
