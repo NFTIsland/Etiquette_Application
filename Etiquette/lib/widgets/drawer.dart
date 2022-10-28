@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:Etiquette/Screens/Account.dart';
+import 'package:Etiquette/Screens/Drawer/ChangeUserInfo.dart';
 import 'package:Etiquette/Screens/Drawer/Bid.dart';
 import 'package:Etiquette/Screens/Drawer/Hold.dart';
 import 'package:Etiquette/Screens/Drawer/Interest.dart';
@@ -47,6 +48,36 @@ Widget drawer(BuildContext context, bool theme, String? nickname) {
                     )
                 ),
               ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0, bottom: 5.0),
+              child: Text(
+                '내 정보',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text(
+                '개인정보 변경',
+                style: TextStyle(
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                Get.to(
+                      () => const ChangeUserInfo(),
+                );
+              },
+            ),
+            Divider(
+              height: 20,
+              color: Colors.grey[600],
             ),
             const Padding(
               padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0, bottom: 5.0),
