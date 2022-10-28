@@ -1,11 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'package:Etiquette/Screens/Change_id.dart';
-import 'package:Etiquette/Screens/Change_pw.dart';
+import 'package:Etiquette/Screens/Drawer/Change_pw.dart';
 
 class Account extends StatefulWidget {
   State createState() => _Account();

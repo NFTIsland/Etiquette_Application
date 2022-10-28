@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/appbar.dart';
-import 'package:Etiquette/Screens/Drawer/Change_pw.dart';
 import 'package:Etiquette/Screens/Drawer/Change_nickname.dart';
+import 'package:Etiquette/Screens/Drawer/Check_CurPW.dart';
+import 'package:Etiquette/Screens/Home.dart';
 
 class ChangeUserInfo extends StatefulWidget {
   const ChangeUserInfo({Key? key}) : super(key: key);
@@ -18,6 +19,7 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
   late double height;
   late bool theme;
   late final Future future;
+  String? id = "";
   String? nickname = "";
   var img = const Icon(Icons.notifications);
 
@@ -28,13 +30,14 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
     return theme;
   }
 
-  Future<void> getNickname() async {
+  Future<void> getInfo() async {
+    id = await storage.read(key: "id");
     nickname = await storage.read(key: "nickname");
   }
 
   Future<void> loading() async {
     getTheme();
-    getNickname();
+    getInfo();
   }
 
   @override
@@ -60,7 +63,20 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-              appBar: appbarWithArrowBackButton("개인 정보 수정", theme),
+              appBar: AppBar(
+                title: const Text("개인정보 수정",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                elevation: 0,
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.white24,
+                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back_ios_new_rounded),
+                  onPressed: () {
+                    Get.to(() => Home());
+                  },
+                ),
+              ),
               body: Container(
                 width: width,
                 height: height,
@@ -70,12 +86,12 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                     children: <Widget>[
                       SizedBox(
                           width: width,
-                          height: 0.35 * height,
+                          height: 0.25 * height,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Text(
+                              const Text(
                                 "비밀번호를 바꾸고 싶다면",
                                 style: TextStyle(
                                     fontSize: 20.0,
@@ -89,7 +105,7 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                                       primary: Colors.blueAccent),
                                   onPressed: () {
                                     Get.to(
-                                      () => ChangePW(),
+                                      () => checkcurPW(),
                                     );
                                   },
                                   child: const Text("비밀번호 변경",
@@ -100,18 +116,18 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                               ),
                             ],
                           )),
-                      Divider(
+                      const Divider(
                         thickness: 1,
                         color: Colors.grey,
                       ),
                       SizedBox(
                           width: width,
-                          height: 0.35 * height,
+                          height: 0.25 * height,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Text(
+                              const Text(
                                 "닉네임을 바꾸고 싶다면",
                                 style: TextStyle(
                                     fontSize: 20.0,

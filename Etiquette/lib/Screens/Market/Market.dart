@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
-import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Screens/Market/search_market_ticket.dart';
 import 'package:Etiquette/Screens/Market/market_details.dart';
 import 'package:Etiquette/Screens/Market/total_imminent_auction.dart';
@@ -13,8 +12,7 @@ import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
-
-import '../../Utilities/time_remaining_until_end.dart';
+import 'package:Etiquette/Utilities/time_remaining_until_end.dart';
 
 class Market extends StatefulWidget {
   const Market({Key? key}) : super(key: key);

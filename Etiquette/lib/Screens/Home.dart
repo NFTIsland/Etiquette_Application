@@ -246,7 +246,6 @@ class _Home extends State<Home> {
       _loadData();
       loadHomePosters();
       getHomeNotices();
-      getNickname();
       getHoldCounts();
       getAuctionCounts();
       loadKlayBalance();
@@ -279,6 +278,7 @@ class _Home extends State<Home> {
   void initState() {
     super.initState();
     getTheme();
+    getNickname();
   }
 
   @override
