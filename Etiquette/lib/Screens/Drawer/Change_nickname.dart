@@ -97,6 +97,8 @@ class _ChangeNickname extends State<ChangeNickname> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return FutureBuilder(
         future: future,
         builder: (context, snapshot) {
@@ -224,44 +226,54 @@ class _ChangeNickname extends State<ChangeNickname> {
                           ),
                         ),
                       ),
-                      Center(
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(primary: Colors.blueAccent),
-                            onPressed: () {
-                              if (checkNickduplicate == true) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text("닉네임 변경"),
-                                    content: const Text("입력하신 닉네임으로 정말 변경하시겠습니까?"),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: const Text('Cancel'),
-                                        onPressed: () =>
-                                            Navigator.pop(context, false),
-                                      ),
-                                      TextButton(
-                                        child: const Text('OK'),
-                                        onPressed: () async {
-                                          if (await updateNickname(id!, cha.value.text) == true) {
-                                            displayDialog_changeIndividual(context, "닉네임 변경 성공", "닉네임을 성공적으로 변경하였습니다.");
-                                          } else {
-                                            displayDialog_checkonly_directNN(context, "닉네임 변경 오류", "오류로 인하여 닉네임 변경에 실패했습니다.\n다시 시도해주십시오.");
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                displayDialog_checkonly(context, "닉네임 변경 오류", "중복확인을 먼저 해주시기 바랍니다.");
-                              }
-                            },
-                            child: const Text("닉네임 변경", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold))),
-                      )
                     ])
                     )
+                ),
+                bottomNavigationBar: Container(
+                  padding : EdgeInsets.fromLTRB(width * 0.03, 0, width * 0.03, height * 0.01),
+                  child: ElevatedButton(
+                    child: const Text("닉네임 변경"),
+                    style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(9.5)),
+                        minimumSize: Size.fromHeight(height * 0.062),
+                        primary: Color(0xffEE3D43)
+                    ),
+                    onPressed: () {
+                      if (checkNickduplicate == true) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text("닉네임 변경"),
+                            content: const Text("입력하신 닉네임으로 정말 변경하시겠습니까?"),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Cancel'),
+                                onPressed: () =>
+                                    Navigator.pop(context, false),
+                              ),
+                              TextButton(
+                                child: const Text('OK'),
+                                onPressed: () async {
+                                  if (await updateNickname(id!, cha.value.text) == true) {
+                                    displayDialog_changeIndividual(context, "닉네임 변경 성공", "닉네임을 성공적으로 변경하였습니다.");
+                                  } else {
+                                    displayDialog_checkonly_directNN(context, "닉네임 변경 오류", "오류로 인하여 닉네임 변경에 실패했습니다.\n다시 시도해주십시오.");
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        displayDialog_checkonly(context, "닉네임 변경 오류", "중복확인을 먼저 해주시기 바랍니다.");
+                      }
+                    },
+                  ),
                 )
+
             );
           }
           return const Center(

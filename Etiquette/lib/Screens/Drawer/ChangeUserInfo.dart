@@ -5,6 +5,7 @@ import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Screens/Drawer/Change_nickname.dart';
 import 'package:Etiquette/Screens/Drawer/Check_CurPW.dart';
+import 'package:Etiquette/Screens/TabController.dart';
 import 'package:Etiquette/Screens/Home.dart';
 
 class ChangeUserInfo extends StatefulWidget {
@@ -62,99 +63,106 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
             );
           }
           if (snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text("개인정보 수정",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                elevation: 0,
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.white24,
-                automaticallyImplyLeading: false,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new_rounded),
-                  onPressed: () {
-                    Get.to(() => Home());
-                  },
+            return WillPopScope(
+                child: Scaffold(
+                  appBar: AppBar(
+                    title: const Text("개인정보 수정",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    elevation: 0,
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.white24,
+                    automaticallyImplyLeading: false,
+                    leading: IconButton(
+                      icon: Icon(Icons.arrow_back_ios_new_rounded),
+                      onPressed: () {
+                        Get.to(() => Tabb());
+                      },
+                    ),
+                  ),
+                  body: Container(
+                    width: width,
+                    height: height,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                              width: width,
+                              height: 0.25 * height,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  const Text(
+                                    "비밀번호를 바꾸고 싶다면",
+                                    style: TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    width: 0.6 * width,
+                                    height: 0.1 * height,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.blueAccent),
+                                      onPressed: () {
+                                        Get.to(
+                                              () => checkcurPW(),
+                                        );
+                                      },
+                                      child: const Text("비밀번호 변경",
+                                          style: TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                          const Divider(
+                            thickness: 1,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                              width: width,
+                              height: 0.25 * height,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  const Text(
+                                    "닉네임을 바꾸고 싶다면",
+                                    style: TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    width: 0.6 * width,
+                                    height: 0.1 * height,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.blueAccent),
+                                      onPressed: () {
+                                        Get.to(
+                                              () => ChangeNickname(),
+                                        );
+                                      },
+                                      child: const Text("닉네임 변경",
+                                          style: TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ]),
+                  ),
                 ),
-              ),
-              body: Container(
-                width: width,
-                height: height,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                          width: width,
-                          height: 0.25 * height,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              const Text(
-                                "비밀번호를 바꾸고 싶다면",
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                width: 0.6 * width,
-                                height: 0.1 * height,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.blueAccent),
-                                  onPressed: () {
-                                    Get.to(
-                                      () => checkcurPW(),
-                                    );
-                                  },
-                                  child: const Text("비밀번호 변경",
-                                      style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                              ),
-                            ],
-                          )),
-                      const Divider(
-                        thickness: 1,
-                        color: Colors.grey,
-                      ),
-                      SizedBox(
-                          width: width,
-                          height: 0.25 * height,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              const Text(
-                                "닉네임을 바꾸고 싶다면",
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                width: 0.6 * width,
-                                height: 0.1 * height,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.blueAccent),
-                                  onPressed: () {
-                                    Get.to(
-                                      () => ChangeNickname(),
-                                    );
-                                  },
-                                  child: const Text("닉네임 변경",
-                                      style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                              ),
-                            ],
-                          )),
-                    ]),
-              ),
+                onWillPop: ()async {
+                  return await Get.to(Tabb());
+                }
             );
+
+
           }
           return const Center(child: CircularProgressIndicator());
         });

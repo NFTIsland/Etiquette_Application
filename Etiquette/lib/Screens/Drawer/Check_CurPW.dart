@@ -62,6 +62,8 @@ class _checkcurPW extends State<checkcurPW> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -140,29 +142,39 @@ class _checkcurPW extends State<checkcurPW> {
                                   },
                                 ),
                               ),
-                              Center(
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(primary: Colors.blueAccent),
-                                    onPressed: () async {
-                                      if (check == true){
-                                        if (await check_curPW(id!, cur.value.text) == true){
-                                          Get.to(() => ChangePW(),);
-                                        }
-                                        else{
-                                          displayDialog_checkonly(context, "비밀번호 오류", "비밀번호를 잘못 입력하셨습니다.\n다시 시도해주십시오.");
-                                        }
-                                      }
-                                      else{
-                                        displayDialog_checkonly(context, "비밀번호 오류", "비밀번호를 입력해주십시오.");
-                                      }
-                                    },
-                                    child: const Text("다음", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold))),
-                              )
                             ])
                     ),
                             ])
                 ])
-            )
-        ));
+            ),
+                    bottomNavigationBar: Container(
+                      padding : EdgeInsets.fromLTRB(width * 0.03, 0, width * 0.03, height * 0.01),
+                      child: ElevatedButton(
+                        child: const Text("다음"),
+                        style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(9.5)),
+                            minimumSize: Size.fromHeight(height * 0.062),
+                            primary: Color(0xffEE3D43)
+                        ),
+                        onPressed: () async {
+                          if (check == true){
+                            if (await check_curPW(id!, cur.value.text) == true){
+                              Get.to(() => ChangePW(),);
+                            }
+                            else{
+                              displayDialog_checkonly(context, "비밀번호 오류", "비밀번호를 잘못 입력하셨습니다.\n다시 시도해주십시오.");
+                            }
+                          }
+                          else{
+                            displayDialog_checkonly(context, "비밀번호 오류", "비밀번호를 입력해주십시오.");
+                          }
+                          },
+                      ),
+                    )
+        )
+    );
   }
 }

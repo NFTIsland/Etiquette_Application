@@ -96,6 +96,8 @@ class _ChangePW extends State<ChangePW> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -213,32 +215,43 @@ class _ChangePW extends State<ChangePW> {
                             },
                           ),
                         ),
-                        Center(
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(primary: Colors.blueAccent),
-                              onPressed: () async {
-                                if (cha.value.text == re.value.text) {
-                                  if (await updatePW(id!, cha.value.text) == 0) {
-                                    displayDialog_changeIndividual(context, "비밀번호 변경 성공", "비밀번호를 성공적으로 변경했습니다.");
-                                  }
-                                  else if (await updatePW(id!, cha.value.text) == 1) {
-                                    displayDialog_checkonly(context, "비밀번호 변경 오류", "비밀번호는 최소 8글자 이상이어야 합니다.");
-                                  }
-                                  else if (await updatePW(id!, cha.value.text) == 2) {
-                                    displayDialog_checkonly(context, "기존 비밀번호 재사용", "기존과 같은 비밀번호로는 변경할 수 없습니다.\n다시 시도해주십시오.");
-                                  }
-                                  else if (await updatePW(id!, cha.value.text) == 3) {
-                                    displayDialog_checkonly(context, "비밀번호 변경 오류", "오류로 인하여 비밀번호 변경에 실패했습니다.\n다시 시도해주십시오.");
-                                  }
-                                }
-                                else {
-                                  displayDialog_checkonly(context, "새 비밀번호 확인 오류", "새 비밀번호 확인을 위해 다시 한번 입력해주십시오.");
-                                }
-                              },
-                              child: const Text("비밀번호 변경",
-                                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold))),
-                        )
+
                       ]))
-            ]))));
+            ])),
+    bottomNavigationBar: Container(
+    padding : EdgeInsets.fromLTRB(width * 0.03, 0, width * 0.03, height * 0.01),
+    child: ElevatedButton(
+    child: const Text("비밀번호 변경"),
+    style: ElevatedButton.styleFrom(
+    elevation: 0,
+    shadowColor: Colors.transparent,
+    shape: RoundedRectangleBorder(
+    borderRadius:
+    BorderRadius.circular(9.5)),
+    minimumSize: Size.fromHeight(height * 0.062),
+    primary: Color(0xffEE3D43)
+    ),
+    onPressed: () async {
+    if (cha.value.text == re.value.text) {
+    if (await updatePW(id!, cha.value.text) == 0) {
+    displayDialog_changeIndividual(context, "비밀번호 변경 성공", "비밀번호를 성공적으로 변경했습니다.");
+    }
+    else if (await updatePW(id!, cha.value.text) == 1) {
+    displayDialog_checkonly(context, "비밀번호 변경 오류", "비밀번호는 최소 8글자 이상이어야 합니다.");
+    }
+    else if (await updatePW(id!, cha.value.text) == 2) {
+    displayDialog_checkonly(context, "기존 비밀번호 재사용", "기존과 같은 비밀번호로는 변경할 수 없습니다.\n다시 시도해주십시오.");
+    }
+    else if (await updatePW(id!, cha.value.text) == 3) {
+    displayDialog_checkonly(context, "비밀번호 변경 오류", "오류로 인하여 비밀번호 변경에 실패했습니다.\n다시 시도해주십시오.");
+    }
+    }
+    else {
+    displayDialog_checkonly(context, "새 비밀번호 확인 오류", "새 비밀번호 확인을 위해 다시 한번 입력해주십시오.");
+    }
+    },
+    ),
+    )
+        ));
   }
 }

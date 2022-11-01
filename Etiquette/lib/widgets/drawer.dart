@@ -70,7 +70,7 @@ Widget drawer(BuildContext context, bool theme, String? nickname) {
                 ),
               ),
               onTap: () {
-                Get.to(
+                Get.offAll(
                       () => const ChangeUserInfo(),
                 );
               },
