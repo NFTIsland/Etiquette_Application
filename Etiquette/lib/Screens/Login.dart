@@ -47,16 +47,14 @@ class _Login extends State<Login> {
         child: Scaffold(
             body: Center(
                 child: SingleChildScrollView(// 스크롤 가능하게 설정 -> 만약 한 화면 내에 안담기더라도 스크롤 해서 볼 수 있음
-                    child: Column
-                      (
+                    child: Column(
                         children: <Widget> [
                           Padding(
                               padding: const EdgeInsets.only(left: 80), // 좌측 공간 확보
                               child: Row( // 가로로 Login, Signup 배치
                                   children: const <Widget> [
                                     Text("Login", style: TextStyle(fontSize: 30)),
-                                    Text("/Sign up", style: TextStyle(fontSize: 20, color: Colors.grey),
-                                    )
+                                    Text("/Sign up", style: TextStyle(fontSize: 20, color: Colors.grey),)
                                   ]
                               ) //사이즈, 컬러 설정 및 텍스트 입력
                           ),
@@ -124,9 +122,7 @@ class _Login extends State<Login> {
                                                       storage.write(key: "nickname", value: _nickname);
                                                       Get.off(Tabb(idx:0));
                                                       ScaffoldMessenger.of(context).showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(_nickname + "님 접속을 환영합니다."),
-                                                          )
+                                                          SnackBar(content: Text(_nickname + "님 접속을 환영합니다."),)
                                                       );
                                                     }
                                                   },
@@ -134,8 +130,7 @@ class _Login extends State<Login> {
                                                   style: ElevatedButton.styleFrom(
                                                       primary: const Color(0xff7795FF),
                                                       shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                          BorderRadius.circular(12)
+                                                          borderRadius: BorderRadius.circular(12)
                                                       ) //둥글게 설정
                                                   )
                                               ),
@@ -148,8 +143,7 @@ class _Login extends State<Login> {
                                                   style: ElevatedButton.styleFrom(
                                                       primary: Colors.purpleAccent.shade100,
                                                       shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                          BorderRadius.circular(12)
+                                                          borderRadius: BorderRadius.circular(12)
                                                       ) // 둥글게 설정
                                                   )
                                               )
