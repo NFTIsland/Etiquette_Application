@@ -1,12 +1,10 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Screens/Drawer/Change_nickname.dart';
 import 'package:Etiquette/Screens/Drawer/Check_CurPW.dart';
 import 'package:Etiquette/Screens/TabController.dart';
-import 'package:Etiquette/Screens/Home.dart';
 
 class ChangeUserInfo extends StatefulWidget {
   const ChangeUserInfo({Key? key}) : super(key: key);
@@ -20,9 +18,6 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
   late double height;
   late bool theme;
   late final Future future;
-  String? id = "";
-  String? nickname = "";
-  var img = const Icon(Icons.notifications);
 
   Future<bool> getTheme() async {
     var key = 'theme';
@@ -31,20 +26,10 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
     return theme;
   }
 
-  Future<void> getInfo() async {
-    id = await storage.read(key: "id");
-    nickname = await storage.read(key: "nickname");
-  }
-
-  Future<void> loading() async {
-    getTheme();
-    getInfo();
-  }
-
   @override
   void initState() {
     super.initState();
-    future = loading();
+    future = getTheme();
   }
 
   @override
@@ -66,6 +51,7 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
             return WillPopScope(
                 child: Scaffold(
                   appBar: AppBar(
+                    centerTitle: true,
                     title: const Text("개인정보 수정",
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     elevation: 0,
@@ -73,7 +59,7 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                     backgroundColor: Colors.white24,
                     automaticallyImplyLeading: false,
                     leading: IconButton(
-                      icon: Icon(Icons.arrow_back_ios_new_rounded),
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded),
                       onPressed: () {
                         Get.to(() => Tabb());
                       },
@@ -93,8 +79,7 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  const Text(
-                                    "비밀번호를 바꾸고 싶다면",
+                                  const Text("비밀번호를 바꾸고 싶다면",
                                     style: TextStyle(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.bold),
@@ -106,22 +91,15 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                                       style: ElevatedButton.styleFrom(
                                           primary: Colors.blueAccent),
                                       onPressed: () {
-                                        Get.to(
-                                              () => checkcurPW(),
-                                        );
+                                        Get.to(() => checkcurPW(),);
                                       },
                                       child: const Text("비밀번호 변경",
-                                          style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold)),
+                                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
                                     ),
                                   ),
                                 ],
                               )),
-                          const Divider(
-                            thickness: 1,
-                            color: Colors.grey,
-                          ),
+                          const Divider(thickness: 1, color: Colors.grey,),
                           SizedBox(
                               width: width,
                               height: 0.25 * height,
@@ -129,8 +107,7 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  const Text(
-                                    "닉네임을 바꾸고 싶다면",
+                                  const Text("닉네임을 바꾸고 싶다면",
                                     style: TextStyle(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.bold),
@@ -142,14 +119,10 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                                       style: ElevatedButton.styleFrom(
                                           primary: Colors.blueAccent),
                                       onPressed: () {
-                                        Get.to(
-                                              () => ChangeNickname(),
-                                        );
+                                        Get.to(() => ChangeNickname(),);
                                       },
                                       child: const Text("닉네임 변경",
-                                          style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold)),
+                                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
                                     ),
                                   ),
                                 ],
@@ -157,12 +130,10 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                         ]),
                   ),
                 ),
-                onWillPop: ()async {
+                onWillPop: () async {
                   return await Get.to(Tabb());
                 }
             );
-
-
           }
           return const Center(child: CircularProgressIndicator());
         });
