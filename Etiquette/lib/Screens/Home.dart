@@ -2,19 +2,17 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:Etiquette/widgets/drawer.dart';
-import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Models/serverset.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/round.dart';
-import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/get_balance.dart';
 
 class Home extends StatefulWidget {
@@ -36,6 +34,8 @@ class _Home extends State<Home> {
   String currentTime = "Loading...";
   String klayCurrency = "Loading...";
   String yesterday_last = "";
+  String hold_counts = "";
+  String auction_counts = "";
   String? nickname = "";
   late final String address;
 
@@ -44,8 +44,6 @@ class _Home extends State<Home> {
   List contents = [];
   List upload_times = [];
 
-  int hold_counts = 0;
-  int auction_counts = 0;
   double current_klay = 0.0;
 
   void _setData(bool value) async {
@@ -183,77 +181,6 @@ class _Home extends State<Home> {
     }
   }
 
-  Future<void> getNickname() async {
-    nickname = await storage.read(key: "nickname");
-  }
-
-  Future<void> getHoldCounts() async {
-    const url = "$SERVER_IP/individual/holdCounts";
-    try {
-      final kas_address_data = await getKasAddress();
-      if (kas_address_data['statusCode'] == 200) {
-        var res = await http.post(Uri.parse(url), body: {
-          'kas_address': kas_address_data['data'][0]['kas_address'],
-        });
-        Map<String, dynamic> data = json.decode(res.body);
-        if (res.statusCode == 200) {
-          var counter = data["data"][0]['counts'];
-          setState(() {
-            hold_counts = counter;
-          }
-          );
-        } else {
-          String msg = data['msg'];
-          displayDialog_checkonly(context, "보유 티켓의 수", msg);
-        }
-      } else {
-        displayDialog_checkonly(context, "보유 티켓의 수", "보유 티켓의 수를 불러오는 데에 실패했습니다.");
-      }
-    } catch (ex) {
-      print("보유 티켓의 수 --> ${ex.toString()}");
-    }
-  }
-
-  Future<void> getAuctionCounts() async {
-    const url = "$SERVER_IP/individual/auctionCounts";
-    try {
-      final kas_address_data = await getKasAddress();
-      if (kas_address_data['statusCode'] == 200) {
-        var res = await http.post(Uri.parse(url), body: {
-          'kas_address': kas_address_data['data'][0]['kas_address'],
-        });
-        Map<String, dynamic> data = json.decode(res.body);
-        if (res.statusCode == 200) {
-          var counter = data["data"][0]['counts'];
-          setState(() {
-            auction_counts = counter;
-          }
-          );
-        } else {
-          String msg = data['msg'];
-          displayDialog_checkonly(context, "옥션 참여 티켓의 수", msg);
-        }
-      } else {
-        displayDialog_checkonly(context, "옥션 참여 티켓의 수", "옥션에 참여 중인 티켓의 수를 불러오는 데에 실패했습니다.");
-      }
-    } catch (ex) {
-      print("옥션 참여 티켓의 수 --> ${ex.toString()}");
-    }
-  }
-
-  _fetchData() async {
-    return this._memoizer.runOnce(() async {
-      _loadData();
-      loadHomePosters();
-      getHomeNotices();
-      getHoldCounts();
-      getAuctionCounts();
-      loadKlayBalance();
-      await Future.delayed(const Duration(milliseconds: 1000));
-      return;
-    });
-  }
-
   Future<void> getHomeNotices() async {
     const url = "$SERVER_IP/screen/homeNotices";
     try {
@@ -274,11 +201,25 @@ class _Home extends State<Home> {
     }
   }
 
+  _fetchData() async {
+    return this._memoizer.runOnce(() async {
+      _loadData();
+      loadHomePosters();
+      getHomeNotices();
+      loadKlayBalance();
+      List<String?> Infolist = await getInfo();
+      nickname = Infolist[1];
+      hold_counts = await getHoldCounts();
+      auction_counts = await getAuctionCounts();
+      await Future.delayed(const Duration(milliseconds: 1000));
+      return;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getTheme();
-    getNickname();
   }
 
   @override
@@ -304,18 +245,11 @@ class _Home extends State<Home> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
                 appBar: AppBar(
-                    iconTheme: IconThemeData(
-                        color:
-                        (theme ? const Color(0xffe8e8e8) : Colors.black)),
-                    title: Text("Etiquette",
-                        style: TextStyle(
-                            color: (theme
-                                ? const Color(0xffe8e8e8)
-                                : Colors.black))),
+                    iconTheme: IconThemeData(color: (theme ? const Color(0xffe8e8e8) : Colors.black)),
+                    title: Text("Etiquette", style: TextStyle(color: (theme ? const Color(0xffe8e8e8) : Colors.black))),
                     backgroundColor: Colors.white24,
                     foregroundColor: Colors.black,
-                    elevation: 0,
-                    // elevation은 떠보이는 느낌 설정하는 것, 0이면 뜨는 느낌 없음, foreground는 글자 색 변경
+                    elevation: 0, // elevation은 떠보이는 느낌 설정하는 것, 0이면 뜨는 느낌 없음, foreground는 글자 색 변경
                     actions: <Widget>[
                       IconButton(
                         icon: img,
@@ -376,23 +310,18 @@ class _Home extends State<Home> {
                                 child: ClipRRect(
                                   //ClipRRect : 위젯 모서리 둥글게 하기위해 사용하는 위젯
                                   borderRadius: BorderRadius.circular(16.0),
-                                  child: Image.network(
-                                    item,
-                                    fit: BoxFit.fill,
-                                  ),
+                                  child: Image.network(item, fit: BoxFit.fill,),
                                 ),
                               );
                             });
                           }).toList(),
                         ),
                       ),
-                      SizedBox(height : 10),
+                      const SizedBox(height : 10),
                       Container(
                         height : height*0.01,decoration: BoxDecoration(
                           border: const Border(
-                              top: BorderSide(
-                                  width : 1,
-                                  color: Color(0xffC4C4C4)
+                              top: BorderSide(width : 1, color: Color(0xffC4C4C4)
                               )
                           ),
                           boxShadow: [
@@ -440,16 +369,12 @@ class _Home extends State<Home> {
                                           fontFamily: "Square",
                                           fontWeight: FontWeight.w600,
                                           fontSize: 30,
-                                          color: (theme
-                                              ? const Color(0xffffffff)
-                                              : const Color(0xff000000))),),
+                                          color: (theme ? const Color(0xffffffff) : const Color(0xff000000))),),
                                       Text(" 님의 Etiquette", style: TextStyle(
                                           fontFamily: "Square",
                                           fontWeight: FontWeight.w500,
                                           fontSize: 20,
-                                          color: (theme
-                                              ? const Color(0xffffffff)
-                                              : const Color(0xff000000))),)
+                                          color: (theme ? const Color(0xffffffff) : const Color(0xff000000))),)
                                     ],
                                   ),
                                 ),
@@ -465,16 +390,12 @@ class _Home extends State<Home> {
                                             fontFamily: "Square",
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14,
-                                            color: (theme
-                                                ? const Color(0xffffffff)
-                                                : Color(0xff000000)))),
-                                        Text(hold_counts.toString(), style: TextStyle(
+                                            color: (theme ? const Color(0xffffffff) : Color(0xff000000)))),
+                                        Text(hold_counts, style: TextStyle(
                                             fontFamily: "Quicksand",
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
-                                            color: (theme
-                                                ? const Color(0xffffffff)
-                                                : Color(0xff5a5a5a))))
+                                            color: (theme ? const Color(0xffffffff) : Color(0xff5a5a5a))))
                                       ],
                                     ),
                                   ),
@@ -486,16 +407,12 @@ class _Home extends State<Home> {
                                             fontFamily: "Square",
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14,
-                                            color: (theme
-                                                ? const Color(0xffffffff)
-                                                : Color(0xff000000)))),
+                                            color: (theme ? const Color(0xffffffff) : Color(0xff000000)))),
                                         Text(auction_counts.toString(), style: TextStyle(
                                             fontFamily: "Quicksand",
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
-                                            color: (theme
-                                                ? const Color(0xffffffff)
-                                                : Color(0xff5a5a5a))))
+                                            color: (theme ? const Color(0xffffffff) : Color(0xff5a5a5a))))
                                       ],
                                     ),
                                   ),
@@ -507,16 +424,12 @@ class _Home extends State<Home> {
                                             fontFamily: "Square",
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14,
-                                            color: (theme
-                                                ? const Color(0xffffffff)
-                                                : Color(0xff000000)))),
+                                            color: (theme ? const Color(0xffffffff) : Color(0xff000000)))),
                                         Text(current_klay.toString(), style: TextStyle(
                                             fontFamily: "Quicksand",
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
-                                            color: (theme
-                                                ? const Color(0xffffffff)
-                                                : Color(0xff5a5a5a))))
+                                            color: (theme ? const Color(0xffffffff) : Color(0xff5a5a5a))))
                                       ],
                                     ),
                                   ),
@@ -572,10 +485,7 @@ class _Home extends State<Home> {
                                                 style: TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.w700,
-                                                    color: (theme
-                                                        ? const Color(0xffffffff)
-                                                        : const Color(
-                                                        0xff000000))))),
+                                                    color: (theme ? const Color(0xffffffff) : const Color(0xff000000))))),
                                         const SizedBox(width: 5),
                                         TimerBuilder.periodic(
                                           const Duration(seconds: 1),
@@ -586,10 +496,7 @@ class _Home extends State<Home> {
                                                 style: TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.w600,
-                                                    color: (theme
-                                                        ? const Color(0xffffffff)
-                                                        : const Color(
-                                                        0xff000000))));
+                                                    color: (theme ? const Color(0xffffffff) : const Color(0xff000000))));
                                           },
                                         ),
                                       ],
@@ -603,9 +510,7 @@ class _Home extends State<Home> {
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  color: (theme
-                                                      ? const Color(0xffffffff)
-                                                      : Color(0xff5a5a5a)))),
+                                                  color: (theme ? const Color(0xffffffff) : Color(0xff5a5a5a)))),
                                         ),
                                         TimerBuilder.periodic(
                                             const Duration(seconds: 1),
@@ -641,8 +546,7 @@ class _Home extends State<Home> {
                                 color: Colors.black87.withOpacity(0.4),
                                 spreadRadius: 1,
                                 blurRadius: 1,
-                                offset: const Offset(
-                                    1, 1), // changes position of shadow
+                                offset: const Offset(1, 1), // changes position of shadow
                               ),
                             ],
                           ),
@@ -677,9 +581,7 @@ class _Home extends State<Home> {
                                                 fontFamily: "Pretendard",
                                                 fontWeight: FontWeight.w700,
                                                 fontSize: 16,
-                                                color: (theme
-                                                    ? const Color(0xff000000)
-                                                    : const Color(0xff2d386b))),
+                                                color: (theme ? const Color(0xff000000) : const Color(0xff2d386b))),
                                           );
                                         },
                                       ),
@@ -721,9 +623,7 @@ class _Home extends State<Home> {
                                         fontFamily: "Pretendard",
                                         fontWeight: FontWeight.w500,
                                         fontSize: 20,
-                                        color: (theme
-                                            ? const Color(0xffffffff)
-                                            : const Color(0xff000000)))),
+                                        color: (theme ? const Color(0xffffffff) : const Color(0xff000000)))),
                                 TextButton(
                                   onPressed: () {
                                     // Navigator.push(
@@ -770,18 +670,14 @@ class _Home extends State<Home> {
                                                   fontFamily: "Pretendard",
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 20,
-                                                  color: (theme
-                                                      ? const Color(0xff000000)
-                                                      : const Color(0xff000000)),
+                                                  color: (theme ? const Color(0xff000000) : const Color(0xff000000)),
                                                   overflow: TextOverflow.ellipsis)),
                                           subtitle: Text(upload_times[index],
                                               style: TextStyle(
                                                   fontFamily: "NotoSans",
                                                   fontWeight: FontWeight.w400,
                                                   fontSize: 10,
-                                                  color: (theme
-                                                      ? const Color(0xff000000)
-                                                      : const Color(0xff000000)),
+                                                  color: (theme ? const Color(0xff000000) : const Color(0xff000000)),
                                                   overflow: TextOverflow.ellipsis)),
                                           children: <Widget>[
                                             Container(
@@ -796,17 +692,10 @@ class _Home extends State<Home> {
                                                               softWrap: true,
                                                               maxLines: 40,
                                                               style: TextStyle(
-                                                                  fontFamily:
-                                                                  "NotoSans",
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
+                                                                  fontFamily: "NotoSans",
+                                                                  fontWeight: FontWeight.w400,
                                                                   fontSize: 15,
-                                                                  color: (theme
-                                                                      ? const Color(
-                                                                      0xff000000)
-                                                                      : const Color(
-                                                                      0xff000000)))))
+                                                                  color: (theme ? const Color(0xff000000) : const Color(0xff000000)))))
                                                     ]))
                                           ]));
                                 })),
