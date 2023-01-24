@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:Etiquette/Screens/Register.dart';
-import 'package:Etiquette/Models/serverset.dart';
-import 'package:Etiquette/widgets/alertDialogWidget.dart';
+import 'package:Etiquette/Models/Settings.dart';
+import 'package:Etiquette/widgets/AlertDialogWidget.dart';
 import 'package:Etiquette/Screens/TabController.dart';
 
 // 로그인 화면
@@ -46,7 +46,7 @@ class _Login extends State<Login> {
         onTap: () => FocusScope.of(context).unfocus(), // 만약 화면 영역 밖을 선택하면 키보드 사라지게 설정
         child: Scaffold(
             body: Center(
-                child: SingleChildScrollView(// 스크롤 가능하게 설정 -> 만약 한 화면 내에 안담기더라도 스크롤 해서 볼 수 있음
+                child: SingleChildScrollView( // 스크롤 가능하게 설정 -> 만약 한 화면 내에 안담기더라도 스크롤 해서 볼 수 있음
                     child: Column(
                         children: <Widget> [
                           Padding(
@@ -110,11 +110,11 @@ class _Login extends State<Login> {
                                                     var _pw = pwController.text;
                                                     var jwt = await attemptLogIn(_id, _pw);
                                                     if (jwt == "") {
-                                                      displayDialog(context, "An Error Occurred", "No account was found matching that ID and Password");
+                                                      displayDialog_checkonly(context, "계정 정보 없음", "해당 계정이 존재하지 않습니다.\n다시 확인 후 입력해주십시오.");
                                                     } else if (jwt == "SocketException") {
-                                                      displayDialog(context, "An Error Occurred", "Connection to the server is not smooth.");
+                                                      displayDialog_checkonly(context, "에러 발생", "서버와의 통신이 원활하지 않습니다.\n다시 시도해 주십시오.");
                                                     } else if (jwt == "Unknown Error Occurred") {
-                                                      displayDialog(context, "An Error Occurred", jwt);
+                                                      displayDialog_checkonly(context, "에러 발생", "알 수 없는 에러가 발생했습니다.\n다시 시도해 주십시오.");
                                                     } else {
                                                       var _JWT = jwt.split(':')[0];
                                                       var _nickname = jwt.split(':')[1];
@@ -137,7 +137,7 @@ class _Login extends State<Login> {
                                               // 회원가입 버튼
                                               ElevatedButton(
                                                   onPressed: () {
-                                                    Get.to(Register());
+                                                    Get.to(const Register());
                                                   },
                                                   child: const Text("회원가입"), // 회원가입 버튼
                                                   style: ElevatedButton.styleFrom(
@@ -146,7 +146,43 @@ class _Login extends State<Login> {
                                                           borderRadius: BorderRadius.circular(12)
                                                       ) // 둥글게 설정
                                                   )
-                                              )
+                                              ),
+
+                                              const Padding(
+                                                padding: EdgeInsets.only(top: 50),
+                                                child: Text("만약 기억나지 않는다면",
+                                                    style: TextStyle(fontWeight: FontWeight.bold)),
+                                              ),
+
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        displayDialog_checkonly(context, "아이디 찾기", "ID는 사용자님의 휴대전화 번호입니다.");
+                                                      },
+                                                      child: const Text("ID 찾기"),
+                                                      style: ElevatedButton.styleFrom(
+                                                          primary: Colors.black,
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(12)
+                                                          ) // 둥글게 설정
+                                                      )
+                                                  ),
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        //TODO : 메일 보내기
+                                                      },
+                                                      child: const Text("PW 찾기"),
+                                                      style: ElevatedButton.styleFrom(
+                                                          primary: Colors.black,
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(12)
+                                                          ) // 둥글게 설정
+                                                      )
+                                                  )
+                                                ],
+                                              ),
                                             ]
                                         )
                                     ),
