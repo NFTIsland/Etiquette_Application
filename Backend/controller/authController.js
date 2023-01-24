@@ -7,11 +7,23 @@ module.exports = {
     login: function (req, res) {
         Auth.selectLogIn(req.body.id, req.body.pw, function (err, row) {
             if (row != undefined && row.length) {
-                var payload = {
-                    id: req.body.id,
-                };
-                var token = jwt.sign(payload, KEY, { algorithm: 'HS256', expiresIn: "1h" });
-                res.send(token);
+                var getToken = () => {
+                    return new Promise((resolve, reject) => {
+                        var payload = {
+                            id: req.body.id,
+                        };
+                        jwt.sign(payload, KEY, { algorithm: 'HS256', expiresIn: "1h" }, 
+                        function(err, token){
+                            if (err){
+                                reject(err);
+                            }
+                            else{
+                                resolve(token);
+                            }
+                        })
+                    });
+                }
+                getToken().then(token => {res.json({token: token, nickname: row[0]["nickname"]});})
             } else {
                 res.status(401);
                 res.send("There's no user matching that");
