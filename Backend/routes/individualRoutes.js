@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const individualController = require("../controller/individualController");
 
+router.post('/getEmail', individualController.getEmail);
 router.post('/holdlist', individualController.holdlist);
 router.post('/holdCounts', individualController.holdCounts);
 router.post('/auctionCounts', individualController.auctionCounts);
