@@ -1,6 +1,11 @@
 const connection = require('../config/database.js');
 
 module.exports = {
+    getMyEmail: function (id, callback) {
+        const sql = "SELECT email FROM user_db.users where id = (?);"
+        connection.query(sql, [id], callback);
+    },
+
     getHoldlist: function (kas_address, callback) {
         const sql = "\
         SELECT token_id, product_name, category, performance_date, place, seat_class, seat_No \
