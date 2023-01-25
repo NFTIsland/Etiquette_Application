@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const schedule = require('node-schedule');
+const nodemailer = require('nodemailer');
 
 const app = express();
 app.use(bodyParser.json({extended: true}));
