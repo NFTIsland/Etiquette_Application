@@ -1,6 +1,18 @@
 const Individual = require('../model/individual');
 
 module.exports = {
+    getEmail: function (req, res) {
+        Individual.getMyEmail(req.body.id, function (err, row) {
+            if (row != undefined) {
+                res.status(200);
+                res.json({statusCode: 200, email: row.at(0)['email']});
+            } else {
+                res.status(405)
+                res.json({statusCode: 405, msg: "Failed to retrieve email from DB"});
+            }
+        });
+    },
+
     holdlist: function (req, res) {
         Individual.getHoldlist(req.body.kas_address, function (err, row) {
             if (row != undefined) {
