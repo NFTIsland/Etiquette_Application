@@ -8,6 +8,7 @@ import 'package:Etiquette/Screens/Register.dart';
 import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/widgets/AlertDialogWidget.dart';
 import 'package:Etiquette/Screens/TabController.dart';
+import 'package:Etiquette/Screens/Find_PW.dart';
 
 // 로그인 화면
 class Login extends StatefulWidget {
@@ -159,7 +160,7 @@ class _Login extends State<Login> {
                                                 children: [
                                                   ElevatedButton(
                                                       onPressed: () {
-                                                        displayDialog_checkonly(context, "아이디 찾기", "ID는 사용자님의 휴대전화 번호입니다.");
+                                                        displayDialog_checkonly(context, "아이디 찾기", "ID는 회원님의 휴대전화 번호입니다.");
                                                       },
                                                       child: const Text("ID 찾기"),
                                                       style: ElevatedButton.styleFrom(
@@ -171,7 +172,7 @@ class _Login extends State<Login> {
                                                   ),
                                                   ElevatedButton(
                                                       onPressed: () {
-                                                        //TODO : 메일 보내기
+                                                        Get.to(const FindPW());
                                                       },
                                                       child: const Text("PW 찾기"),
                                                       style: ElevatedButton.styleFrom(
