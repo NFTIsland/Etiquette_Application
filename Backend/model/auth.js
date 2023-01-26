@@ -11,9 +11,9 @@ module.exports = {
         connection.query("SELECT * FROM users WHERE id = (?);", [id], callback);
     },
 
-    insert: function (id, pw, nickname, kas_address, callback) {
+    insert: function (id, pw, email, nickname, kas_address, callback) {
         var cryptPassword = crypto.createHash('sha256').update(pw).digest('hex');
-        connection.query("INSERT INTO user_db.users (id, pw, nickname, kas_address, role) VALUES (?, ?, ?, ?, ?);", [id, cryptPassword, nickname, kas_address, '2'], callback);
+        connection.query("INSERT INTO user_db.users (id, pw, email, nickname, kas_address, role) VALUES (?, ?, ?, ?, ?, ?);", [id, cryptPassword, email, nickname, kas_address, '2'], callback);
     },
 
     updatePW: function (id, pw, callback) {
