@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:Etiquette/widgets/AlertDialogWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/Settings.dart';
 
+// PW 찾기 화면
 class FindPW extends StatefulWidget {
   const FindPW({Key? key}) : super(key: key);
   @override
@@ -11,10 +13,11 @@ class FindPW extends StatefulWidget {
 }
 
 class _FindPW extends State<FindPW> {
-  final findPWController = TextEditingController();
+  final findPWController = TextEditingController(); // PW를 찾기 위한 key인 ID를 입력받는 컨트롤러
 
-  String email = "";
+  String email = ""; // email 주소를 저장하는 변수
 
+  // 임시 비밀번호를 받을 회원의 email 주소 받아오는 함수
   Future<void> getEmail(String id) async {
     try {
       final res = await http.post(Uri.parse("$SERVER_IP/individual/getEmail"),
@@ -32,6 +35,7 @@ class _FindPW extends State<FindPW> {
     }
   }
 
+  // getEmail 함수를 통해 받은 email 주소로 임시 비밀번호를 생성하여 메일 전송
   Future<void> SendRandomPW(String id, String email) async {
     try {
       final res = await http.post(Uri.parse("$SERVER_IP/auth/sendRandomPW"), body: {
@@ -49,16 +53,32 @@ class _FindPW extends State<FindPW> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true, // 페이지 제목을 중앙에 배치
+        title: const Text("비밀번호 찾기",
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        elevation: 0,
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.white24,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () {
+            Get.back(); // 이전 화면으로 이동
+          },
+        ),
+      ),
       body: Center(
         child: Column(
           children: <Widget>[
             const Padding(
-              padding: EdgeInsets.only(top: 40),
+              padding: EdgeInsets.only(top: 80),
               child: Text("본인 확인을 위하여 다시 한번 입력해주세요.",
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 20),
+              // 본인 확인을 위해 id 다시 입력
+              padding: const EdgeInsets.fromLTRB(80, 20, 80, 0),
               child: TextFormField(
                   maxLines: 1,
                   maxLength: 11,
@@ -66,7 +86,7 @@ class _FindPW extends State<FindPW> {
                   keyboardType: TextInputType.number, // 기본으로 숫자 모양의 키보드 호출되도록 설정
                   controller: findPWController,
                   decoration: const InputDecoration(
-                    labelText: "HP(ID)", // 입력칸에 ID 표시되도록
+                    labelText: "HP(ID)",
                     hintText: "Please Enter Your HP(ID) Again",
                     counterText: "",
                   ),
@@ -78,19 +98,23 @@ class _FindPW extends State<FindPW> {
                   }
               ),
             ),
-            ElevatedButton(
-                onPressed: () async {
-                  var _id = findPWController.text;
-                  await getEmail(_id);
-                  await SendRandomPW(_id, email);
-                },
-                child: const Text("확인"),
-                style: ElevatedButton.styleFrom(
-                    primary: Colors.purpleAccent.shade100,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)
-                    ) // 둥글게 설정
-                )
+            // 확인 버튼
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: ElevatedButton(
+                  onPressed: () async {
+                    var _id = findPWController.text; // 본인 확인용 id를 입력받을 변수
+                    await getEmail(_id);
+                    await SendRandomPW(_id, email);
+                  },
+                  child: const Text("확인"),
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.purpleAccent.shade100,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)
+                      ) // 둥글게 설정
+                  )
+              ),
             ),
           ],
         ),
