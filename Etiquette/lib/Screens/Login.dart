@@ -49,12 +49,14 @@ class _Login extends State<Login> {
         onTap: () => FocusScope.of(context).unfocus(), // 만약 키보드 밖을 선택하면 키보드 사라지게 설정
         child: Scaffold(
             body: Center(
-                child: SingleChildScrollView( // 스크롤 가능하게 설정 -> 만약 한 화면 내에 안담기더라도 스크롤 해서 볼 수 있음
+              // 스크롤 가능하게 설정 -> 만약 한 화면 내에 담기지 않더라도 스크롤 해서 볼 수 있음
+                child: SingleChildScrollView(
                     child: Column(
                         children: <Widget> [
                           Padding(
                               padding: const EdgeInsets.only(left: 80),
-                              child: Row( // 가로로 Login, Signup 글씨 배치
+                              // 가로로 Login, Signup 글씨 배치
+                              child: Row(
                                   children: const <Widget> [
                                     Text("Login", style: TextStyle(fontSize: 30)),
                                     Text("/Sign up", style: TextStyle(fontSize: 20, color: Colors.grey),)
