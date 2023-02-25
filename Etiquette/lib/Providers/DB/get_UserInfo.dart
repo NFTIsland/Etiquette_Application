@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Utilities/jwt_decode.dart';
 
+// 개인의 Kas 주소를 불러오는 함수
 Future<Map<String, dynamic>> getKasAddress() async {
   try {
     String id = await jwtDecode();
