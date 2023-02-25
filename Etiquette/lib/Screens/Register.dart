@@ -24,7 +24,7 @@ class _Register extends State<Register> {
   final repwController = TextEditingController(); // pw 재입력받는 컨트롤러
   final emailController = TextEditingController(); // email 입력받는 컨트롤러
   final nicknameController = TextEditingController(); // nickname 입력받는 컨트롤러
-  final inputKlaytnAddressController = TextEditingController(); // KAS 주소 입력받기
+  final inputKlaytnAddressController = TextEditingController(); // KAS 주소 입력받는 컨트롤러
   bool flag_auth = false; // 인증 여부 확인
   bool email_input = false; // email 제대로 입력되었는지 확인
   bool nickname_input = false; // 닉네임 제대로 입력되었는지 확인
