@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:async/async.dart';
 import 'dart:convert';
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,13 +8,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:Etiquette/widgets/drawer.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/widgets/appbar.dart';
-import 'package:Etiquette/Widgets/alertDialogWidget.dart';
+import 'package:Etiquette/Widgets/AlertDialogWidget.dart';
 import 'package:Etiquette/Utilities/round.dart';
 import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/get_balance.dart';
 
+// 로그인 시 처음으로 진입하는 Home 화면
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -23,28 +24,28 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
-  final AsyncMemoizer _memoizer = AsyncMemoizer();
+  final AsyncMemoizer _memoizer = AsyncMemoizer(); // 불필요하게 위젯이 rebuild되는 것을 막기 위한 asyncmemoizer
 
-  bool ala = true;
-  var img = const Icon(Icons.notifications);
-  late bool theme;
-  late double width;
-  late double height;
+  bool ala = true; // alarm 여부
+  var img = const Icon(Icons.notifications); // alarm 이미지
+  late bool theme; // 테마 적용 여부
+  late double width; // 화면의 너비
+  late double height; // 화면의 높이
 
-  String currentTime = "Loading...";
-  String klayCurrency = "Loading...";
-  String yesterday_last = "";
-  String hold_counts = "";
-  String auction_counts = "";
-  String? nickname = "";
-  late final String address;
+  String currentTime = "Loading..."; // 현재 시간을 표시하는 문자열
+  String klayCurrency = "Loading..."; // Klay 환율을 표시하는 문자열
+  String yesterday_last = ""; // 환율 변동 비교를 위한 지표
+  String hold_counts = ""; // 보유 중인 티켓의 수를 표시하는 문자열
+  String auction_counts = ""; // 옥션에 참여중인 티켓의 수를 표시하는 문자열
+  String? nickname = ""; // 닉네임을 표시하는 문자열
+  late final String address; // KAS 주소를 받는 문자열
 
-  List home_posters = [];
-  List titles = [];
-  List contents = [];
-  List upload_times = [];
+  List home_posters = []; // Home 화면에 보일 포스터들을 저장하는 리스트
+  List titles = []; // Home 화면 공지사항의 제목
+  List contents = []; // Home 화면 공지사항의 세부내용
+  List upload_times = []; // Home 화면 공지사항의 업로드 시간
 
-  double current_klay = 0.0;
+  double current_klay = 0.0; // 보유 중인 Klay
 
   void _setData(bool value) async {
     var key = 'ala';
@@ -75,12 +76,13 @@ class _Home extends State<Home> {
     return theme;
   }
 
+  // 현재의 시간 받아오는 함수
   String loadCurrentTime() {
     final now = DateTime.now();
-    // currentTime = "${now.year}년 ${now.month}월 ${now.day}일 ${now.hour}시 ${now.minute}분 ${now.second}초";
     return "${now.year}.${now.month.toString().padLeft(2, "0")}.${now.day.toString().padLeft(2, "0")}. ${now.hour.toString().padLeft(2, "0")}:${now.minute.toString().padLeft(2, "0")}:${now.second.toString().padLeft(2, "0")}";
   }
 
+  // 보유 중인 Klay 잔액 확인 함수
   Future<void> loadKlayBalance() async {
     Map<String, dynamic> kas_address_data = await getKasAddress();
     if (kas_address_data['statusCode'] == 200) {
@@ -104,6 +106,7 @@ class _Home extends State<Home> {
     }
   }
 
+  // Klay 환율 확인하는 함수
   Future<void> getKlayCurrency() async {
     final res = await http
         .get(Uri.parse("https://api.coinone.co.kr/ticker?currency=klay"));
@@ -117,6 +120,7 @@ class _Home extends State<Home> {
     }
   }
 
+  // 환율을 문자열로 변환
   String getStrKlayCurrency() {
     getKlayCurrency();
     if (double.tryParse(klayCurrency) == null) {
@@ -126,6 +130,7 @@ class _Home extends State<Home> {
     }
   }
 
+  // 등락 여부 Text로 표시
   Text getUpAndDownRate() {
     double? _klayCurrency = double.tryParse(klayCurrency);
     double? _yesterday_last = double.tryParse(yesterday_last);
@@ -163,6 +168,7 @@ class _Home extends State<Home> {
     }
   }
 
+  // Home 화면의 포스터들을 load하는 함수
   Future<void> loadHomePosters() async {
     const url = "$SERVER_IP/screen/homePosters";
     try {
@@ -181,6 +187,7 @@ class _Home extends State<Home> {
     }
   }
 
+  // Home 화면에 표시할 공지사항들을 가져오는 함수
   Future<void> getHomeNotices() async {
     const url = "$SERVER_IP/screen/homeNotices";
     try {
@@ -201,16 +208,77 @@ class _Home extends State<Home> {
     }
   }
 
+  // 닉네임을 불러오는 함수
+  Future<void> getNickname() async {
+    nickname = await storage.read(key: "nickname");
+  }
+
+  // 보유 중인 티켓의 수를 가져오는 함수
+  Future<void> getHoldCounts() async {
+    const url = "$SERVER_IP/individual/holdCounts";
+    try {
+      final kas_address_data = await getKasAddress();
+      if (kas_address_data['statusCode'] == 200) {
+        var res = await http.post(Uri.parse(url), body: {
+          'kas_address': kas_address_data['data'][0]['kas_address'],
+        });
+        Map<String, dynamic> data = json.decode(res.body);
+        if (res.statusCode == 200) {
+          var counter = data["data"][0]['counts'];
+          setState(() {
+            hold_counts = counter;
+          }
+          );
+        } else {
+          String msg = data['msg'];
+          displayDialog_checkonly(context, "보유 티켓의 수", msg);
+        }
+      } else {
+        displayDialog_checkonly(context, "보유 티켓의 수", "보유 티켓의 수를 불러오는 데에 실패했습니다.");
+      }
+    } catch (ex) {
+      print("보유 티켓의 수 --> ${ex.toString()}");
+    }
+  }
+
+  // 옥션에 참여중인 티켓의 수를 받아오는 함수
+  Future<void> getAuctionCounts() async {
+    const url = "$SERVER_IP/individual/auctionCounts";
+    try {
+      final kas_address_data = await getKasAddress();
+      if (kas_address_data['statusCode'] == 200) {
+        var res = await http.post(Uri.parse(url), body: {
+          'kas_address': kas_address_data['data'][0]['kas_address'],
+        });
+        Map<String, dynamic> data = json.decode(res.body);
+        if (res.statusCode == 200) {
+          var counter = data["data"][0]['counts'];
+          setState(() {
+            auction_counts = counter;
+          }
+          );
+        } else {
+          String msg = data['msg'];
+          displayDialog_checkonly(context, "옥션 참여 티켓의 수", msg);
+        }
+      } else {
+        displayDialog_checkonly(context, "옥션 참여 티켓의 수", "옥션에 참여 중인 티켓의 수를 불러오는 데에 실패했습니다.");
+      }
+    } catch (ex) {
+      print("옥션 참여 티켓의 수 --> ${ex.toString()}");
+    }
+  }
+
   _fetchData() async {
+    // 불필요하게 rebuild 되지 않아야하는 함수들 설정
     return this._memoizer.runOnce(() async {
       _loadData();
       loadHomePosters();
       getHomeNotices();
       loadKlayBalance();
-      List<String?> Infolist = await getInfo();
-      nickname = Infolist[1];
-      hold_counts = await getHoldCounts();
-      auction_counts = await getAuctionCounts();
+      getNickname();
+      getHoldCounts();
+      getAuctionCounts();
       await Future.delayed(const Duration(milliseconds: 1000));
       return;
     });
@@ -285,6 +353,7 @@ class _Home extends State<Home> {
                       SizedBox(
                         width: width,
                         height: height * 0.55,
+                        // 자동으로 횡이동하며 포스터들이 차례로 보이는 CarouselSlider
                         child: CarouselSlider(
                           options: CarouselOptions(
                             viewportFraction: 0.8,
@@ -300,7 +369,6 @@ class _Home extends State<Home> {
                                 height: height * 0.55,
                                 decoration: BoxDecoration(
                                   color: Colors.black,
-                                  //border 를 주기 위해 decoration 사용
                                   border: Border.all(
                                     width: 0,
                                     color: Colors.grey,
@@ -308,7 +376,7 @@ class _Home extends State<Home> {
                                   borderRadius: BorderRadius.circular(16.0),
                                 ),
                                 child: ClipRRect(
-                                  //ClipRRect : 위젯 모서리 둥글게 하기위해 사용하는 위젯
+                                  // ClipRRect : 위젯 모서리 둥글게 하기위해 사용하는 위젯
                                   borderRadius: BorderRadius.circular(16.0),
                                   child: Image.network(item, fit: BoxFit.fill,),
                                 ),
@@ -356,6 +424,7 @@ class _Home extends State<Home> {
                               ),
                             ]
                         ),
+                        // 개인 현황을 보여주는 정보판
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -488,7 +557,7 @@ class _Home extends State<Home> {
                                                     color: (theme ? const Color(0xffffffff) : const Color(0xff000000))))),
                                         const SizedBox(width: 5),
                                         TimerBuilder.periodic(
-                                          const Duration(seconds: 1),
+                                          const Duration(seconds: 1), // 1초마다 갱신
                                           builder: (context) {
                                             return Text(getStrKlayCurrency(),
                                                 maxLines: 1,
@@ -513,7 +582,7 @@ class _Home extends State<Home> {
                                                   color: (theme ? const Color(0xffffffff) : Color(0xff5a5a5a)))),
                                         ),
                                         TimerBuilder.periodic(
-                                            const Duration(seconds: 1),
+                                            const Duration(seconds: 1), // 1초마다 갱신
                                             builder: (context) {
                                               return getUpAndDownRate();
                                             }),
@@ -546,7 +615,7 @@ class _Home extends State<Home> {
                                 color: Colors.black87.withOpacity(0.4),
                                 spreadRadius: 1,
                                 blurRadius: 1,
-                                offset: const Offset(1, 1), // changes position of shadow
+                                offset: const Offset(1, 1),
                               ),
                             ],
                           ),
@@ -573,10 +642,10 @@ class _Home extends State<Home> {
                                             letterSpacing: 1.3),
                                       ),
                                       TimerBuilder.periodic(
-                                        const Duration(seconds: 1),
+                                        const Duration(seconds: 1), // 1초마다 갱신
                                         builder: (context) {
                                           return Text(
-                                            loadCurrentTime(),
+                                            loadCurrentTime(), // 현재의 시간 출력
                                             style: TextStyle(
                                                 fontFamily: "Pretendard",
                                                 fontWeight: FontWeight.w700,
@@ -611,6 +680,7 @@ class _Home extends State<Home> {
                             ),
                           ]),
                       ),
+                      // 공지사항 표시구역
                       Padding(
                           padding: EdgeInsets.fromLTRB(
                               width * 0.044, height * 0.01125, width * 0.044, 0),
@@ -624,21 +694,6 @@ class _Home extends State<Home> {
                                         fontWeight: FontWeight.w500,
                                         fontSize: 20,
                                         color: (theme ? const Color(0xffffffff) : const Color(0xff000000)))),
-                                TextButton(
-                                  onPressed: () {
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => const NoticePage()
-                                    //     )
-                                    // )
-                                  },
-                                  child: const Text("+more",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Color(0xff5D5D5D),
-                                      )),
-                                ),
                               ])),
                       Padding(
                         padding: EdgeInsets.fromLTRB(width * 0.044, height * 0.019,
@@ -651,13 +706,14 @@ class _Home extends State<Home> {
                                   ? const Color(0xffe8e8e8)
                                   : const Color(0xffffffff)),
                             ),
+                            // 리스트뷰와 타일을 사용하여 공지사항 표시
                             child: ListView.separated(
                                 separatorBuilder:
                                     (BuildContext context, int index) =>
                                 const Divider(thickness: 2),
-                                physics: const NeverScrollableScrollPhysics(),
+                                physics: const NeverScrollableScrollPhysics(), // listview 안에서의 스크롤 해제
                                 shrinkWrap: true,
-                                itemCount: contents.length,
+                                itemCount: contents.length, // 공지사항의 개수
                                 itemBuilder: (context, index) {
                                   return Theme(
                                       data: Theme.of(context).copyWith(
