@@ -15,5 +15,12 @@ module.exports = {
         ORDER BY upload_time DESC \
         LIMIT 0, 5;";
         connection.query(sql, callback);
+    },
+
+    getBackdropImages: function (callback) {
+        const sql = "\
+        SELECT DISTINCT(backdrop_url) \
+        FROM user_db.backdrop_images;";
+        connection.query(sql, callback);
     }
 }
