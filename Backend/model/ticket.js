@@ -3,13 +3,17 @@ const connection = require('../config/database.js');
 module.exports = {
     getSearch: function (keyword, callback) {
         const sql = "\
-        SELECT product_name, place \
+        SELECT T1.product_name, T1.place, T2.poster_url \
+        FROM (SELECT product_name, place \
         FROM user_db.tickets \
         WHERE owner IN (SELECT kas_address \
         FROM user_db.users \
         WHERE role = '2') \
         AND product_name LIKE (?) \
-        GROUP BY product_name, place;";
+        AND now() > booking_start_date \
+        AND now() < performance_date \
+        GROUP BY product_name, place) T1 LEFT JOIN user_db.ticket_description T2 \
+        ON (T1.product_name = T2.product_name);";
         connection.query(sql, [`%${keyword}%`], callback);
     },
 
@@ -34,7 +38,7 @@ module.exports = {
 
     getTicketPerformanceDate: function (product_name, place, callback) {
         const sql = "\
-        SELECT DATE(performance_date) AS `date` \
+        SELECT DISTINCT DATE(performance_date) AS `date` \
         FROM (SELECT DISTINCT(performance_date) \
         FROM user_db.tickets \
         WHERE owner IN (SELECT kas_address \
@@ -42,7 +46,9 @@ module.exports = {
         WHERE role = '2') \
         AND product_name = (?) \
         AND place = (?) \
-        ORDER BY performance_date ASC) AS `performance_date`;"
+        AND now() > booking_start_date \
+        AND now() < performance_date \
+        ORDER BY performance_date ASC) AS `performance_date`;";
         connection.query(sql, [product_name, place], callback);
     },
 
@@ -105,14 +111,13 @@ module.exports = {
         const datetime = `${date} ${time}`;
         const sql = "\
         SELECT token_id, owner \
-        FROM (SELECT token_id, owner \
         FROM user_db.tickets \
         WHERE product_name = (?) \
         AND place = (?) \
         AND performance_date = (?) \
         AND seat_class = (?) \
-        AND seat_No = (?) as `owner` \
-        WHERE owner IN (SELECT kas_address \
+        AND seat_No = (?) \
+        AND owner IN (SELECT kas_address \
         FROM user_db.users \
         WHERE role = '2');"
         connection.query(sql, [product_name, place, datetime, seat_class, seat_No], callback);
@@ -134,13 +139,35 @@ module.exports = {
         connection.query(sql, [token_id], callback);
     },
 
-    getHotPick: function (callback) {
+    getTicketInfoByTokenId: function (token_id, callback) {
         const sql = "\
-        SELECT product_name, place, count(*) as `count` \
+        SELECT product_name, place, seat_class, seat_No \
+        FROM user_db.tickets \
+        where token_id = (?);";
+        connection.query(sql, [token_id], callback);
+    },
+
+    getComingSoon: function (callback) {
+        const sql = '\
+        SELECT T1.product_name, T1.booking_start_date, T1.performance_date, T1.place, T2.poster_url \
+        FROM (SELECT product_name, booking_start_date, performance_date, place \
+        FROM user_db.tickets \
+        WHERE now() < booking_start_date \
+        AND now() >= DATE_SUB(booking_start_date, INTERVAL 1 HOUR) \
+        GROUP BY product_name, place, booking_start_date, performance_date) T1 LEFT JOIN user_db.ticket_description T2 \
+        ON (T1.product_name = T2.product_name);';
+        connection.query(sql, callback);
+    },
+
+    getHotPick: function (callback) {
+        const sql = '\
+        SELECT T1.product_name, T1.place, T1.count, T2.poster_url \
+        FROM (SELECT product_name, place, count(*) as `count` \
         FROM user_db.interest_for_ticketing \
         GROUP BY product_name, place \
         ORDER BY `count` DESC, product_name ASC, place ASC \
-        LIMIT 0, 5;";
+        LIMIT 0, 5) T1 LEFT JOIN user_db.ticket_description T2 \
+        ON (T1.product_name = T2.product_name);';
         connection.query(sql, callback);
     },
 
