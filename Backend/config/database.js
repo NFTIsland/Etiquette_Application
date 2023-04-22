@@ -1,6 +1,7 @@
-const mysql = require("mysql")
+const mysql = require("mysql2")
 require("dotenv").config();
 
+// DB 커넥션 객체 생성
 const mysqlConnection = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -10,12 +11,13 @@ const mysqlConnection = mysql.createConnection({
     multipleStatements : true
 });
 
+// DB 연결 성공 여부에 따라 로그 출력
 mysqlConnection.connect((error) => {
     if (error) {
         console.log(error);
         return;
     } else {
-        console.log('DB is connected');
+        console.log('DB가 연결되었습니다.');
     }
 });
 
