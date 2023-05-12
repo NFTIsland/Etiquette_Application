@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const screenController = require("../controller/screenController");
 
-router.get('/homePosters', screenController.homePosters);
-router.get('/homeNotices', screenController.homeNotices);
+const homePosters = require('../controller/screen/homePosters');
+const homeNotices = require('../controller/screen/homeNotices');
+const backdropImages = require('../controller/screen/backdropImages');
+
+router.get('/homePosters', homePosters);
+router.get('/homeNotices', homeNotices);
+router.get('/backdropImages', backdropImages);
 
 module.exports = router;
