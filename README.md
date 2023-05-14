@@ -10,4 +10,11 @@
 
 :arrow_forward: The database is constructed by separately setting additional tables for performing major functions such as auctions, focusing on the 'users' table that stores user information and the 'tickets' table that stores ticket information.
 
+### :bulb: Features
+:pencil2: Basically, it consists of four main tabs, and the market is configured to carry out used ticket transactions between users as well as ticketing from ticket vendors.  
+:pencil2: When signing up as a member, you have to go through Firebase mobile phone authentication and set passwords and nicknames.  
+:pencil2: Individuals are given KAS addresses so that they can make transactions based on Klay in the app, and if they already have KAS addresses, they can also enter them directly.  
+:pencil2: You can modify your personal information through Drawer, or check the list of tickets you have, and the Klay you have.  
+:pencil2: Tickets with TokenID can be freely traded in Klay currency.
+
 This project is the result of the 2022 Hanium Mentoring Contest.
