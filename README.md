@@ -1,5 +1,6 @@
 # Etiquette_Application
-#### :ticket: Ticket System Using NFT for Fair and Transparent Transactions
+#### :ticket: Ticket System Using NFT for Fair and Transparent Transactions  
+**This project is the result of the 2022 Hanium Mentoring Contest.**
 
 ### :mega: Purpose of planning this project
 :arrow_forward: There is a need for a system to resolve consumers' complaints about ticket refund fees and to prevent fraudulent damage that may occur during transactions by presenting transparency in transaction details.  
@@ -35,11 +36,9 @@ With this in mind, there is an auction function that allows free transactions be
 :exclamation: **_In order to upload a ticket to Auction, the following three conditions must be met._**  
 - The starting price of the auction must be less than or equal to the cost of the ticket.
 - The immediate transaction price must be less than or equal to the cost of the ticket.  
-- The starting price of the auction shall be divided into units of bidding.
+- The starting price of the auction should be divided into units of bidding.
 
 ### :bar_chart: Test
 - Ubuntu 22.04
 - Android Studio based on Windows
 - MySQL Workbench 8.0 CE
-
-**This project is the result of the 2022 Hanium Mentoring Contest.**
