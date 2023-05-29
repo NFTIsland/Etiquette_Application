@@ -1,14 +1,12 @@
 import 'dart:convert';
-import 'package:intl/intl.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:Etiquette/Models/Settings.dart';
-import 'package:Etiquette/Screens/Search.dart';
-import 'package:Etiquette/Screens/Ticketing/total_imminent.dart';
 import 'package:Etiquette/Screens/Ticketing/search_ticket.dart';
 import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
 import 'package:Etiquette/widgets/drawer.dart';
@@ -66,7 +64,7 @@ class _Ticketing extends State<Ticketing> {
   }
 
   Future<void> getHotPickFromDB() async {
-    const url = "$SERVER_IP/ticketing/hotPick";
+    const url = "$SERVER_IP/ticket/hotPick";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
@@ -99,8 +97,8 @@ class _Ticketing extends State<Ticketing> {
     }
   }
 
-  Future<void> getCommingSoonFromDB() async {
-    const url = "$SERVER_IP/ticketing/commingSoon";
+  Future<void> getComingSoonFromDB() async {
+    const url = "$SERVER_IP/ticket/comingSoon";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
@@ -145,7 +143,7 @@ class _Ticketing extends State<Ticketing> {
   }
 
   Future<void> getImminentDeadlineFromDB() async {
-    const url = "$SERVER_IP/ticketing/deadLineTop5";
+    const url = "$SERVER_IP/ticket/deadLineTop5";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
@@ -193,8 +191,7 @@ class _Ticketing extends State<Ticketing> {
   Future<void> getTicketingDataFromDB() async {
     loadBannerPosters();
     getHotPickFromDB();
-    getCommingSoonFromDB();
-    // getImminentDeadlineFromDB();
+    getComingSoonFromDB();
   }
 
   @override
@@ -316,7 +313,6 @@ class _Ticketing extends State<Ticketing> {
                                           child: InkWell(
                                             highlightColor: Colors.transparent,
                                             splashFactory: InkRipple.splashFactory,
-                                            // splashFactory: NoSplash.splashFactory,
                                             onTap: () {
                                               Navigator.push(
                                                 context,
@@ -337,7 +333,6 @@ class _Ticketing extends State<Ticketing> {
                                                   Expanded(
                                                     flex : 4,
                                                     child: Image.network(
-                                                      // "https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fmainlogo.png?alt=media&token=6195fc49-ac21-4641-94d9-1586874ded92",
                                                       commingsoon[index]['poster_url'],
                                                       fit: BoxFit.fill,
                                                     ),
@@ -414,8 +409,6 @@ class _Ticketing extends State<Ticketing> {
                         CarouselSlider(
                           options: CarouselOptions(
                             viewportFraction: 1,
-                            // height: height * 0.125,
-                            // height: height * 0.2,
                             height: height * 0.3,
                             autoPlay: true, //자동재생 여부
                           ),
@@ -465,7 +458,6 @@ class _Ticketing extends State<Ticketing> {
                                           child: InkWell(
                                             highlightColor: Colors.transparent,
                                             splashFactory: InkRipple.splashFactory,
-                                            // splashFactory: NoSplash.splashFactory,
                                             onTap: () {
                                               Navigator.push(
                                                 context,
@@ -482,17 +474,13 @@ class _Ticketing extends State<Ticketing> {
                                               padding: const EdgeInsets.only(bottom: 10),
                                               child: SizedBox(
                                                 width: double.infinity,
-                                                // height: height * 0.07,
                                                 height: 70,
                                                 child: Row(
-                                                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                     crossAxisAlignment: CrossAxisAlignment.center,
                                                     children: <Widget>[
                                                       Image.network(
                                                         hotpick[index]['poster_url'],
-                                                        // width: height*0.07,
-                                                        // height: height*0.07,
                                                         width: 47.48,
                                                         height: 70,
                                                         fit: BoxFit.fill,
@@ -506,14 +494,10 @@ class _Ticketing extends State<Ticketing> {
                                                           children: <Widget> [
                                                             Container(
                                                               width: height*0.07,
-                                                              // height: height*0.07,
                                                               alignment: Alignment.center,
                                                               child : Text(
                                                                 (index + 1).toString(),
                                                                 style: const TextStyle(
-                                                                  // fontFamily: "Pretendard",
-                                                                  // fontWeight: FontWeight.w400,
-                                                                  // fontSize: 15,
                                                                   fontFamily: "Quicksand",
                                                                   fontWeight: FontWeight.bold,
                                                                   fontSize: 25,
