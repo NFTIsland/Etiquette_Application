@@ -1,29 +1,13 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/Settings.dart';
 
 Future<Map<String, dynamic>> checkKasAddress(String address) async {
   String url = "$SERVER_IP/kas/wallet/checkAccount/$address";
-  Dio dio = getBasicDio();
-
   try {
-    final res = await dio.get(url);
-    Map<String, dynamic> data = res.data;
+    final res = await http.get(Uri.parse(url));
+    Map<String, dynamic> data = json.decode(res.body);
     return data;
-  } on DioError catch (e) {
-    final handleError = e.response?.data; // { statusCode: 400, msg: 존재하지 않는 KAS 주소입니다. }
-    if (handleError == null) {
-      Map<String, dynamic> data = {
-        "statusCode": 400,
-        "msg": "서버와의 연결이 원활하지 않습니다.",
-      };
-      return data;
-    } else {
-      Map<String, dynamic> data = {
-        "statusCode": e.response?.statusCode,
-        "msg": handleError['msg'],
-      };
-      return data;
-    }
   } catch (ex) {
     Map<String, dynamic> data = {
       "statusCode": 400,
