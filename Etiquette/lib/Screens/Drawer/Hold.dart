@@ -156,7 +156,7 @@ class _Hold extends State<Hold> {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
-            appBar: appbarWithArrowBackButton( "보유 티켓 목록", theme),
+            appBar: appbarWithArrowBackButton("보유 티켓 목록", theme),
             body: SingleChildScrollView(
               padding: const EdgeInsets.all(15.0),
               child: Column(
@@ -262,7 +262,6 @@ class _Hold extends State<Hold> {
                                       const SizedBox(width: 5),
                                       Image.network(
                                         holdlist[index]['poster_url'],
-                                        // 'https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fkbo_logo.png?alt=media&token=b3a5372d-1e5c-4013-b2d5-1dad86ff4060',
                                         width: 88.18,
                                         height: 130,
                                         fit: BoxFit.fill,
@@ -317,8 +316,6 @@ class _Hold extends State<Hold> {
                                                     child: Text(
                                                       holdlist[index]['performance_date'].substring(0, 10).replaceAll("-", ".") + " " + holdlist[index]['performance_date'].substring(11, 16),
                                                       style: const TextStyle(
-                                                        // fontFamily: 'Pretendard',
-                                                        // fontWeight: FontWeight.w400,
                                                         fontFamily: 'Quicksand',
                                                         fontWeight: FontWeight.w600,
                                                         fontSize: 13,

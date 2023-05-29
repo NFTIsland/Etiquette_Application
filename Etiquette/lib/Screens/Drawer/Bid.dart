@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:get/get.dart';
 import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 import 'package:Etiquette/widgets/appbar.dart';

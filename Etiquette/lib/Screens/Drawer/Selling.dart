@@ -210,7 +210,6 @@ class _Selling extends State<Selling> {
                                       const SizedBox(width: 10),
                                       Image.network(
                                         sellinglist[i]['poster_url'],
-                                        // 'https://firebasestorage.googleapis.com/v0/b/island-96845.appspot.com/o/poster%2Fkbo_logo.png?alt=media&token=b3a5372d-1e5c-4013-b2d5-1dad86ff4060',
                                         width: 88.18,
                                         height: 130,
                                         fit: BoxFit.fill,

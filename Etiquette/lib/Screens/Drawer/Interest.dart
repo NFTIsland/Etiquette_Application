@@ -26,7 +26,6 @@ class _Interest extends State<Interest> with SingleTickerProviderStateMixin {
   late bool theme;
 
   final _tabbar = GlobalKey();
-  final _tabbarview = GlobalKey();
   late final TabController? tabcontroller;
 
   Future<bool> getTheme() async {
@@ -301,8 +300,6 @@ class _Interest extends State<Interest> with SingleTickerProviderStateMixin {
                                           const SizedBox(width: 5),
                                           Image.network(
                                             interest_ticketing_list[index]['poster_url'],
-                                            // width: 88.18,
-                                            // height: 130,
                                             width: 67.83,
                                             height: 100,
                                             fit: BoxFit.fill,

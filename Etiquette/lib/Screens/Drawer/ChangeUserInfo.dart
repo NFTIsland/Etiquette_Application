@@ -52,8 +52,10 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                 child: Scaffold(
                   appBar: AppBar(
                     centerTitle: true,
-                    title: const Text("개인정보 수정",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    title: const Text(
+                        "개인정보 수정",
+                        style: TextStyle(fontWeight: FontWeight.bold)
+                    ),
                     elevation: 0,
                     foregroundColor: Colors.black,
                     backgroundColor: Colors.white24,
@@ -78,11 +80,13 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  const Text("비밀번호를 바꾸고 싶다면",
+                                children: <Widget> [
+                                  const Text(
+                                    "비밀번호를 바꾸고 싶다면",
                                     style: TextStyle(
                                         fontSize: 20.0,
-                                        fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.bold
+                                    ),
                                   ),
                                   SizedBox(
                                     width: 0.6 * width,
@@ -91,15 +95,24 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                                       style: ElevatedButton.styleFrom(
                                           primary: Colors.blueAccent),
                                       onPressed: () {
-                                        Get.to(() => checkcurPW(),);
+                                        Get.to(() => const checkcurPW());
                                       },
-                                      child: const Text("비밀번호 변경",
-                                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+                                      child: const Text(
+                                          "비밀번호 변경",
+                                          style: TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.bold
+                                          )
+                                      ),
                                     ),
                                   ),
                                 ],
-                              )),
-                          const Divider(thickness: 1, color: Colors.grey,),
+                              )
+                          ),
+                          const Divider(
+                              thickness: 1,
+                              color: Colors.grey
+                          ),
                           SizedBox(
                               width: width,
                               height: 0.25 * height,
@@ -107,22 +120,30 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  const Text("닉네임을 바꾸고 싶다면",
+                                  const Text(
+                                    "닉네임을 바꾸고 싶다면",
                                     style: TextStyle(
                                         fontSize: 20.0,
-                                        fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.bold
+                                    ),
                                   ),
                                   SizedBox(
                                     width: 0.6 * width,
                                     height: 0.1 * height,
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                          primary: Colors.blueAccent),
+                                          primary: Colors.blueAccent
+                                      ),
                                       onPressed: () {
-                                        Get.to(() => ChangeNickname(),);
+                                        Get.to(() => const ChangeNickname());
                                       },
-                                      child: const Text("닉네임 변경",
-                                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+                                      child: const Text(
+                                          "닉네임 변경",
+                                          style: TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.bold
+                                          )
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -136,6 +157,7 @@ class _ChangeUserInfo extends State<ChangeUserInfo> {
             );
           }
           return const Center(child: CircularProgressIndicator());
-        });
+        }
+    );
   }
 }

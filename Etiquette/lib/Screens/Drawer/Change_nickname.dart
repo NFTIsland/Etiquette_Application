@@ -9,6 +9,9 @@ import 'package:Etiquette/widgets/appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangeNickname extends StatefulWidget {
+  const ChangeNickname({Key? key}) : super(key: key);
+
+  @override
   State createState() => _ChangeNickname();
 }
 
@@ -19,7 +22,7 @@ class _ChangeNickname extends State<ChangeNickname> {
   late bool theme;
   final _formkey_cha = GlobalKey<FormState>();
   final cha = TextEditingController();
-  FocusNode _chtextFieldFocus = FocusNode();
+  final FocusNode _chtextFieldFocus = FocusNode();
   String? id = "";
   String? nickname = "";
   bool? checkNickduplicate = false;
@@ -31,7 +34,7 @@ class _ChangeNickname extends State<ChangeNickname> {
   }
 
   Future<int> check_Nickname(String nickname) async {
-    if (nickname.length == 0) {
+    if (nickname.isEmpty) {
       return 1;
     } else if (nickname.length > 20) {
       return 2;
@@ -239,7 +242,7 @@ class _ChangeNickname extends State<ChangeNickname> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(9.5)),
                         minimumSize: Size.fromHeight(height * 0.062),
-                        primary: Color(0xffEE3D43)
+                        primary: const Color(0xffEE3D43)
                     ),
                     onPressed: () {
                       if (checkNickduplicate == true) {
