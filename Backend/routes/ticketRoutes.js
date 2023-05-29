@@ -31,7 +31,7 @@ router.post('/ticketTokenIdAndOwner', ticketTokenIdAndOwner);
 router.post('/updateTicketOwner', updateTicketOwner);
 router.get('/comingSoon', comingSoon);
 router.get('/ticketInfo', ticketInfo);
-router.get('/ticketSeatImageUrl', ticketSeatImageUrl);
+router.post('/ticketSeatImageUrl', ticketSeatImageUrl);
 router.get('/hotPick', hotPick);
 router.get('/deadLineTop5', deadLineTop5);
 router.get('/deadLineAll', deadLineAll);

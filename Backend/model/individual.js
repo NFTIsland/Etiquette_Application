@@ -146,10 +146,12 @@ module.exports = {
     
     getNumberOfHoldingTickets: function (kas_address, callback) {
         const sql = "\
-        select count(*) as counts \
-        from user_db.tickets \
-        where owner = (?) \
-        and now() < performance_date;";
+        SELECT count(*) as counts \
+        FROM user_db.tickets \
+        WHERE owner = (?) \
+        AND now() < performance_date \
+        AND token_id NOT IN (SELECT token_id \
+        FROM user_db.auction_tickets);";
         connection.query(sql, [kas_address], callback);
     },
 
