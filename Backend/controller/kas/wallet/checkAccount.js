@@ -28,7 +28,7 @@ const checkAccount = async function (req, res) {
                     res.json({statusCode: check['statusCode'], msg: '해당 주소는 사용할 수 없습니다. 다른 주소를 사용해주세요.'});
                     break;
                 default:
-                    res.json({statusCode: account['statusCode'], msg: check['data']['message']});
+                    res.json({statusCode: account['statusCode'], msg: "계정을 확인할 수 없습니다. 다른 계정으로 시도해 주세요."});
                     break;
             }
         }

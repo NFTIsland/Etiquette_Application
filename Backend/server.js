@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const schedule = require('node-schedule');
+const connection = require('./config/database');
 
 const app = express();
 app.use(bodyParser.json({extended: true}));

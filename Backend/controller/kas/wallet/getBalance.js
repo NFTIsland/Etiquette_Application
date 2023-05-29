@@ -50,12 +50,9 @@ const getBalance = async function (req, res) {
                     break;
                 case 1035200:
                     res.json({statusCode: balance['statusCode'], msg: "서버 에러가 발생했습니다."});
-                    break;
-                case 1035301:
-                    res.json({statusCode: balance['statusCode'], msg: "라이브 노드가 없습니다."});
-                    break;
+                    break;                
                 default:
-                    res.json({statusCode: balance['statusCode'], msg: balance['data']['message']});
+                    res.json({statusCode: balance['statusCode'], msg: "잔액 확인에 실패했습니다. 잠시 후 다시 시도해주세요."});
                     break;
             }
         }
