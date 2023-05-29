@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:timer_builder/timer_builder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Models/Settings.dart';
@@ -135,35 +135,40 @@ class _Home extends State<Home> {
     double? _klayCurrency = double.tryParse(klayCurrency);
     double? _yesterday_last = double.tryParse(yesterday_last);
     if (_klayCurrency == null || _yesterday_last == null) {
-      return const Text("Loading...",
+      return const Text(
+          "Loading...",
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Color(0xff147814),
-          ));
+          )
+      );
     } else {
-      double up_and_down_rate =
-          (_klayCurrency - _yesterday_last) * 100 / _yesterday_last;
+      double up_and_down_rate = (_klayCurrency - _yesterday_last) * 100 / _yesterday_last;
       if (up_and_down_rate >= 0.0) {
-        return Text("${roundDouble(up_and_down_rate, 2)}%",
+        return Text(
+            "${roundDouble(up_and_down_rate, 2)}%",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Color(0xff147814),
-            ));
+            )
+        );
       } else {
-        return Text("${roundDouble(up_and_down_rate, 2)}%",
+        return Text(
+            "${roundDouble(up_and_down_rate, 2)}%",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.red,
-            ));
+            )
+        );
       }
     }
   }
@@ -226,9 +231,8 @@ class _Home extends State<Home> {
         if (res.statusCode == 200) {
           var counter = data["data"][0]['counts'];
           setState(() {
-            hold_counts = counter;
-          }
-          );
+            hold_counts = counter.toString();
+          });
         } else {
           String msg = data['msg'];
           displayDialog_checkonly(context, "보유 티켓의 수", msg);
@@ -254,9 +258,8 @@ class _Home extends State<Home> {
         if (res.statusCode == 200) {
           var counter = data["data"][0]['counts'];
           setState(() {
-            auction_counts = counter;
-          }
-          );
+            auction_counts = counter.toString();
+          });
         } else {
           String msg = data['msg'];
           displayDialog_checkonly(context, "옥션 참여 티켓의 수", msg);
@@ -339,429 +342,497 @@ class _Home extends State<Home> {
                           }
                         },
                       ),
-                    ]),
+                    ]
+                ),
                 drawer: drawer(context, theme, nickname),
                 body: SingleChildScrollView(
-                    child: Column(children: <Widget>[
-                      Center(
-                        child: SizedBox(
-                          width: width * 0.3,
-                          height: height * 0.1,
-                          child: Image.asset('assets/image/today_pick.png', fit: BoxFit.contain),
-                        ),
-                      ),
-                      SizedBox(
-                        width: width,
-                        height: height * 0.55,
-                        // 자동으로 횡이동하며 포스터들이 차례로 보이는 CarouselSlider
-                        child: CarouselSlider(
-                          options: CarouselOptions(
-                            viewportFraction: 0.8,
-                            aspectRatio: 1.7,
+                    child: Column(
+                        children: <Widget> [
+                          Center(
+                            child: SizedBox(
+                              width: width * 0.3,
+                              height: height * 0.1,
+                              child: Image.asset('assets/image/today_pick.png', fit: BoxFit.contain),
+                            ),
+                          ),
+                          SizedBox(
+                            width: width,
                             height: height * 0.55,
-                            enlargeCenterPage: true,
-                            autoPlay: true, //자동재생 여부
-                          ),
-                          items: home_posters.map((item) {
-                            return Builder(builder: (BuildContext context) {
-                              return Container(
-                                width: width,
+                            // 자동으로 횡이동하며 포스터들이 차례로 보이는 CarouselSlider
+                            child: CarouselSlider(
+                              options: CarouselOptions(
+                                viewportFraction: 0.8,
+                                aspectRatio: 1.7,
                                 height: height * 0.55,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  border: Border.all(
-                                    width: 0,
-                                    color: Colors.grey,
-                                  ),
-                                  borderRadius: BorderRadius.circular(16.0),
-                                ),
-                                child: ClipRRect(
-                                  // ClipRRect : 위젯 모서리 둥글게 하기위해 사용하는 위젯
-                                  borderRadius: BorderRadius.circular(16.0),
-                                  child: Image.network(item, fit: BoxFit.fill,),
-                                ),
-                              );
-                            });
-                          }).toList(),
-                        ),
-                      ),
-                      const SizedBox(height : 10),
-                      Container(
-                        height : height*0.01,decoration: BoxDecoration(
-                          border: const Border(
-                              top: BorderSide(width : 1, color: Color(0xffC4C4C4)
-                              )
+                                enlargeCenterPage: true,
+                                autoPlay: true, //자동재생 여부
+                              ),
+                              items: home_posters.map((item) {
+                                return Builder(builder: (BuildContext context) {
+                                  return Container(
+                                    width: width,
+                                    height: height * 0.55,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      border: Border.all(
+                                        width: 0,
+                                        color: Colors.grey,
+                                      ),
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                    child: ClipRRect(
+                                      // ClipRRect : 위젯 모서리 둥글게 하기위해 사용하는 위젯
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      child: Image.network(item, fit: BoxFit.fill,),
+                                    ),
+                                  );
+                                });
+                              }).toList(),
+                            ),
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26.withOpacity(0.1),
-                              spreadRadius: 0,
-                              blurRadius: 0,
-                              offset: const Offset(0, 0), // changes position of shadow
-                            ),
-                          ]),
-                      ),
-                      Container(
-                        width: width * 0.91,
-                        height: height * 0.15,
-                        margin: EdgeInsets.fromLTRB(21, height * 0.015 , 21, 0),
-                        decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [
-                                Color(0xffFFDAB9),
-                                Color(0xffFF7F50),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black87.withOpacity(0.4),
-                                spreadRadius: 1,
-                                blurRadius: 1,
-                                offset: const Offset(1, 1), // changes position of shadow
+                          const SizedBox(height : 10),
+                          Container(
+                            height : height*0.01,decoration: BoxDecoration(
+                              border: const Border(
+                                  top: BorderSide(
+                                      width : 1,
+                                      color: Color(0xffC4C4C4)
+                                  )
                               ),
-                            ]
-                        ),
-                        // 개인 현황을 보여주는 정보판
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 20),
-                                child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      Text(nickname!, style: TextStyle(
-                                          fontFamily: "Square",
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 30,
-                                          color: (theme ? const Color(0xffffffff) : const Color(0xff000000))),),
-                                      Text(" 님의 Etiquette", style: TextStyle(
-                                          fontFamily: "Square",
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20,
-                                          color: (theme ? const Color(0xffffffff) : const Color(0xff000000))),)
-                                    ],
-                                  ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26.withOpacity(0.1),
+                                  spreadRadius: 0,
+                                  blurRadius: 0,
+                                  offset: const Offset(0, 0), // changes position of shadow
                                 ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Flexible(
-                                    fit: FlexFit.tight,
-                                    child: Column(
+                              ]),
+                          ),
+                          Container(
+                            width: width * 0.91,
+                            height: height * 0.15,
+                            margin: EdgeInsets.fromLTRB(21, height * 0.015 , 21, 0),
+                            decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [
+                                    Color(0xffFFDAB9),
+                                    Color(0xffFF7F50),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black87.withOpacity(0.4),
+                                    spreadRadius: 1,
+                                    blurRadius: 1,
+                                    offset: const Offset(1, 1), // changes position of shadow
+                                  ),
+                                ]
+                            ),
+                            // 개인 현황을 보여주는 정보판
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                                       children: <Widget>[
-                                        Text("보유 중인 티켓", style: TextStyle(
-                                            fontFamily: "Square",
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: (theme ? const Color(0xffffffff) : Color(0xff000000)))),
-                                        Text(hold_counts, style: TextStyle(
-                                            fontFamily: "Quicksand",
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: (theme ? const Color(0xffffffff) : Color(0xff5a5a5a))))
+                                        Text(
+                                          nickname!,
+                                          style: TextStyle(
+                                              fontFamily: "Square",
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 30,
+                                              color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
+                                          ),
+                                        ),
+                                        Text(
+                                          " 님의 Etiquette",
+                                          style: TextStyle(
+                                              fontFamily: "Square",
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 20,
+                                              color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
+                                          ),
+                                        )
                                       ],
                                     ),
                                   ),
-                                  Flexible(
-                                    fit: FlexFit.tight,
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text("옥션 참여중인 티켓", style: TextStyle(
-                                            fontFamily: "Square",
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: (theme ? const Color(0xffffffff) : Color(0xff000000)))),
-                                        Text(auction_counts.toString(), style: TextStyle(
-                                            fontFamily: "Quicksand",
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: (theme ? const Color(0xffffffff) : Color(0xff5a5a5a))))
-                                      ],
-                                    ),
-                                  ),
-                                  Flexible(
-                                    fit: FlexFit.tight,
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text("보유 중인 KLAY", style: TextStyle(
-                                            fontFamily: "Square",
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: (theme ? const Color(0xffffffff) : Color(0xff000000)))),
-                                        Text(current_klay.toString(), style: TextStyle(
-                                            fontFamily: "Quicksand",
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: (theme ? const Color(0xffffffff) : Color(0xff5a5a5a))))
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                      ),
-                      Container(
-                        width: width * 0.91,
-                        height: height * 0.08,
-                        margin: const EdgeInsets.fromLTRB(21, 10, 21, 10),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                            colors: [
-                              Color(0xffF4FFFF),
-                              Color(0xff5AD2FF),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black87.withOpacity(0.4),
-                              spreadRadius: 1,
-                              blurRadius: 1,
-                              offset:
-                              const Offset(1, 1), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(left: width * 0.0361),
-                                child: Image.asset('assets/image/KlaytnLogo.png',
-                                    width: width * 0.09, height: height * 0.18),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                            child: Text("Klaytn",
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: (theme ? const Color(0xffffffff) : const Color(0xff000000))))),
-                                        const SizedBox(width: 5),
-                                        TimerBuilder.periodic(
-                                          const Duration(seconds: 1), // 1초마다 갱신
-                                          builder: (context) {
-                                            return Text(getStrKlayCurrency(),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: (theme ? const Color(0xffffffff) : const Color(0xff000000))));
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 3),
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Text("KLAY",
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                                    Flexible(
+                                      fit: FlexFit.tight,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                              "보유 중인 티켓",
                                               style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: (theme ? const Color(0xffffffff) : Color(0xff5a5a5a)))),
-                                        ),
-                                        TimerBuilder.periodic(
-                                            const Duration(seconds: 1), // 1초마다 갱신
-                                            builder: (context) {
-                                              return getUpAndDownRate();
-                                            }),
-                                      ],
+                                                  fontFamily: "Square",
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14,
+                                                  color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
+                                              )
+                                          ),
+                                          Text(
+                                              hold_counts,
+                                              style: TextStyle(
+                                                  fontFamily: "Quicksand",
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                  color: (theme ? const Color(0xffffffff) : const Color(0xff5a5a5a))
+                                              )
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Flexible(
+                                      fit: FlexFit.tight,
+                                      child: Column(
+                                        children: <Widget> [
+                                          Text(
+                                              "옥션 참여중인 티켓",
+                                              style: TextStyle(
+                                                  fontFamily: "Square",
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14,
+                                                  color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
+                                              )
+                                          ),
+                                          Text(
+                                              auction_counts.toString(),
+                                              style: TextStyle(
+                                                  fontFamily: "Quicksand",
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                  color: (theme ? const Color(0xffffffff) : const Color(0xff5a5a5a))
+                                              )
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Flexible(
+                                      fit: FlexFit.tight,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                              "보유 중인 KLAY",
+                                              style: TextStyle(
+                                                  fontFamily: "Square",
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14,
+                                                  color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
+                                              )
+                                          ),
+                                          Text(
+                                              current_klay.toString(),
+                                              style: TextStyle(
+                                                  fontFamily: "Quicksand",
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                  color: (theme ? const Color(0xffffffff) : const Color(0xff5a5a5a))
+                                              )
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(right: width * 0.0361),
-                              )
-                            ]),
-                      ),
-                      Container(
-                          width: width * 0.91,
-                          height: height * 0.08,
-                          margin: EdgeInsets.fromLTRB(21, 0, 21, height * 0.015),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [
-                                Color(0xffFFDCFF),
-                                Color(0xffFF4646),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black87.withOpacity(0.4),
-                                spreadRadius: 1,
-                                blurRadius: 1,
-                                offset: const Offset(1, 1),
-                              ),
-                            ],
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: width * 0.0290),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.access_time_filled_outlined,
-                                  size: width * 0.09,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      const Text(
-                                        "서버시간",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 1.3),
-                                      ),
-                                      TimerBuilder.periodic(
-                                        const Duration(seconds: 1), // 1초마다 갱신
-                                        builder: (context) {
-                                          return Text(
-                                            loadCurrentTime(), // 현재의 시간 출력
-                                            style: TextStyle(
-                                                fontFamily: "Pretendard",
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16,
-                                                color: (theme ? const Color(0xff000000) : const Color(0xff2d386b))),
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(right: width * 0.0361),
-                                )
-                              ],
-                            ),
-                          )),
-                      Container(
-                        height : height*0.01,decoration: BoxDecoration(
-                          border: const Border(
-                              top: BorderSide(
-                                  width : 1,
-                                  color: Color(0xffC4C4C4)
-                              )
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26.withOpacity(0.1),
-                              spreadRadius: 0,
-                              blurRadius: 0,
-                              offset: const Offset(0, 0), // changes position of shadow
-                            ),
-                          ]),
-                      ),
-                      // 공지사항 표시구역
-                      Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              width * 0.044, height * 0.01125, width * 0.044, 0),
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text("공지사항",
-                                    style: TextStyle(
-                                        fontFamily: "Pretendard",
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 20,
-                                        color: (theme ? const Color(0xffffffff) : const Color(0xff000000)))),
-                              ])),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(width * 0.044, height * 0.019,
-                            width * 0.044, height * 0.02875),
-                        child: Container(
+                          Container(
                             width: width * 0.91,
+                            height: height * 0.08,
+                            margin: const EdgeInsets.fromLTRB(21, 10, 21, 10),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(9),
-                              color: (theme
-                                  ? const Color(0xffe8e8e8)
-                                  : const Color(0xffffffff)),
+                              gradient: const LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: [
+                                  Color(0xffF4FFFF),
+                                  Color(0xff5AD2FF),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black87.withOpacity(0.4),
+                                  spreadRadius: 1,
+                                  blurRadius: 1,
+                                  offset:
+                                  const Offset(1, 1), // changes position of shadow
+                                ),
+                              ],
                             ),
-                            // 리스트뷰와 타일을 사용하여 공지사항 표시
-                            child: ListView.separated(
-                                separatorBuilder:
-                                    (BuildContext context, int index) =>
-                                const Divider(thickness: 2),
-                                physics: const NeverScrollableScrollPhysics(), // listview 안에서의 스크롤 해제
-                                shrinkWrap: true,
-                                itemCount: contents.length, // 공지사항의 개수
-                                itemBuilder: (context, index) {
-                                  return Theme(
-                                      data: Theme.of(context).copyWith(
-                                          dividerColor: Colors.transparent),
-                                      child: ExpansionTile(
-                                          backgroundColor: Colors.white,
-                                          collapsedBackgroundColor: Colors.white,
-                                          title: Text(titles[index],
-                                              style: TextStyle(
-                                                  fontFamily: "Pretendard",
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 20,
-                                                  color: (theme ? const Color(0xff000000) : const Color(0xff000000)),
-                                                  overflow: TextOverflow.ellipsis)),
-                                          subtitle: Text(upload_times[index],
-                                              style: TextStyle(
-                                                  fontFamily: "NotoSans",
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 10,
-                                                  color: (theme ? const Color(0xff000000) : const Color(0xff000000)),
-                                                  overflow: TextOverflow.ellipsis)),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.only(left: width * 0.0361),
+                                    child: Image.asset(
+                                        'assets/image/KlaytnLogo.png',
+                                        width: width * 0.09,
+                                        height: height * 0.18
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: <Widget> [
+                                            Expanded(
+                                                child: Text(
+                                                    "Klaytn",
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight: FontWeight.w700,
+                                                        color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
+                                                    )
+                                                )
+                                            ),
+                                            const SizedBox(width: 5),
+                                            TimerBuilder.periodic(
+                                              const Duration(seconds: 1), // 1초마다 갱신
+                                              builder: (context) {
+                                                return Text(
+                                                    getStrKlayCurrency(),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
+                                                    )
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Row(
                                           children: <Widget>[
-                                            Container(
-                                                width: width * 0.8,
-                                                child: Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      Flexible(
-                                                          child: Text(
-                                                              contents[index],
-                                                              softWrap: true,
-                                                              maxLines: 40,
-                                                              style: TextStyle(
-                                                                  fontFamily: "NotoSans",
-                                                                  fontWeight: FontWeight.w400,
-                                                                  fontSize: 15,
-                                                                  color: (theme ? const Color(0xff000000) : const Color(0xff000000)))))
-                                                    ]))
-                                          ]));
-                                })),
-                      ),
-                    ])));
+                                            Expanded(
+                                              child: Text(
+                                                  "KLAY",
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: (theme ? const Color(0xffffffff) : const Color(0xff5a5a5a))
+                                                  )
+                                              ),
+                                            ),
+                                            TimerBuilder.periodic(
+                                                const Duration(seconds: 1), // 1초마다 갱신
+                                                builder: (context) {
+                                                  return getUpAndDownRate();
+                                                }),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(right: width * 0.0361),
+                                  )
+                                ]
+                            ),
+                          ),
+                          Container(
+                              width: width * 0.91,
+                              height: height * 0.08,
+                              margin: EdgeInsets.fromLTRB(21, 0, 21, height * 0.015),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [
+                                    Color(0xffFFDCFF),
+                                    Color(0xffFF4646),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black87.withOpacity(0.4),
+                                    spreadRadius: 1,
+                                    blurRadius: 1,
+                                    offset: const Offset(1, 1),
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.only(left: width * 0.0290),
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.access_time_filled_outlined,
+                                      size: width * 0.09,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          const Text(
+                                            "서버시간",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: 1.3
+                                            ),
+                                          ),
+                                          TimerBuilder.periodic(
+                                            const Duration(seconds: 1), // 1초마다 갱신
+                                            builder: (context) {
+                                              return Text(
+                                                loadCurrentTime(), // 현재의 시간 출력
+                                                style: TextStyle(
+                                                    fontFamily: "Pretendard",
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 16,
+                                                    color: (theme ? const Color(0xff000000) : const Color(0xff2d386b))
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(right: width * 0.0361),
+                                    )
+                                  ],
+                                ),
+                              )
+                          ),
+                          Container(
+                            height : height*0.01,decoration: BoxDecoration(
+                              border: const Border(
+                                  top: BorderSide(
+                                      width : 1,
+                                      color: Color(0xffC4C4C4)
+                                  )
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26.withOpacity(0.1),
+                                  spreadRadius: 0,
+                                  blurRadius: 0,
+                                  offset: const Offset(0, 0), // changes position of shadow
+                                ),
+                              ]),
+                          ),
+                          // 공지사항 표시구역
+                          Padding(
+                              padding: EdgeInsets.fromLTRB(width * 0.044, height * 0.01125, width * 0.044, 0),
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget> [
+                                    Text(
+                                        "공지사항",
+                                        style: TextStyle(
+                                            fontFamily: "Pretendard",
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 20,
+                                            color: (theme ? const Color(0xffffffff) : const Color(0xff000000))
+                                        )
+                                    ),
+                                  ]
+                              )
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(width * 0.044, height * 0.019, width * 0.044, height * 0.02875),
+                            child: Container(
+                                width: width * 0.91,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(9),
+                                  color: (theme
+                                      ? const Color(0xffe8e8e8)
+                                      : const Color(0xffffffff)),
+                                ),
+                                // 리스트뷰와 타일을 사용하여 공지사항 표시
+                                child: ListView.separated(
+                                    separatorBuilder: (BuildContext context, int index) =>
+                                    const Divider(thickness: 2),
+                                    physics: const NeverScrollableScrollPhysics(), // listview 안에서의 스크롤 해제
+                                    shrinkWrap: true,
+                                    itemCount: contents.length, // 공지사항의 개수
+                                    itemBuilder: (context, index) {
+                                      return Theme(
+                                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                                          child: ExpansionTile(
+                                              backgroundColor: Colors.white,
+                                              collapsedBackgroundColor: Colors.white,
+                                              title: Text(titles[index],
+                                                  style: TextStyle(
+                                                      fontFamily: "Pretendard",
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 20,
+                                                      color: (theme ? const Color(0xff000000) : const Color(0xff000000)),
+                                                      overflow: TextOverflow.ellipsis)
+                                              ),
+                                              subtitle: Text(upload_times[index],
+                                                  style: TextStyle(
+                                                      fontFamily: "NotoSans",
+                                                      fontWeight: FontWeight.w400,
+                                                      fontSize: 10,
+                                                      color: (theme ? const Color(0xff000000) : const Color(0xff000000)),
+                                                      overflow: TextOverflow.ellipsis)
+                                              ),
+                                              children: <Widget>[
+                                                Container(
+                                                    width: width * 0.8,
+                                                    child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        children: <Widget> [
+                                                          Flexible(
+                                                              child: Text(
+                                                                  contents[index],
+                                                                  softWrap: true,
+                                                                  maxLines: 40,
+                                                                  style: TextStyle(
+                                                                      fontFamily: "NotoSans",
+                                                                      fontWeight: FontWeight.w400,
+                                                                      fontSize: 15,
+                                                                      color: (theme ? const Color(0xff000000) : const Color(0xff000000))
+                                                                  )
+                                                              )
+                                                          )
+                                                        ]
+                                                    )
+                                                )
+                                              ]
+                                          )
+                                      );
+                                    }
+                                )
+                            ),
+                          ),
+                        ]
+                    )
+                )
+            );
           }
           return const Center(
             child: CircularProgressIndicator(),
           );
-        });
+        }
+        );
   }
 }
 
