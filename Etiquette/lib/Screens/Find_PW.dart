@@ -20,10 +20,9 @@ class _FindPW extends State<FindPW> {
   // 임시 비밀번호를 받을 회원의 email 주소 받아오는 함수
   Future<void> getEmail(String id) async {
     try {
-      final res = await http.post(Uri.parse("$SERVER_IP/individual/getEmail"),
-          body: {
-            "id": id
-          });
+      final res = await http.post(Uri.parse("$SERVER_IP/individual/getEmail"), body: {
+        "id": id
+      });
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         setState((){
@@ -55,8 +54,11 @@ class _FindPW extends State<FindPW> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true, // 페이지 제목을 중앙에 배치
-        title: const Text("비밀번호 찾기",
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+            "비밀번호 찾기",
+            style: TextStyle(
+                fontWeight: FontWeight.bold)
+        ),
         elevation: 0,
         foregroundColor: Colors.black,
         backgroundColor: Colors.white24,
@@ -73,8 +75,12 @@ class _FindPW extends State<FindPW> {
           children: <Widget>[
             const Padding(
               padding: EdgeInsets.only(top: 80),
-              child: Text("본인 확인을 위하여 다시 한번 입력해주세요.",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(
+                  "본인 확인을 위하여 다시 한번 입력해주세요.",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold
+                  )
+              ),
             ),
             Padding(
               // 본인 확인을 위해 id 다시 입력

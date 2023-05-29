@@ -108,8 +108,7 @@ class _Home extends State<Home> {
 
   // Klay 환율 확인하는 함수
   Future<void> getKlayCurrency() async {
-    final res = await http
-        .get(Uri.parse("https://api.coinone.co.kr/ticker?currency=klay"));
+    final res = await http.get(Uri.parse("https://api.coinone.co.kr/ticker?currency=klay"));
     Map<String, dynamic> data = json.decode(res.body);
     if (data["result"] == "success") {
       klayCurrency = data["last"];
@@ -392,7 +391,8 @@ class _Home extends State<Home> {
                           ),
                           const SizedBox(height : 10),
                           Container(
-                            height : height*0.01,decoration: BoxDecoration(
+                            height : height * 0.01,
+                            decoration: BoxDecoration(
                               border: const Border(
                                   top: BorderSide(
                                       width : 1,
@@ -406,7 +406,8 @@ class _Home extends State<Home> {
                                   blurRadius: 0,
                                   offset: const Offset(0, 0), // changes position of shadow
                                 ),
-                              ]),
+                              ]
+                            ),
                           ),
                           Container(
                             width: width * 0.91,

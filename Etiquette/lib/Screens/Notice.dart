@@ -6,7 +6,6 @@ import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 
-
 class Notice extends StatefulWidget{
   @override
   State<StatefulWidget> createState() => _Notice();
