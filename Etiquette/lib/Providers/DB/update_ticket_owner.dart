@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 
 Future<Map<String, dynamic>> updateTicketOwner(String owner, String token_id) async {
   try {

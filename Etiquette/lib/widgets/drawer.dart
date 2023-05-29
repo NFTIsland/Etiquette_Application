@@ -10,7 +10,7 @@ import 'package:Etiquette/Screens/Drawer/Used.dart';
 import 'package:Etiquette/Screens/Wallet/Wallet.dart';
 import 'package:Etiquette/Screens/Login.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 
 @override
 Widget drawer(BuildContext context, bool theme, String? nickname) {

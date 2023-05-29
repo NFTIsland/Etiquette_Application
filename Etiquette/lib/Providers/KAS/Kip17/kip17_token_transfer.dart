@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:Etiquette/Models/dio_models.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 
 // 토큰 전송
 Future<Map<String, dynamic>> kip17TokenTransfer(String alias, String token_id, String sender, String owner, String to) async {

@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:Etiquette/Models/dio_models.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 
 // 잔액 조회
 Future<Map<String, dynamic>> getBalance(String address) async {

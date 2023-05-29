@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/widgets/appbar.dart';
-import 'package:Etiquette/Models/serverset.dart';
-import 'package:Etiquette/Utilities/get_theme.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
-import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 
 class Used extends StatefulWidget {
   const Used({Key? key}) : super(key: key);

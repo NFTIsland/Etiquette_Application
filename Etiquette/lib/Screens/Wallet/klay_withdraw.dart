@@ -8,7 +8,7 @@ import 'package:Etiquette/Utilities/round.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/get_balance.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/klay_transaction.dart';
-import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 
 class KlayWithdraw extends StatefulWidget {
   const KlayWithdraw({Key? key}) : super(key: key);

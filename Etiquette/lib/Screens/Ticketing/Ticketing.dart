@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Screens/Ticketing/total_imminent.dart';
 import 'package:Etiquette/Screens/Ticketing/search_ticket.dart';

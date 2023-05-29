@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Screens/Ticketing/ticket_details.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';

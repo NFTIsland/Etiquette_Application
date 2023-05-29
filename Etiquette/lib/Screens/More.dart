@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:Etiquette/Screens/Search.dart';
 import 'package:Etiquette/Screens/Setting.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Screens/Notice.dart';

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 
 Future<Map<String, dynamic>> kip17GetTokenData(String alias, String token_id) async {
   const url = "$SERVER_IP/kas/kip17/getTokenData";

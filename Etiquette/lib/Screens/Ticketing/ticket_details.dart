@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:Etiquette/Models/serverset.dart';
-import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:Etiquette/Models/Settings.dart';
+import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 import 'package:Etiquette/Screens/Ticketing/select_ticket.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Screens/Market/upload_ticket.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:like_button/like_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TicketDetails extends StatefulWidget {
   String? owner;

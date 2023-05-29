@@ -1,8 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:like_button/like_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Providers/Coinone/get_klay_currency.dart';
-import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 import 'package:Etiquette/Providers/DB/update_ticket_owner.dart';
 import 'package:Etiquette/Providers/KAS/Kip17/kip17_token_transfer.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/klay_transaction.dart';
@@ -10,11 +15,6 @@ import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 import 'package:Etiquette/Utilities/round.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'package:like_button/like_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MarketDetails extends StatefulWidget {
   String? token_id;

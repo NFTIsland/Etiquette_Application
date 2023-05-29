@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 
 Map<String, dynamic> parseJwt(String token) {
   final parts = token.split('.');

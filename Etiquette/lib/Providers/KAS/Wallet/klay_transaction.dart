@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:Etiquette/Models/dio_models.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 
 // KLAY 트랜젝션 수행
 Future<Map<String, dynamic>> klayTransaction(String from, String value, String to) async {

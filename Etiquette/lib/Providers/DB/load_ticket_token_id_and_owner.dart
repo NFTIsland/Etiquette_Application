@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 
 Future<Map<String, dynamic>> loadTicketTokenIdAndOwner(String product_name, String place, String date_value, String time_value, String seat_class_value, String seat_no_value) async {
   final url = "$SERVER_IP/ticket/ticketTokenIdAndOwner/$product_name/$place/$date_value/$time_value/$seat_class_value/$seat_no_value";

@@ -1,19 +1,18 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Utilities/round.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 import 'package:Etiquette/Providers/Coinone/get_klay_currency.dart';
 import 'package:Etiquette/Providers/DB/get_ticket_seat_image_url.dart';
 import 'package:Etiquette/Providers/KAS/Kip17/kip17_token_transfer.dart';
 import 'package:Etiquette/Providers/KAS/Wallet/klay_transaction.dart';
-import 'package:Etiquette/Providers/DB/get_kas_address.dart';
+import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 import 'package:Etiquette/Providers/DB/update_ticket_owner.dart';
-import 'package:dropdown_button2/custom_dropdown_button2.dart';
 
 class TimePickerPage extends StatefulWidget{
   String product_name;

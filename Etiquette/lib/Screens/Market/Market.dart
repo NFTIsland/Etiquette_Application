@@ -10,7 +10,7 @@ import 'package:Etiquette/Screens/Market/market_details.dart';
 import 'package:Etiquette/Screens/Market/total_imminent_auction.dart';
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/widgets/appbar.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/time_remaining_until_end.dart';
 

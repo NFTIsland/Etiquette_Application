@@ -5,7 +5,7 @@ import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
 import 'package:flutter_date_pickers/flutter_date_pickers.dart';
 import 'package:flutter_date_pickers/src/utils.dart';
 import 'package:Etiquette/widgets/event.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/widgets/time_picker_page.dart';
 
 /// Page with [dp.DayPicker].

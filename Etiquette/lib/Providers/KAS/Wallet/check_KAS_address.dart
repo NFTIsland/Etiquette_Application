@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:Etiquette/Models/dio_models.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 
 Future<Map<String, dynamic>> checkKasAddress(String address) async {
   String url = "$SERVER_IP/kas/wallet/checkAccount/$address";

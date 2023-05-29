@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'package:Etiquette/Providers/DB/get_kas_address.dart';
-import 'package:Etiquette/widgets/appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +13,8 @@ import 'package:Etiquette/Utilities/numberConversion.dart';
 import 'package:Etiquette/Utilities/compare_strings_ignore_case.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/transaction_container.dart';
+import 'package:Etiquette/widgets/appbar.dart';
+import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 import 'package:Etiquette/Providers/KAS/get_transaction_history.dart';
 import 'package:Etiquette/Providers/DB/get_ticketInfo_by_token_id.dart';
 

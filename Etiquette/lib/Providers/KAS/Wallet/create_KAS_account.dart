@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:Etiquette/Models/dio_models.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 
 // KAS 계정 생성
 Future<Map<String, dynamic>> createKasAccount() async {

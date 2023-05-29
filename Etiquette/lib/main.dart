@@ -1,13 +1,13 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'dart:convert' show json, base64, ascii;
-import 'package:Etiquette/Screens/Login.dart';
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:Etiquette/Screens/Login.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Screens/TabController.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

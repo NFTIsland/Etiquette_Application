@@ -3,7 +3,7 @@ import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:Etiquette/Models/serverset.dart';
+import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Utilities/jwt_decode.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
