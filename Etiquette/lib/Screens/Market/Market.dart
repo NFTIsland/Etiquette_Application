@@ -460,10 +460,10 @@ class _Market extends State<Market> {
                         ) : GridView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
+                              crossAxisCount: 2, // 1 개의 행에 보여줄 item 개수
                               childAspectRatio: 1 / 1.8,
-                              mainAxisSpacing: height * 0.01, //수평 Padding
-                              crossAxisSpacing: width * 0.05, //수직 Padding
+                              mainAxisSpacing: height * 0.01, // 수평 Padding
+                              crossAxisSpacing: width * 0.05, // 수직 Padding
                             ),
                             shrinkWrap: true,
                             itemCount: deadline.length,
@@ -474,7 +474,6 @@ class _Market extends State<Market> {
                                 child: InkWell(
                                   highlightColor: Colors.transparent,
                                   splashFactory: InkRipple.splashFactory,
-                                  // splashFactory: NoSplash.splashFactory,
                                   onTap: () async {
                                     final kas_address_data = await getKasAddress();
                                     if (kas_address_data['statusCode'] != 200) {

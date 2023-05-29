@@ -5,7 +5,6 @@ import 'package:Etiquette/Models/Settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
-import 'package:Etiquette/Utilities/get_theme.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 
 class AuctionStatus extends StatefulWidget {
@@ -249,69 +248,3 @@ class _AuctionStatus extends State<AuctionStatus> {
     );
   }
 }
-
-// TableRow tableRow(String ranking, String bidder, String bid_date, String bid_price) {
-//   return TableRow(
-//     children: <Widget> [
-//       TableCell(
-//         verticalAlignment: TableCellVerticalAlignment.middle,
-//         child: Container(
-//             height: 50,
-//             alignment: Alignment.center,
-//             child: Text(
-//                 ranking,
-//                 style: const TextStyle(
-//                   fontFamily: 'FiraBold',
-//                   fontSize: 20,
-//                 )
-//             )
-//         ),
-//       ),
-//       TableCell(
-//         verticalAlignment: TableCellVerticalAlignment.middle,
-//         child: Container(
-//             height: 50,
-//             alignment: Alignment.center,
-//             padding: const EdgeInsets.all(10.0),
-//             child : Text(
-//                 bidder,
-//                 style : const TextStyle(
-//                   fontFamily: 'FiraRegular',
-//                   fontSize: 12,
-//                 )
-//             )
-//         ),
-//       ),
-//       TableCell(
-//         verticalAlignment: TableCellVerticalAlignment.middle,
-//         child: Container(
-//             height: 50,
-//             alignment: Alignment.center,
-//             padding: const EdgeInsets.all(10.0),
-//             child : Text(
-//                 bid_date,
-//                 style : const TextStyle(
-//                   fontFamily: 'FiraRegular',
-//                   fontSize: 12,
-//                 )
-//             )
-//         ),
-//       ),
-//       TableCell(
-//         verticalAlignment: TableCellVerticalAlignment.middle,
-//         child: Container(
-//             height: 50,
-//             alignment: Alignment.center,
-//             padding: const EdgeInsets.all(10.0),
-//             child : Text(
-//                 bid_price,
-//                 style : const TextStyle(
-//                   fontFamily: 'FiraRegular',
-//                   fontSize: 12,
-//                 )
-//             )
-//         ),
-//       )
-//     ],
-//   );
-// }

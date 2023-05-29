@@ -64,7 +64,6 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
   final rows = <DataRow>[];
   final TextEditingController bid_price_controller = TextEditingController();
 
-  // String bid_price = "";
   void _scrollDown() {
     Scrollable.ensureVisible(
       _tabbar.currentContext!,
@@ -90,9 +89,12 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
 
     final kas_address = kas_address_data['data'][0]['kas_address'];
 
-    final url = "$SERVER_IP/ticket/ticketPrice/${widget.product_name!}/${widget.seat_class!}";
+    const url = "$SERVER_IP/ticket/ticketPrice";
     try {
-      var res = await http.get(Uri.parse(url));
+      var res = await http.post(Uri.parse(url), body: {
+        "product_name": widget.product_name!,
+        "seat_class": widget.seat_class!
+      });
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
         int ticket_price = data["data"][0]["price"];
@@ -219,8 +221,8 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
             if (bid['bidder'] == kas_address) {
               previous_bid_price = bid['bid_price'].toString();
               minimum_bid_price = (bid['bid_price'] + auction_details['bid_unit']).toString();
-              if ((bid['bid_price'] + auction_details['bid_unit']) > auction_details['immediate_purchase_price']) {
-                minimum_bid_price = auction_details['immediate_purchase_price'].toString();
+              if ((bid['bid_price'] + auction_details['bid_unit']) > auction_details['instant_purchase_price']) {
+                minimum_bid_price = auction_details['instant_purchase_price'].toString();
               }
               setState(() {});
               break;
@@ -257,7 +259,7 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
 
     if (int.tryParse(previous_bid_price) != null) {
       if (bid_price < int.parse(previous_bid_price) + auction_details['bid_unit']
-          && bid_price != auction_details['immediate_purchase_price']) {
+          && bid_price != auction_details['instant_purchase_price']) {
         displayDialog_checkonly(context, "입찰", "최소 입찰가보다 큰 금액을 입력해야 합니다.");
         return;
       }
@@ -821,7 +823,7 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                               ),
                                             ),
                                             Text(
-                                              "${auction_details['immediate_purchase_price'].toString().replaceAllMapped(reg, mathFunc)} 원",
+                                              "${auction_details['instant_purchase_price'].toString().replaceAllMapped(reg, mathFunc)} 원",
                                               style: const TextStyle(
                                                 fontFamily: "NotoSans",
                                                 fontWeight: FontWeight.w400,
@@ -973,8 +975,8 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                                   setState(() {
                                                     int? _parse = int.tryParse(bid_price);
                                                     if (_parse != null) {
-                                                      if (_parse > auction_details['immediate_purchase_price']) {
-                                                        bid_price_controller.text = auction_details['immediate_purchase_price'].toString();
+                                                      if (_parse > auction_details['instant_purchase_price']) {
+                                                        bid_price_controller.text = auction_details['instant_purchase_price'].toString();
                                                       }
                                                     }
                                                   });
@@ -1035,8 +1037,8 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                           children: <Widget> [
                                             ElevatedButton(
                                               onPressed: () async {
-                                                if (int.parse(bid_price_controller.text) >= auction_details['immediate_purchase_price']) {
-                                                  final immediate_purchase_price = auction_details['immediate_purchase_price'];
+                                                if (int.parse(bid_price_controller.text) >= auction_details['instant_purchase_price']) {
+                                                  final instant_purchase_price = auction_details['instant_purchase_price'];
                                                   await loadKlayCurrency();
                                                   if (_klayCurrency == 0.0) {
                                                     await displayDialog_checkonly(context, "통신 오류", "서버와의 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.");
@@ -1064,7 +1066,7 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                                               ),
                                                             ),
                                                             TextSpan(
-                                                              text: "${roundDouble(immediate_purchase_price / _klayCurrency, 2)} KLAY",
+                                                              text: "${roundDouble(instant_purchase_price / _klayCurrency, 2)} KLAY",
                                                               style: const TextStyle(
                                                                 fontWeight: FontWeight.bold,
                                                                 color: Colors.black,
@@ -1120,7 +1122,7 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                                     }
 
                                                     final bidder = kas_address_data['data'][0]['kas_address'];
-                                                    double payment_klay = auction_details['immediate_purchase_price'] / _klayCurrency;
+                                                    double payment_klay = auction_details['instant_purchase_price'] / _klayCurrency;
                                                     if (payment_klay.isInfinite) {
                                                       // _klayCurrency가 0인 경우
                                                       String errorMessage = "즉시 입찰에 실패했습니다.\n\nKLAY 환율 정보를 받아오지 못했습니다.";
@@ -1159,8 +1161,7 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                                       return;
                                                     }
 
-                                                    Map<String, dynamic>updateTicketOwnerData =
-                                                    await updateTicketOwner(bidder, widget.token_id!);
+                                                    Map<String, dynamic>updateTicketOwnerData = await updateTicketOwner(bidder, widget.token_id!);
                                                     if (updateTicketOwnerData['statusCode'] != 200) {
                                                       // DB에 티켓 owner를 업데이트 하지 못함
                                                       String errorMessage = "즉시 입찰에 실패했습니다.\n\n서버와의 통신이 원활하지 않습니다.";
@@ -1169,7 +1170,6 @@ class _MarketDetails extends State<MarketDetails> with SingleTickerProviderState
                                                     }
 
                                                     Map<String, dynamic>terminateAuctionData = await terminateAuction(bidder);
-
                                                     if (terminateAuctionData['statusCode'] != 200) {
                                                       String errorMessage = "즉시 입찰에 실패했습니다.\n\n${terminateAuctionData['msg']}";
                                                       displayDialog_checkonly(context, "즉시 입찰 실패", errorMessage);

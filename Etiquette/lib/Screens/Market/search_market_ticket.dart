@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Screens/Market/market_details.dart';
 import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchMarketTicket extends StatefulWidget {
   const SearchMarketTicket({Key? key}) : super(key: key);
@@ -203,8 +203,6 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
                                                 children: <Widget> [
                                                   Image.network(
                                                     list[index]['poster_url'],
-                                                    // width: 88.18,
-                                                    // height: 130,
                                                     width: 71.22,
                                                     height: 105,
                                                     fit: BoxFit.fill,
@@ -244,20 +242,6 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
                                                             ),
                                                           ),
                                                           const SizedBox(height: 10),
-                                                          // Text(
-                                                          //   "${list[index]['first_date']} ~ ${list[index]['last_date']}",
-                                                          //   style: const TextStyle(
-                                                          //     fontSize: 15,
-                                                          //   ),
-                                                          // ),
-                                                          // const SizedBox(height: 5),
-                                                          // Text(
-                                                          //   list[index]['place'],
-                                                          //   style: const TextStyle(
-                                                          //     fontSize: 20,
-                                                          //   ),
-                                                          // ),
-                                                          // const SizedBox(height: 5),
                                                         ],
                                                       ),
                                                     ),

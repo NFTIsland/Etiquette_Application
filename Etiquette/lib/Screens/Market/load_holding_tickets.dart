@@ -66,9 +66,12 @@ class _LoadHoldingTickets extends State<LoadHoldingTickets> {
   }
 
   Future<int> load_price(String product_name, String seat_class) async {
-    final url = "$SERVER_IP/ticket/ticketPrice/$product_name/$seat_class";
+    const url = "$SERVER_IP/ticket/ticketPrice";
     try {
-      var res = await http.get(Uri.parse(url));
+      var res = await http.post(Uri.parse(url), body: {
+        "product_name": product_name,
+        "seat_class": seat_class
+      });
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
         return data["data"][0]["price"];

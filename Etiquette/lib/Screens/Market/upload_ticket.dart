@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 
 class UploadTicket extends StatefulWidget {
@@ -44,10 +44,8 @@ class _UploadTicket extends State<UploadTicket> with SingleTickerProviderStateMi
   late double width;
   late double height;
   String? remain;
-  String _price = "";
   String previous_bid_price = "-";
   String minimum_bid_price = "0";
-  double _klayCurrency = 0.0;
   String auction_end_date = "";
   bool like = false;
   final comments_controller = TextEditingController();
@@ -97,27 +95,11 @@ class _UploadTicket extends State<UploadTicket> with SingleTickerProviderStateMi
         "auction_comments": comments_controller.text
       });
       if (res.statusCode == 200) {
-        await displayDialog_checkonly(
-            context, "티켓 업로드", "티켓 업로드가 성공적으로 완료되었습니다.");
+        await displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드가 성공적으로 완료되었습니다.");
         Navigator.of(context).pop();
-        send_data_for_schedule();
       } else {
         displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드에 실패했습니다.");
       }
-    } catch (ex) {
-      print("티켓 업로드 --> ${ex.toString()}");
-      displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드에 실패했습니다.");
-    }
-  }
-
-  Future<void> send_data_for_schedule() async {
-    const url = "$SERVER_IP/scheduler/auctionSchedule";
-    try {
-      await http.post(Uri.parse(url), body: {
-        "token_id": widget.token_id,
-        "alias": widget.category,
-        "auction_end_date": auction_end_date,
-      });
     } catch (ex) {
       print("티켓 업로드 --> ${ex.toString()}");
       displayDialog_checkonly(context, "티켓 업로드", "티켓 업로드에 실패했습니다.");
@@ -174,7 +156,6 @@ class _UploadTicket extends State<UploadTicket> with SingleTickerProviderStateMi
                                           Image.network(
                                             widget.backdrop_url!,
                                             width: width,
-                                            // height: width * 0.33,
                                             height: width * 0.4,
                                             fit: BoxFit.fill,
                                           ),
@@ -191,16 +172,6 @@ class _UploadTicket extends State<UploadTicket> with SingleTickerProviderStateMi
                                               ),
                                             ),
                                           ),
-                                          // Positioned(
-                                          //   left: width * 0.05,
-                                          //   top: width * 0.05,
-                                          //   child: Image.network(
-                                          //     "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
-                                          //     width: width * 0.25,
-                                          //     height: width * 0.38,
-                                          //     fit: BoxFit.fill,
-                                          //   ),
-                                          // ),
                                         ],
                                         clipBehavior: Clip.none,
                                       ),
@@ -270,7 +241,7 @@ class _UploadTicket extends State<UploadTicket> with SingleTickerProviderStateMi
                                       ),
                                       SizedBox(height: height * 0.015),
                                       Center(
-                                          child : Container(
+                                          child: Container(
                                             key: _tabbar,
                                             alignment: Alignment.topCenter,
                                             width: width * 0.9,
@@ -377,7 +348,6 @@ class _UploadTicket extends State<UploadTicket> with SingleTickerProviderStateMi
                                               maxLines: 500,
                                               maxLength: 500,
                                               minLines: 30,
-                                              //expands: true,
                                               keyboardType: TextInputType.multiline,
                                               controller: comments_controller,
                                               decoration: const InputDecoration(
