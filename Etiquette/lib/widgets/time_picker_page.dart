@@ -65,19 +65,16 @@ class _TimePickerPage extends State<TimePickerPage>{
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     return Scaffold(
-        body :
-        SafeArea(
-            child :
-            Column(
+        body: SafeArea(
+            child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children : <Widget>[
+                children : <Widget> [
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: height * 0.3,
                     child: image_url != "" ?
                     Image.network(
                         image_url,
-                        //height: 150,
                         fit : BoxFit.fill
                     ) : const Center(
                       child: Text(
@@ -90,7 +87,7 @@ class _TimePickerPage extends State<TimePickerPage>{
                   ),
                   SizedBox(height: height * 0.06),
                   Column(
-                    children : <Widget>[
+                    children: <Widget> [
                       Table(
                           border: TableBorder.all(color : Colors.transparent),
                           columnWidths: const {
@@ -117,53 +114,42 @@ class _TimePickerPage extends State<TimePickerPage>{
                                     verticalAlignment: TableCellVerticalAlignment.middle,
                                     child: Container(
                                       margin: const EdgeInsets.all(12.0),
-                                      //alignment: Alignment.center,
-                                      child:
-                                      DropdownButtonHideUnderline(
+                                      child: DropdownButtonHideUnderline(
                                         child: DropdownButton2(
-                                          //alignment: Alignment.center,
                                           items: _seatClassItems,
                                           value: seat_class_value,
                                           onChanged: (value) {
                                             setState(() {
                                               seat_class_value = value as String;
-                                              load_seat_no(widget.date!, widget.time!, seat_class_value);
+                                              load_seat_no(widget.date, widget.time, seat_class_value);
                                               load_price();
                                             });
                                           },
                                           buttonHeight: 40,
                                           buttonWidth: 140,
                                           itemHeight: 40,
-                                          //dropdownMaxHeight: height * 0.1,
                                           buttonDecoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(12),
                                             border: Border.all(
                                               color: Colors.black26,
                                             ),
-                                            //color: Colors.transparent,
                                           ),
-                                          buttonPadding: EdgeInsets.only(left : 20),
+                                          buttonPadding: const EdgeInsets.only(left : 20),
                                           dropdownDecoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(12),
                                             border: Border.all(
                                               color: Colors.black26,
                                             ),
-                                            //color: Colors.transparent,
                                           ),
-                                          //buttonElevation: 2,
-                                          //scrollbarAlwaysShow: true,
                                           dropdownOverButton: false,
-
                                         ),
                                       ),
                                     )
                                 ),
-
                               ],
                             ),
                             TableRow(
-
-                                children: <Widget>[
+                                children: <Widget> [
                                   TableCell(
                                     verticalAlignment: TableCellVerticalAlignment.middle,
                                     child: Container(
@@ -185,7 +171,6 @@ class _TimePickerPage extends State<TimePickerPage>{
                                         child:
                                         DropdownButtonHideUnderline(
                                           child: DropdownButton2(
-                                            //alignment: Alignment.center,
                                             items: _seatNoItems,
                                             value: seat_no_value,
                                             onChanged: (value) {
@@ -197,22 +182,19 @@ class _TimePickerPage extends State<TimePickerPage>{
                                             buttonWidth: 140,
                                             itemHeight: 40,
                                             dropdownMaxHeight: height * 0.4,
-                                            buttonPadding: EdgeInsets.only(left : 20),
+                                            buttonPadding: const EdgeInsets.only(left : 20),
                                             buttonDecoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(12),
                                               border: Border.all(
                                                 color: Colors.black26,
                                               ),
-                                              //color: Colors.transparent,
                                             ),
                                             dropdownDecoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(12),
                                               border: Border.all(
                                                 color: Colors.black26,
                                               ),
-                                              //color: Colors.transparent,
                                             ),
-                                            //buttonElevation: 2,
                                             scrollbarAlwaysShow: true,
                                             dropdownOverButton: false,
                                           ),
@@ -225,9 +207,9 @@ class _TimePickerPage extends State<TimePickerPage>{
                       ),
                       Padding(
                           padding: EdgeInsets.fromLTRB(width * 0.03, height * 0.07,width * 0.03, height * 0.011),
-                          child : Column(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
+                            children: <Widget> [
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children : <Widget>[
@@ -259,7 +241,6 @@ class _TimePickerPage extends State<TimePickerPage>{
                       )
                     ]
                   )
-
                 ]
             )
         ),
@@ -286,15 +267,13 @@ class _TimePickerPage extends State<TimePickerPage>{
                 elevation: 0,
                 shadowColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(9.5)),
-                minimumSize:
-                Size.fromHeight(height * 0.062),
+                    borderRadius: BorderRadius.circular(9.5)
+                ),
+                minimumSize: Size.fromHeight(height * 0.062),
                 primary: const Color(0xffEE3D43)
             ),
             onPressed: () async {
-              if (seat_class_value != "좌석 등급 선택"
-                  && seat_no_value != "좌석 번호 선택") {
+              if (seat_class_value != "좌석 등급 선택" && seat_no_value != "좌석 번호 선택") {
                 final pay_selected = await displayDialog_YesOrNo(context, "티켓 결제", "위 옵션으로 결제하시겠습니까?");
                 if (pay_selected) { // 다이얼 로그에서 OK 누름
                   final kas_address_data = await getKasAddress(); // jwt token으로부터 kas_address 가져오기
@@ -367,19 +346,22 @@ class _TimePickerPage extends State<TimePickerPage>{
             },
           ),
         )
-
-
-
     );
   }
 
   String image_url = "";
 
-  Future<Map<String, dynamic>> loadTicketTokenIdAndOwner(String date_value,
-      String time_value, String seat_class_value, String seat_no_value) async {
-    final url = "$SERVER_IP/ticket/ticketTokenIdAndOwner/${widget.product_name}/${widget.place}/$date_value/$time_value/$seat_class_value/$seat_no_value";
+  Future<Map<String, dynamic>> loadTicketTokenIdAndOwner(String date_value, String time_value, String seat_class_value, String seat_no_value) async {
+    const url = "$SERVER_IP/ticket/ticketTokenIdAndOwner";
     try {
-      var res = await http.get(Uri.parse(url));
+      var res = await http.post(Uri.parse(url), body: {
+        "product_name": widget.product_name,
+        "place": widget.place,
+        "date": date_value,
+        "time": time_value,
+        "seat_class": seat_class_value,
+        "seat_No": seat_no_value
+      });
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
         return {
@@ -402,8 +384,7 @@ class _TimePickerPage extends State<TimePickerPage>{
   }
 
   Future<void> loadTicketSeatImage() async {
-    Map<String, dynamic> data = await getTicketSeatImageUrl(
-        widget.product_name, widget.place);
+    Map<String, dynamic> data = await getTicketSeatImageUrl(widget.product_name, widget.place);
     if (data["statusCode"] == 200) {
       image_url = data['data'][0]['seat_image_url'];
     } else {
@@ -422,8 +403,7 @@ class _TimePickerPage extends State<TimePickerPage>{
   double _klayCurrency = 0.0;
 
   Future<void> loadKlayCurrency() async {
-    Map<String,
-        dynamic> data = await getKlayCurrency(); // 현재 KLAY 시세 정보를 API를 통해 가져옴
+    Map<String, dynamic> data = await getKlayCurrency(); // 현재 KLAY 시세 정보를 API를 통해 가져옴
     if (data["statusCode"] == 200) { // 현재 KLAY 시세 정보를 정상적으로 가져옴
       String klayCurrency = data['lastCurrency'];
       _klayCurrency = double.parse(klayCurrency);
@@ -433,10 +413,12 @@ class _TimePickerPage extends State<TimePickerPage>{
   }
 
   Future<void> load_price() async {
-    final url = "$SERVER_IP/ticket/ticketPrice/${widget
-        .product_name!}/${seat_class_value}";
+    const url = "$SERVER_IP/ticket/ticketPrice";
     try {
-      var res = await http.get(Uri.parse(url));
+      var res = await http.post(Uri.parse(url), body: {
+        "product_name": widget.product_name,
+        "seat_class": seat_class_value
+      });
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
         int ticket_price = data["data"][0]["price"];
@@ -454,9 +436,6 @@ class _TimePickerPage extends State<TimePickerPage>{
       print("가격 가져오기 --> ${ex.toString()}");
     }
   }
-
-  //String date_value = widget.date;
-  //String time_value = widget.time;
   List _seatNo = new List.empty(growable: true);
   String seat_no_value = "좌석 번호 선택";
   List<DropdownMenuItem<String>> _seatNoItems = [
@@ -477,13 +456,18 @@ class _TimePickerPage extends State<TimePickerPage>{
     ];
   }
 
-  Future<void> load_seat_no(String date_value, String time_value,
-      String seat_class_value) async {
+  Future<void> load_seat_no(String date_value, String time_value, String seat_class_value) async {
     if (seat_class_value != "좌석 등급 선택") {
-      final url = "$SERVER_IP/ticket/ticketSeatNo/${widget.product_name}/${widget.place}/$date_value/$time_value/$seat_class_value";
+      const url = "$SERVER_IP/ticket/ticketSeatNo";
       try {
         await init_seatNoItems();
-        var res = await http.get(Uri.parse(url));
+        var res = await http.post(Uri.parse(url), body: {
+          "product_name": widget.product_name,
+          "place": widget.place,
+          "date": date_value,
+          "time": time_value,
+          "seat_class": seat_class_value
+        });
         Map<String, dynamic> data = json.decode(res.body);
         if (res.statusCode == 200) {
           _seatNo = data["data"];
@@ -493,10 +477,12 @@ class _TimePickerPage extends State<TimePickerPage>{
           }
           List list_seatNo = set_seatNo.toList();
           for (var item in list_seatNo) {
-            _seatNoItems.add(DropdownMenuItem(
-              value: item,
-              child: Text(item),
-            ));
+            _seatNoItems.add(
+                DropdownMenuItem(
+                  value: item,
+                  child: Text(item),
+                )
+            );
           }
         } else {
           _seatNo = [];
@@ -529,10 +515,15 @@ class _TimePickerPage extends State<TimePickerPage>{
 
   Future<void> load_seat_class(String date_value, String time_value) async {
     if (time_value != "예매 시각 선택") {
-      final url = "$SERVER_IP/ticket/ticketSeatClass/${widget.product_name}/${widget.place}/$date_value/$time_value";
+      const url = "$SERVER_IP/ticket/ticketSeatClass";
       try {
         await init_seatClassItems();
-        var res = await http.get(Uri.parse(url));
+        var res = await http.post(Uri.parse(url), body: {
+          "product_name": widget.product_name!,
+          "place": widget.place!,
+          "date": date_value,
+          "time": time_value
+        });
         Map<String, dynamic> data = json.decode(res.body);
         if (res.statusCode == 200) {
           _seatClass = data["data"];

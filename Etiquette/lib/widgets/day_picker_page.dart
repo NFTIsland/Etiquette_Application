@@ -1,8 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
-import 'package:flutter_date_pickers/flutter_date_pickers.dart';
 import 'package:flutter_date_pickers/src/utils.dart';
 import 'package:Etiquette/widgets/event.dart';
 import 'package:Etiquette/Models/Settings.dart';
@@ -29,20 +28,18 @@ class DayPickerPage extends StatefulWidget {
 }
 
 class _DayPickerPageState extends State<DayPickerPage> {
-  DateTime _selectedDate = DateTime.now().subtract(Duration(days: 1));
-  List notday = [];//되는 날짜 받기
+  DateTime _selectedDate = DateTime.now().add(const Duration(minutes: 1));
+  List notday = []; // 되는 날짜 받기
   final DateTime _firstDate = DateTime.now();
-  DateTime? _lastDate;//마지막으로 되는 날짜가 언제까지인지. DateTime.now()가 아니라 DateTime형식으로 직접 날짜 지정해줘도 됨.
+  DateTime? _lastDate; // 마지막으로 되는 날짜가 언제까지인지. DateTime.now()가 아니라 DateTime 형식으로 직접 날짜 지정해줘도 됨.
 
   Color selectedDateStyleColor = Colors.blue;
-  Color selectedSingleDateDecorationColor = Color(0xffFD6059);
+  Color selectedSingleDateDecorationColor = const Color(0xffFD6059);
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     selectedDateStyleColor = Theme.of(context).colorScheme.onSecondary;
-    //selectedSingleDateDecorationColor = Theme.of(context).colorScheme.secondary;
   }
 
   late Future myFuture;
@@ -57,7 +54,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
         color: selectedSingleDateDecorationColor,
         shape: BoxShape.circle,
       ),
-      dayHeaderStyle: const DayHeaderStyle(
+      dayHeaderStyle: const dp.DayHeaderStyle(
         textStyle: TextStyle(
           color: Colors.black,
         ),
@@ -77,14 +74,13 @@ class _DayPickerPageState extends State<DayPickerPage> {
             direction: MediaQuery.of(context).orientation == Orientation.portrait
                 ? Axis.vertical
                 : Axis.horizontal,
-            children: <Widget>[
+            children: <Widget> [
               Container(
-                //decoration: BoxDecoration(border: Border(bottom : BorderSide(width: 1, color: Color(0xffC4C4C4))),),
-                height : MediaQuery.of(context).size.height/2 - MediaQuery.of(context).size.height*0.02,
+                height : MediaQuery.of(context).size.height / 2 - MediaQuery.of(context).size.height * 0.02,
                 width: MediaQuery.of(context).size.width,
                 child: dp.DayPicker.single(
                   selectedDate: _selectedDate,
-                  onChanged: _onSelectedDateChanged,//누르면 실행되는 함수
+                  onChanged: _onSelectedDateChanged, // 누르면 실행되는 함수
                   firstDate: _firstDate,
                   lastDate: _lastDate!,
                   datePickerStyles: styles,
@@ -114,11 +110,12 @@ class _DayPickerPageState extends State<DayPickerPage> {
                             itemCount: _totalinfo.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Container(
-                                //height : 200,
                                 width: MediaQuery.of(context).size.width,
                                   child : Column(
-                                      children : <Widget>[
-                                        Container(height : MediaQuery.of(context).size.height*0.01,decoration: BoxDecoration(
+                                      children : <Widget> [
+                                        Container(
+                                          height: MediaQuery.of(context).size.height * 0.01,
+                                          decoration: BoxDecoration(
                                             border: const Border(
                                                 top: BorderSide(
                                                     width : 1,
@@ -132,14 +129,15 @@ class _DayPickerPageState extends State<DayPickerPage> {
                                                 blurRadius: 0,
                                                 offset: const Offset(0, 0), // changes position of shadow
                                               ),
-                                            ]),
+                                            ]
+                                          ),
                                         ),
                                         Container(
                                           padding : const EdgeInsets.fromLTRB(20, 5, 20, 5),
                                           color : Colors.white,
                                           child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children : <Widget>[
+                                              children: <Widget> [
                                                 Text(
                                                   "${_performanceTime[index]}",
                                                   style: const TextStyle(
@@ -155,7 +153,7 @@ class _DayPickerPageState extends State<DayPickerPage> {
                                                         builder: (context) => TimePickerPage(
                                                           category: widget.category!,
                                                           place: widget.place!,
-                                                          date:_selectedDate.toString().substring(0,10)/*날:일:월*/,
+                                                          date: _selectedDate.toString().substring(0,10) /*날:일:월*/,
                                                           product_name: widget.product_name!,
                                                           time: _totalinfo[index][0],
                                                         ),
@@ -261,20 +259,23 @@ class _DayPickerPageState extends State<DayPickerPage> {
         );
       },
     );
-
-
   }
+
   List _totalinfo = new List.empty(growable: true);
   List _timeseatClass = new List.empty(growable: true);
   List _seatClass = new List.empty(growable: true);
   List _seatNo = new List.empty(growable: true);
 
   Future<void> load_seat_class(String date_value, String time_value) async {
-
-    final url = "$SERVER_IP/ticket/ticketSeatClass/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}";
+    const url = "$SERVER_IP/ticket/ticketSeatClass";
     try {
       _seatClass = new List.empty(growable: true);
-      var res = await http.get(Uri.parse(url));
+      var res = await http.post(Uri.parse(url), body: {
+        "product_name": widget.product_name!,
+        "place": widget.place!,
+        "date": date_value,
+        "time": time_value
+      });
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
         _seatClass = data["data"];
@@ -292,32 +293,42 @@ class _DayPickerPageState extends State<DayPickerPage> {
   }
 
   Future<void> load_seat_no(String date_value, String time_value, String seat_class_value) async {
-      final url = "$SERVER_IP/ticket/ticketSeatNo/${widget.product_name!}/${widget.place!}/${date_value}/${time_value}/${seat_class_value}";
-      try {
-        _seatNo = new List.empty(growable: true);
-        var res = await http.get(Uri.parse(url));
-        Map<String, dynamic> data = json.decode(res.body);
-        if (res.statusCode == 200) {
-          _seatNo = data["data"];
-          _timeseatClass.add([seat_class_value, _seatNo.length]);
-        } else {
-          _seatNo = [];
-        }
-      } catch (ex) {
-        print("좌석 번호 선택 --> ${ex.toString()}");
+    const url = "$SERVER_IP/ticket/ticketSeatNo";
+    try {
+      _seatNo = new List.empty(growable: true);
+      var res = await http.post(Uri.parse(url), body: {
+        "product_name": widget.product_name!,
+        "place": widget.place!,
+        "date": date_value,
+        "time": time_value,
+        "seat_class": seat_class_value
+      });
+      Map<String, dynamic> data = json.decode(res.body);
+      if (res.statusCode == 200) {
+        _seatNo = data["data"];
+        _timeseatClass.add([seat_class_value, _seatNo.length]);
+      } else {
+        _seatNo = [];
       }
+    } catch (ex) {
+      print("좌석 번호 선택 --> ${ex.toString()}");
+    }
   }
 
-  int flag = 0;//0이면 선택해주세요, 1이면 기다려주세요 2면 출력
+  int flag = 0; // 0이면 선택해주세요, 1이면 기다려주세요, 2면 출력
   List _performanceTime = new List.empty(growable: true);
 
   Future<void> load_performance_time(String date_value) async {
-    final url = "$SERVER_IP/ticket/ticketPerformanceTime/${widget.product_name!}/${widget.place!}/${date_value}";
+    const url = "$SERVER_IP/ticket/ticketPerformanceTime";
     try {
       flag = 1;
       _performanceTime = new List.empty(growable: true);
       _totalinfo = new List.empty(growable: true);
-      var res = await http.get(Uri.parse(url));
+      var res = await http.post(Uri.parse(url), body: {
+        "product_name": widget.product_name!,
+        "place": widget.place!,
+        "date": date_value
+      });
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
         _performanceTime = data["data"];
@@ -328,7 +339,6 @@ class _DayPickerPageState extends State<DayPickerPage> {
           set_performanceTime.add(item["time"]);
           await load_seat_class(date_value.substring(0,10), item["time"]);
           _totalinfo.add([item["time"], _timeseatClass]);
-
         }
         List list_performanceTime = set_performanceTime.toList();
         _performanceTime = new List.empty(growable: true);
@@ -336,7 +346,6 @@ class _DayPickerPageState extends State<DayPickerPage> {
           int hour = int.parse(item.substring(0, 2));
           _performanceTime.add(hour >= 12 ? (hour == 12 ? "오후 ${item.substring(0, 5)}" : "오후 ${hour-12}${item.substring(2,5)}") : "오전 ${item.substring(0, 5)}");
         }
-
         flag = 2 ;
       } else {
         _performanceTime = [];
@@ -352,14 +361,20 @@ class _DayPickerPageState extends State<DayPickerPage> {
   int max_month = 0;
   int max_day = 0;
   DateTime _max = DateTime.utc(0,0,0,0);
-  void initState(){
-    myFuture = init_PerformanceDate();
 
+  @override
+  void initState(){
+    super.initState();
+    myFuture = init_PerformanceDate();
   }
+
   Future<void> init_PerformanceDate() async {
-    final url = "$SERVER_IP/ticket/ticketPerformanceDate/${widget.product_name!}/${widget.place!}";
+    const url = "$SERVER_IP/ticket/ticketPerformanceDate";
     try {
-      var res = await http.get(Uri.parse(url));
+      var res = await http.post(Uri.parse(url), body: {
+        "product_name": widget.product_name!,
+        "place": widget.place!
+      });
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
         _performanceDate = data["data"];
@@ -370,28 +385,23 @@ class _DayPickerPageState extends State<DayPickerPage> {
         List list_performanceDate = set_performanceDate.toList();
         for (String item in list_performanceDate) {
           _compareDate.add(DateTime.utc(int.parse(item.substring(0,4)), int.parse(item.substring(5,7)), int.parse(item.substring(8,10))));
-          if(_max.year <= int.parse(item.substring(0,4)))
-          {
-            if(_max.year == int.parse(item.substring(0,4)) && _max.month <= int.parse(item.substring(5,7))) {
-              if(_max.month == int.parse(item.substring(5,7)) && _max.day < int.parse(item.substring(8,10))){
+          if (_max.year <= int.parse(item.substring(0,4))) {
+            if (_max.year == int.parse(item.substring(0,4)) && _max.month <= int.parse(item.substring(5,7))) {
+              if (_max.month == int.parse(item.substring(5,7)) && _max.day < int.parse(item.substring(8,10))) {
                 max_day = int.parse(item.substring(8,10));
                 _max = DateTime.utc(int.parse(item.substring(0,4)), int.parse(item.substring(5,7)), int.parse(item.substring(8,10)));
-              }
-              else if(_max.month < int.parse(item.substring(5,7))){
+              } else if (_max.month < int.parse(item.substring(5,7))) {
                 max_month = int.parse(item.substring(5,7));
                 max_day = int.parse(item.substring(8,10));
                 _max = DateTime.utc(int.parse(item.substring(0,4)), int.parse(item.substring(5,7)), int.parse(item.substring(8,10)));
               }
-
-            }
-            else if( _max.year < int.parse(item.substring(0,4))){
+            } else if ( _max.year < int.parse(item.substring(0,4))) {
               _max = DateTime.utc(int.parse(item.substring(0,4)), int.parse(item.substring(5,7)), int.parse(item.substring(8,10)));
               max_year = int.parse(item.substring(0,4));
               max_month = int.parse(item.substring(5,7));
               max_day = int.parse(item.substring(8,10));
             }
           }
-
         }
         _lastDate = _max;
       } else {
@@ -402,9 +412,9 @@ class _DayPickerPageState extends State<DayPickerPage> {
     }
   }
 
-
   void _onSelectedDateChanged(DateTime newDate) {
     String date = newDate.toString();
+    date = date.substring(0, 11) + "00:00:00.000";
     load_performance_time(date);
     setState(() {
       _selectedDate = newDate;
@@ -419,9 +429,6 @@ class _DayPickerPageState extends State<DayPickerPage> {
       }
     }
     return false;
-    //return !DatePickerUtils.sameDate(day, DateTime.now());//현재 날짜 안되게 설정
-
-    //return day.weekday < 6; // 조건문 참이면 되는날짜 아니면 안되는 날짜 -> 리스트에 없는 day.week, day.day 를 되는날만 받아온 리스트의 week,day랑 비교해서 같을 떄만 true되도록 코드 설정해야 함, 현재는 주말이 disable되도록 설정
   }
 
   dp.EventDecoration? _eventDecorationBuilder(DateTime date) {
