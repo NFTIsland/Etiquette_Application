@@ -3,21 +3,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:like_button/like_button.dart';
 import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 import 'package:Etiquette/Screens/Ticketing/select_ticket.dart';
+import 'package:Etiquette/Screens/Market/upload_ticket.dart';
 import 'package:Etiquette/Utilities/add_comma_to_number.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
-import 'package:Etiquette/Screens/Market/upload_ticket.dart';
-import 'package:like_button/like_button.dart';
 
 class TicketDetails extends StatefulWidget {
   String? owner;
   String? token_id;
   String? product_name;
   String? place;
-  // bool? showPurchaseButton;
   int? bottomButtonType;
   String? seat_class;
   String? seat_No;
@@ -78,9 +77,12 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
   }
 
   Future<int> load_price(String product_name, String seat_class) async {
-    final url = "$SERVER_IP/ticket/ticketPrice/$product_name/$seat_class";
+    const url = "$SERVER_IP/ticket/ticketPrice";
     try {
-      var res = await http.get(Uri.parse(url));
+      var res = await http.post(Uri.parse(url), body: {
+        "product_name": product_name,
+        "seat_class": seat_class
+      });
       Map<String, dynamic> data = json.decode(res.body);
       if (res.statusCode == 200) {
         return data["data"][0]["price"];

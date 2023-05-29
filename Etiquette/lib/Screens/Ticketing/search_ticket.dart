@@ -35,7 +35,7 @@ class _TicketingList extends State<TicketingList> {
     }
 
     list = new List.empty(growable: true);
-    final url = "$SERVER_IP/ticketing/search/${inputTicketNameController.text}";
+    final url = "$SERVER_IP/ticket/search/${inputTicketNameController.text}";
     try {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
@@ -219,20 +219,6 @@ class _TicketingList extends State<TicketingList> {
                                                             ),
                                                           ),
                                                           const SizedBox(height: 10),
-                                                          // Text(
-                                                          //   "${list[index]['first_date']} ~ ${list[index]['last_date']}",
-                                                          //   style: const TextStyle(
-                                                          //     fontSize: 15,
-                                                          //   ),
-                                                          // ),
-                                                          // const SizedBox(height: 5),
-                                                          // Text(
-                                                          //   list[index]['place'],
-                                                          //   style: const TextStyle(
-                                                          //     fontSize: 20,
-                                                          //   ),
-                                                          // ),
-                                                          // const SizedBox(height: 5),
                                                         ],
                                                       ),
                                                     ),
