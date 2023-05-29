@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:Etiquette/Screens/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Etiquette/widgets/appbar.dart';

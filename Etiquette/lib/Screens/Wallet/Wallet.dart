@@ -37,10 +37,10 @@ class _Wallet extends State<Wallet> {
   late final String address;
 
   // 조회 선택에서 사용
-  String prev_selected_type = "전체";
-  String prev_selected_period = "1주일";
-  String selected_type = "전체";
-  String selected_period = "1주일";
+  String prev_selected_type = "all";
+  String prev_selected_period = "1w";
+  String selected_type = "all";
+  String selected_period = "1w";
 
   Future<bool> getTheme() async {
     var key = 'theme';
@@ -55,7 +55,6 @@ class _Wallet extends State<Wallet> {
       klayCurrency = data["lastCurrency"];
       lastCurrencyMsg = "1 KLAY ≈ " + klayCurrency.toString() + "￦"; // 현재 KLAY 시세 표시
       double _won = roundDouble(double.parse(klayBalance) * double.parse(klayCurrency), 1); // 잔액 정보를 원화로 환산
-      // won = _won.toString().replaceAllMapped(reg, mathFunc) + "￦";
       won = _won.toString().replaceAllMapped(reg, mathFunc) + "￦";
       balanceAndWonMsg = klayBalance.replaceAllMapped(reg, mathFunc) + " KLAY ≈ " + won.toString().replaceAllMapped(reg, mathFunc) + "￦"; // 잔액 정보 표시
     } else {
@@ -88,55 +87,87 @@ class _Wallet extends State<Wallet> {
   }
 
   Future<void> loadTransactionHistory() async {
-    transactions.clear();
-    final history = await getTransactionHistory(address, selected_type, selected_period);
-    if (history['statusCode'] == 200) {
-      for (var item in history['data']['items']) {
-        if (item['transferType'] == 'klay') {
-          if (compareStringsIgnoreCase(item["from"], address) && !compareStringsIgnoreCase(item["to"], address)) {
-            transactions.add({
-              "kind": "KLAY",
-              "transferType": "KLAY 출금",
-              "date": DateTime.fromMillisecondsSinceEpoch(item["timestamp"] * 1000).toString().substring(0, 19).replaceAll('-', '.'),
-              "value": roundDouble(pebToKlayConversion(hexToDouble(item["value"].substring(2, ))), 2)
-            });
-          } else {
-            transactions.add({
-              "kind": "KLAY",
-              "transferType": "KLAY 입금",
-              "date": DateTime.fromMillisecondsSinceEpoch(item["timestamp"] * 1000).toString().substring(0, 19).replaceAll('-', '.'),
-              "value": roundDouble(pebToKlayConversion(hexToDouble(item["value"].substring(2, ))), 2)
-            });
-          }
-        } else if (item['transferType'] == 'nft') {
-          final data = await getTicketInfoByTokenId(item["tokenId"]);
-          if (compareStringsIgnoreCase(item["from"], address) && !compareStringsIgnoreCase(item["to"], address)) {
-            transactions.add({
-              "kind": "NFT",
-              "transferType": "티켓 판매",
-              "date": DateTime.fromMillisecondsSinceEpoch(item["transaction"]["timestamp"] * 1000).toString().substring(0, 19).replaceAll('-', '.'),
-              "tokenId": item["tokenId"],
-              "product_name": data['data'][0]['product_name'] ?? "",
-              "place": data['data'][0]['place'] ?? "",
-              "seat_class": data['data'][0]['seat_class'] ?? "",
-              "seat_No": data['data'][0]['seat_No'] ?? "",
-            });
-          } else {
-            transactions.add({
-              "kind": "NFT",
-              "transferType": "티켓 구매",
-              "date": DateTime.fromMillisecondsSinceEpoch(item["transaction"]["timestamp"] * 1000).toString().substring(0, 19).replaceAll('-', '.'),
-              "tokenId": item["tokenId"],
-              "product_name": data['data'][0]['product_name'] ?? "",
-              "place": data['data'][0]['place'] ?? "",
-              "seat_class": data['data'][0]['seat_class'] ?? "",
-              "seat_No": data['data'][0]['seat_No'] ?? "",
-            });
+    try {
+      transactions.clear();
+      final history = await getTransactionHistory(address, selected_type, selected_period);
+      if (history['statusCode'] == 200) {
+        for (var item in history['data']) {
+          if (item['transferType'] == 'klay') {
+            if (compareStringsIgnoreCase(item["from"], address) && !compareStringsIgnoreCase(item["to"], address)) {
+              transactions.add({
+                "kind": "KLAY",
+                "transferType": "klay_withdraw",
+                "date": DateTime.fromMillisecondsSinceEpoch(item["timestamp"] * 1000).toString().substring(0, 19).replaceAll('-', '.'),
+                "value": roundDouble(pebToKlayConversion(hexToDouble(item["value"].substring(2, ))), 2)
+              });
+            } else {
+              transactions.add({
+                "kind": "KLAY",
+                "transferType": "klay_deposit",
+                "date": DateTime.fromMillisecondsSinceEpoch(item["timestamp"] * 1000).toString().substring(0, 19).replaceAll('-', '.'),
+                "value": roundDouble(pebToKlayConversion(hexToDouble(item["value"].substring(2, ))), 2)
+              });
+            }
+          } else if (item['transferType'] == 'nft') {
+            final data = await getTicketInfoByTokenId(item["tokenId"]);
+            if (compareStringsIgnoreCase(item["from"], address) && !compareStringsIgnoreCase(item["to"], address)) {
+              transactions.add({
+                "kind": "NFT",
+                "transferType": "ticket_sell",
+                "date": DateTime.fromMillisecondsSinceEpoch(item["timestamp"] * 1000).toString().substring(0, 19).replaceAll('-', '.'),
+                "tokenId": item["tokenId"],
+                "product_name": data['data'][0]['product_name'] ?? "",
+                "place": data['data'][0]['place'] ?? "",
+                "seat_class": data['data'][0]['seat_class'] ?? "",
+                "seat_No": data['data'][0]['seat_No'] ?? "",
+              });
+            } else {
+              transactions.add({
+                "kind": "NFT",
+                "transferType": "ticket_buy",
+                "date": DateTime.fromMillisecondsSinceEpoch(item["timestamp"] * 1000).toString().substring(0, 19).replaceAll('-', '.'),
+                "tokenId": item["tokenId"],
+                "product_name": data['data'][0]['product_name'] ?? "",
+                "place": data['data'][0]['place'] ?? "",
+                "seat_class": data['data'][0]['seat_class'] ?? "",
+                "seat_No": data['data'][0]['seat_No'] ?? "",
+              });
+            }
           }
         }
+      } else {
+        displayDialog_checkonly(context, "Wallet", "거래 내역을 가져오지 못했습니다. 잠시 후 다시 시도해주세요.");
       }
+    } catch (e) {
+      displayDialog_checkonly(context, "Wallet", "거래 내역을 가져오지 못했습니다. 잠시 후 다시 시도해주세요.");
+    }
+  }
+
+  String selected_type_kor() {
+    if (selected_type == "all") {
+      return "전체";
+    } else if (selected_type == "klay_deposit") {
+      return "KLAY 입금";
+    } else if (selected_type == "klay_withdraw") {
+      return "KLAY 출금";
+    } else if (selected_type == "ticket_buy") {
+      return "티켓 구매";
+    } else if (selected_type == "ticket_sell") {
+      return "티켓 판매";
     } else {
-      print(history['msg']);
+      return "Error";
+    }
+  }
+
+  String selected_period_kor() {
+    if (selected_period == "1w") {
+      return "1주일";
+    } else if (selected_period == "1m") {
+      return "1개월";
+    } else if (selected_period == "3m") {
+      return "3개월";
+    } else {
+      return "Error";
     }
   }
 
@@ -217,7 +248,7 @@ class _Wallet extends State<Wallet> {
                   ),
                 ),
                 Text(
-                  address.substring(25, ),
+                  address.substring(25),
                   style: TextStyle(
                     fontFamily: "Pretendard",
                     fontWeight: FontWeight.bold,
@@ -441,7 +472,7 @@ class _Wallet extends State<Wallet> {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                "$selected_type · $selected_period",
+                                "${selected_type_kor()} · ${selected_period_kor()}",
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -580,20 +611,20 @@ class _Wallet extends State<Wallet> {
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               child: CupertinoButton( // 복사 버튼
                                 borderRadius: BorderRadius.circular(15),
-                                color: selected_type == "전체" ? Colors.lightBlue[50] : Colors.grey[200],
+                                color: selected_type == "all" ? Colors.lightBlue[50] : Colors.grey[200],
                                 child: Text(
                                   "전체",
                                   style: TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 10,
-                                    color: selected_type == "전체" ? Colors.black : Colors.grey[600],
+                                    color: selected_type == "all" ? Colors.black : Colors.grey[600],
                                   ),
                                 ),
                                 padding: const EdgeInsets.all(10),
                                 onPressed: () {
                                   bottomState(() {
                                     setState(() {
-                                      selected_type = "전체";
+                                      selected_type = "all";
                                     });
                                   });
                                 },
@@ -606,20 +637,20 @@ class _Wallet extends State<Wallet> {
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               child: CupertinoButton( // 복사 버튼
                                 borderRadius: BorderRadius.circular(15),
-                                color: selected_type == "KLAY 입금" ? Colors.lightBlue[50] : Colors.grey[100],
+                                color: selected_type == "klay_deposit" ? Colors.lightBlue[50] : Colors.grey[100],
                                 child: Text(
                                   "KLAY 입금",
                                   style: TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 9,
-                                    color: selected_type == "KLAY 입금" ? Colors.black : Colors.grey[600],
+                                    color: selected_type == "klay_deposit" ? Colors.black : Colors.grey[600],
                                   ),
                                 ),
                                 padding: const EdgeInsets.all(10),
                                 onPressed: () {
                                   bottomState(() {
                                     setState(() {
-                                      selected_type = "KLAY 입금";
+                                      selected_type = "klay_deposit";
                                     });
                                   });
                                 },
@@ -632,20 +663,20 @@ class _Wallet extends State<Wallet> {
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               child: CupertinoButton( // 복사 버튼
                                 borderRadius: BorderRadius.circular(15),
-                                color: selected_type == "KLAY 출금" ? Colors.lightBlue[50] : Colors.grey[100],
+                                color: selected_type == "klay_withdraw" ? Colors.lightBlue[50] : Colors.grey[100],
                                 child: Text(
                                   "KLAY 출금",
                                   style: TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 9,
-                                    color: selected_type == "KLAY 출금" ? Colors.black : Colors.grey[600],
+                                    color: selected_type == "klay_withdraw" ? Colors.black : Colors.grey[600],
                                   ),
                                 ),
                                 padding: const EdgeInsets.all(10),
                                 onPressed: () {
                                   bottomState(() {
                                     setState(() {
-                                      selected_type = "KLAY 출금";
+                                      selected_type = "klay_withdraw";
                                     });
                                   });
                                 },
@@ -658,20 +689,20 @@ class _Wallet extends State<Wallet> {
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               child: CupertinoButton( // 복사 버튼
                                 borderRadius: BorderRadius.circular(15),
-                                color: selected_type == "티켓 구매" ? Colors.lightBlue[50] : Colors.grey[100],
+                                color: selected_type == "ticket_buy" ? Colors.lightBlue[50] : Colors.grey[100],
                                 child: Text(
                                   "티켓 구매",
                                   style: TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 10,
-                                    color: selected_type == "티켓 구매" ? Colors.black : Colors.grey[600],
+                                    color: selected_type == "ticket_buy" ? Colors.black : Colors.grey[600],
                                   ),
                                 ),
                                 padding: const EdgeInsets.all(10),
                                 onPressed: () {
                                   bottomState(() {
                                     setState(() {
-                                      selected_type = "티켓 구매";
+                                      selected_type = "ticket_buy";
                                     });
                                   });
                                 },
@@ -684,20 +715,20 @@ class _Wallet extends State<Wallet> {
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               child: CupertinoButton( // 복사 버튼
                                 borderRadius: BorderRadius.circular(15),
-                                color: selected_type == "티켓 판매" ? Colors.lightBlue[50] : Colors.grey[100],
+                                color: selected_type == "ticket_sell" ? Colors.lightBlue[50] : Colors.grey[100],
                                 child: Text(
                                   "티켓 판매",
                                   style: TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 10,
-                                    color: selected_type == "티켓 판매" ? Colors.black : Colors.grey[600],
+                                    color: selected_type == "ticket_sell" ? Colors.black : Colors.grey[600],
                                   ),
                                 ),
                                 padding: const EdgeInsets.all(10),
                                 onPressed: () {
                                   bottomState(() {
                                     setState(() {
-                                      selected_type = "티켓 판매";
+                                      selected_type = "ticket_sell";
                                     });
                                   });
                                 },
@@ -731,20 +762,20 @@ class _Wallet extends State<Wallet> {
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               child: CupertinoButton( // 복사 버튼
                                 borderRadius: BorderRadius.circular(15),
-                                color: selected_period == "1주일" ? Colors.lightBlue[50] : Colors.grey[200],
+                                color: selected_period == "1w" ? Colors.lightBlue[50] : Colors.grey[200],
                                 child: Text(
                                   "1주일",
                                   style: TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 16,
-                                    color: selected_period == "1주일" ? Colors.black : Colors.grey[400],
+                                    color: selected_period == "1w" ? Colors.black : Colors.grey[400],
                                   ),
                                 ),
                                 padding: const EdgeInsets.all(10),
                                 onPressed: () {
                                   bottomState(() {
                                     setState(() {
-                                      selected_period = "1주일";
+                                      selected_period = "1w";
                                     });
                                   });
                                 },
@@ -757,20 +788,20 @@ class _Wallet extends State<Wallet> {
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               child: CupertinoButton( // 복사 버튼
                                 borderRadius: BorderRadius.circular(15),
-                                color: selected_period == "1개월" ? Colors.lightBlue[50] : Colors.grey[100],
+                                color: selected_period == "1m" ? Colors.lightBlue[50] : Colors.grey[100],
                                 child: Text(
                                   "1개월",
                                   style: TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 16,
-                                    color: selected_period == "1개월" ? Colors.black : Colors.grey[400],
+                                    color: selected_period == "1m" ? Colors.black : Colors.grey[400],
                                   ),
                                 ),
                                 padding: const EdgeInsets.all(10),
                                 onPressed: () {
                                   bottomState(() {
                                     setState(() {
-                                      selected_period = "1개월";
+                                      selected_period = "1m";
                                     });
                                   });
                                 },
@@ -783,20 +814,20 @@ class _Wallet extends State<Wallet> {
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               child: CupertinoButton( // 복사 버튼
                                 borderRadius: BorderRadius.circular(15),
-                                color: selected_period == "3개월" ? Colors.lightBlue[50] : Colors.grey[100],
+                                color: selected_period == "3m" ? Colors.lightBlue[50] : Colors.grey[100],
                                 child: Text(
                                   "3개월",
                                   style: TextStyle(
                                     fontFamily: "Pretendard",
                                     fontSize: 16,
-                                    color: selected_period == "3개월" ? Colors.black : Colors.grey[400],
+                                    color: selected_period == "3m" ? Colors.black : Colors.grey[400],
                                   ),
                                 ),
                                 padding: const EdgeInsets.all(10),
                                 onPressed: () {
                                   bottomState(() {
                                     setState(() {
-                                      selected_period = "3개월";
+                                      selected_period = "3m";
                                     });
                                   });
                                 },
