@@ -13,6 +13,7 @@ import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/Widgets/alertDialogWidget.dart';
 import 'package:Etiquette/Utilities/time_remaining_until_end.dart';
+import 'package:Etiquette/Providers/DB/get_UserInfo.dart';
 
 class Market extends StatefulWidget {
   const Market({Key? key}) : super(key: key);
@@ -108,7 +109,9 @@ class _Market extends State<Market> {
           Map<String, dynamic> ex = {
             'token_id': item['token_id'],
             'product_name': item['product_name'],
+            'owner': item['owner'],
             'place': item['place'],
+            'performance_date': item['performance_date'],
             'seat_class': item['seat_class'],
             'seat_No': item['seat_No'],
             'auction_end_date': item['auction_end_date'],
@@ -257,8 +260,17 @@ class _Market extends State<Market> {
                                 child: InkWell(
                                   highlightColor: Colors.transparent,
                                   splashFactory: InkRipple.splashFactory,
-                                  // splashFactory: NoSplash.splashFactory,
-                                  onTap: () {
+                                  onTap: () async {
+                                    final kas_address_data = await getKasAddress();
+                                    if (kas_address_data['statusCode'] != 200) {
+                                      displayDialog_checkonly(context, "티켓 검색", "서버와의 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.");
+                                      return;
+                                    }
+                                    final kas_address = kas_address_data['data'][0]['kas_address'];
+                                    if (kas_address == top5RankBid[index]['owner']) {
+                                      displayDialog_checkonly(context, "티켓 검색", "이미 해당 티켓을 가지고 있습니다.");
+                                      return;
+                                    }
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -281,13 +293,10 @@ class _Market extends State<Market> {
                                       height: 70,
                                       child: Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
-                                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: <Widget> [
                                             Image.network(
                                               top5RankBid[index]['poster_url'],
-                                              // width: height*0.07,
-                                              // height: height*0.07,
                                               width: 47.48,
                                               height: 70,
                                               fit: BoxFit.fill,
@@ -300,7 +309,6 @@ class _Market extends State<Market> {
                                                 children: <Widget> [
                                                   Container(
                                                     width: height * 0.05,
-                                                    // height: height * 0.07,
                                                     height: 70,
                                                     alignment: Alignment.center,
                                                     child : Text(
@@ -453,7 +461,6 @@ class _Market extends State<Market> {
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
-                              // childAspectRatio: 3 / 5.5,
                               childAspectRatio: 1 / 1.8,
                               mainAxisSpacing: height * 0.01, //수평 Padding
                               crossAxisSpacing: width * 0.05, //수직 Padding
@@ -468,7 +475,17 @@ class _Market extends State<Market> {
                                   highlightColor: Colors.transparent,
                                   splashFactory: InkRipple.splashFactory,
                                   // splashFactory: NoSplash.splashFactory,
-                                  onTap: () {
+                                  onTap: () async {
+                                    final kas_address_data = await getKasAddress();
+                                    if (kas_address_data['statusCode'] != 200) {
+                                      displayDialog_checkonly(context, "티켓 검색", "서버와의 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.");
+                                      return;
+                                    }
+                                    final kas_address = kas_address_data['data'][0]['kas_address'];
+                                    if (kas_address == deadline[index]['owner']) {
+                                      displayDialog_checkonly(context, "티켓 검색", "이미 해당 티켓을 가지고 있습니다.");
+                                      return;
+                                    }
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -491,18 +508,8 @@ class _Market extends State<Market> {
                                           deadline[index]['poster_url'],
                                           width: 110,
                                           height: 162.17,
-                                          // width: 88.18,
-                                          // height: 130,
                                           fit: BoxFit.fill,
                                         ),
-                                        // Expanded(
-                                        //   flex : 3,
-                                        //   child: Image.network(
-                                        //     deadline[index]['poster_url'],
-                                        //     fit: BoxFit.fill,
-                                        //     //color: Colors.blue,
-                                        //   ),
-                                        // ),
                                         const SizedBox(height: 5),
                                         Expanded(
                                           flex: 1,
@@ -606,135 +613,10 @@ class _Market extends State<Market> {
                             }
                         ),
                         SizedBox(height: height * 0.05),
-                                /*
-                                                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget> [
-                                    const Text(
-                                        "Deadline Imminent",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                          fontFamily: "Pretendard",
-                                          fontWeight: FontWeight.bold,
-                                        )
-                                    ),
-                                    TextButton(
-                                      child: const Text(
-                                          "+ 더보기",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.grey,
-                                          )
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => const TotalImminentAuction()
-                                            )
-                                        );
-                                      },
-                                    )
-                                  ],
-                                ),
-                                const Text(
-                                    "마감 시각이 임박한 티켓들을 보여드립니다.",
-                                    style: TextStyle(
-                                      fontFamily: "Pretendard",
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15,
-                                    )
-                                ),
-                                SizedBox(height: height*0.025),
-                                ListView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: deadline.length,
-                                    itemBuilder: (context, index) {
-                                      return Card(
-                                          color: Colors.white24,
-                                          elevation : 0,
-                                          child: InkWell
-                                          (
-                                            highlightColor: Colors.transparent,
-                                            splashFactory: NoSplash.splashFactory,
-                                            onTap :(){
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) => MarketDetails(
-                                                        token_id: deadline[index]['token_id'],
-                                                        product_name: deadline[index]['product_name'],
-                                                        owner: deadline[index]['owner'],
-                                                        place: deadline[index]['place'],
-                                                        performance_date: deadline[index]['performance_date'],
-                                                        seat_class: deadline[index]['seat_class'],
-                                                        seat_No: deadline[index]['seat_No'],
-                                                      )
-                                                  )
-                                              );
-                                            },
-                                          child : SizedBox(
-                                              width: double.infinity,
-                                              height : height*0.07,
-                                              child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: <Widget> [
-                                                    Image.network(
-                                                      "https://metadata-store.klaytnapi.com/bfc25e78-d5e2-2551-5471-3391b813e035/b8fe2272-da23-f1a0-ad78-35b6b349125a.jpg",
-                                                      width: height*0.07,
-                                                      height: height*0.07,
-                                                      fit: BoxFit.fill,
-                                                    ),
-                                                    SizedBox(width : height*0.07),
-                                                    Expanded(
-                                                        child: Column(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: <Widget>[
-                                                              Text(deadline[index]['product_name']),
-                                                              Text(deadline[index]['place']),
-                                                              Text("${deadline[index]['seat_class']}석 ${deadline[index]['seat_No']}번",),
-                                                            ]
-                                                        )
-                                                    )
-                                                  ]
-                                              )
-                                          ),
-                                      )
-                                      );
-                                    }
-                                ),
-                                SizedBox(height: height*0.025),
-                                 */
-                              ]
-                          ),
-                        ),
-                    ),
-
-              /*
-              floatingActionButton: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget> [
-                  FloatingActionButton.extended(
-                    heroTag: null,
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(
-                              builder: (context) => const UploadTicket()
-                          )
-                      );
-                    },
-                    backgroundColor: (theme ? const Color(0xffe8e8e8) : const Color(0xff7b9acc)),
-                    foregroundColor: (theme ? const Color(0xff000000) : const Color(0xffFCF6F5)),
-                    label: const Text("티켓 업로드"),
-                    icon: const Icon(Icons.add_card),
+                      ]
                   ),
-                ],
+                ),
               ),
-              floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-              */
             );
           }
           return const Center(
