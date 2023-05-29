@@ -4,8 +4,11 @@ import 'package:Etiquette/Models/Settings.dart';
 
 Future<Map<String, dynamic>> getTicketSeatImageUrl(String product_name, String place) async {
   try {
-    final url = "$SERVER_IP/ticket/ticketSeatImageUrl/$product_name/$place";
-    final res = await http.get(Uri.parse(url));
+    const url = "$SERVER_IP/ticket/ticketSeatImageUrl";
+    final res = await http.post(Uri.parse(url), body: {
+      "product_name": product_name,
+      "place": place
+    });
     Map<String, dynamic> data = json.decode(res.body);
     return data;
   } catch (ex) {

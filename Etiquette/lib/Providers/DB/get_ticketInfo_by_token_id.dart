@@ -4,7 +4,7 @@ import 'package:Etiquette/Models/Settings.dart';
 
 Future<Map<String, dynamic>> getTicketInfoByTokenId(String token_id) async {
   try {
-    final url = "$SERVER_IP/ticket/ticketInfoByTokenId/${token_id}";
+    final url = "$SERVER_IP/ticket/ticketInfoByTokenId/$token_id";
     final res = await http.get(Uri.parse(url));
     Map<String, dynamic> data = json.decode(res.body);
     return data;

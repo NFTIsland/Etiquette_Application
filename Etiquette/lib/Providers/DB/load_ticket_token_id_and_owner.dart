@@ -3,9 +3,16 @@ import 'package:http/http.dart' as http;
 import 'package:Etiquette/Models/Settings.dart';
 
 Future<Map<String, dynamic>> loadTicketTokenIdAndOwner(String product_name, String place, String date_value, String time_value, String seat_class_value, String seat_no_value) async {
-  final url = "$SERVER_IP/ticket/ticketTokenIdAndOwner/$product_name/$place/$date_value/$time_value/$seat_class_value/$seat_no_value";
+  const url = "$SERVER_IP/ticket/ticketTokenIdAndOwner";
   try {
-    var res = await http.get(Uri.parse(url));
+    var res = await http.post(Uri.parse(url), body: {
+      "product_name": product_name,
+      "place": place,
+      "date": date_value,
+      "time": time_value,
+      "seat_class": seat_class_value,
+      "seat_No": seat_no_value
+    });
     Map<String, dynamic> data = json.decode(res.body);
     if (res.statusCode == 200) {
       return {
