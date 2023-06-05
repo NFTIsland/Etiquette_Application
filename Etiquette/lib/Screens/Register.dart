@@ -36,7 +36,7 @@ class _Register extends State<Register> {
   String verificationID = "";
 
   // DB에 회원 정보 저장 시도
-  Future<int> attemptSignUp(String id, String pw, String email, String nickname, String kas_address) async {
+  Future<Map<String, dynamic>> attemptSignUp(String id, String pw, String email, String nickname, String kas_address) async {
     var res = await http.post(Uri.parse('$SERVER_IP/auth/signup'), body: {
       "id": id,
       "pw": pw,
@@ -44,7 +44,8 @@ class _Register extends State<Register> {
       "nickname": nickname,
       'kas_address': kas_address
     });
-    return res.statusCode;
+    return json.decode(res.body);
+    // return res.statusCode;
   }
 
   // 핸드폰 번호를 통한 인증
@@ -640,7 +641,8 @@ class _Register extends State<Register> {
                 displayDialog_checkonly(context, "KAS Address 연결되지 않음", "KAS Address가 아직 연결되지 않았습니다.\n연결 절차를 진행해주십시오.");
               } else {
                 var res = await attemptSignUp(_id, _pw, _email, _nickname, _address);
-                if (res == 201) {
+                // if (res == 201) {
+                if (res["result"] == true) {
                   await displayDialog_checkonly(context, "회원가입", "회원가입이 완료되었습니다.");
                   Navigator.pushAndRemoveUntil(
                       context,
@@ -649,8 +651,9 @@ class _Register extends State<Register> {
                       ),
                       (route) => false
                   );
-                } else if (res == 409) {
-                  displayDialog_checkonly(context, "사용자 정보 존재", "해당 정보가 이미 존재합니다.\n새 정보를 입력하여 회원가입하시거나\n이미 회원이신 경우 로그인해주십시오.");
+                } else if (res["result"] == false) {
+                  displayDialog_checkonly(context, "사용자 정보 존재", res["msg"].toString());
+                  // displayDialog_checkonly(context, "사용자 정보 존재", "해당 정보가 이미 존재합니다.\n새 정보를 입력하여 회원가입하시거나\n이미 회원이신 경우 로그인해주십시오.");
                 } else {
                   displayDialog_checkonly(context, "Error", "알 수 없는 오류가 발생했습니다.\n다시 시도해주십시오.");
                 }
