@@ -66,9 +66,8 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
           setState(() {});
         }
       } else {
-        int statusCode = res.statusCode;
         String msg = data['msg'];
-        displayDialog_checkonly(context, "티켓 마켓", "statusCode: $statusCode\n\nmessage: $msg");
+        displayDialog_checkonly(context, "티켓 마켓", msg);
       }
     } catch (ex) {
       print("티켓 마켓 --> ${ex.toString()}");
