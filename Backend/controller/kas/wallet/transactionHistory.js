@@ -4,8 +4,7 @@ const transactionHistory = async function (req, res) {
     try {
         const address = req.body.address; // 트랜잭션 내역을 조회할 클레이튼 주소
         const type = req.body.type;
-        // 조회할 트랜잭션 유형 (여기에서는 "ticket_buy", "ticket_sell", "klay_deposit", "klay_withdraw", "all" 중 하나로
- 설정)
+        // 조회할 트랜잭션 유형 (여기에서는 "ticket_buy", "ticket_sell", "klay_deposit", "klay_withdraw", "all" 중 하나로 설정) 
         const period = req.body.period; // 조회기간 (여기에서는 1w, 1m, 3m 중 하나로 설정)
         const history = await wallet.kasTransactionHistory(address, type, period);
 
