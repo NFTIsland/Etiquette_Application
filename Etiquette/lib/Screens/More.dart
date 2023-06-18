@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:get/get.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:Etiquette/Screens/Search.dart';
-import 'package:Etiquette/Screens/Setting.dart';
 import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/widgets/appbar.dart';
 import 'package:Etiquette/widgets/drawer.dart';
 import 'package:Etiquette/Screens/Notice.dart';
-import 'package:Etiquette/Screens/CustomerService.dart';
 import 'package:Etiquette/Screens/Guide.dart';
 import 'package:Etiquette/Screens/FAQ.dart';
 
@@ -120,66 +116,84 @@ class _More extends State<More> {
                     ]
                 ),
                 drawer: drawer(context, theme, nickname),
-                body: ListView(padding: EdgeInsets.only(left: 10), children: <
-                    Widget>[
-                  ListTile(
-                      title: Text("Application Guide",
-                          style: TextStyle(fontSize: 20)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Guide(),
+                body: ListView(
+                    padding: EdgeInsets.only(left: 10),
+                    children: <Widget>[
+                      ListTile(
+                          title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget> [
+                                const Text(
+                                    "Contacts",
+                                    style: TextStyle(fontSize: 20)
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: const <Widget> [
+                                    Text(
+                                        "Email: nftisland@naver.com",
+                                        style: TextStyle(fontSize: 15)
+                                    ),
+                                    Text(
+                                        "카카오톡: nftisland",
+                                        style: TextStyle(fontSize: 15)
+                                    ),
+                                  ],
+                                )
+                              ]
+                          )
+                      ),
+                      ListTile(
+                          title: const Text(
+                              "Application Guide",
+                              style: TextStyle(fontSize: 20)
                           ),
-                        );
-                      }),
-                  ListTile(
-                      title: Text("Notice", style: TextStyle(fontSize: 20)),
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Notice(),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Guide(),
+                              ),
+                            );
+                          }
+                      ),
+                      ListTile(
+                          title: const Text(
+                              "Notice",
+                              style: TextStyle(fontSize: 20)
                           ),
-                        );
-                      }
-                  ),
-                  ListTile(
-                      title: Text("1:1 Customer Service",
-                          style: TextStyle(fontSize: 20)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Customer(),
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Notice(),
+                              ),
+                            );
+                          }
+                      ),
+                      ListTile(
+                          title: const Text(
+                              "FAQ",
+                              style: TextStyle(fontSize: 20)
                           ),
-                        );
-                      }),
-                  ListTile(
-                      title: Text("FAQ", style: TextStyle(fontSize: 20)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FAQ(),
-                          ),
-                        );
-                      }),
-                  ListTile(
-                      title: Text("Setting", style: TextStyle(fontSize: 20)),
-                      onTap: () {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => Setting()));
-                        setState(() {
-                          _loadData();
-                        });
-                      }),
-                ]));
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FAQ(),
+                              ),
+                            );
+                          }
+                      ),
+                    ]
+                )
+            );
           }
           return const Center(
             child: CircularProgressIndicator(),
           );
-        });
+        }
+    );
   }
 }
 
