@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const Auth = require("../../model/auth");
 
 const checkPassword = async function (req, res) {
-    await Auth.selectLogIn(req.body.id, req.body.pw, async (err, row) => {
+    await Auth.selectLogIn_or_SignUp(req.body.id, async (err, row) => {
         if (!err) {
             const hashed_PW = row[0]['pw'];
             const isValid = await bcrypt.compare(req.body.pw, hashed_PW);
