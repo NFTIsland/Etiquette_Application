@@ -25,7 +25,7 @@ class _Ticketing extends State<Ticketing> {
   late bool theme;
   var img = const Icon(Icons.notifications);
   List hotpick = [];
-  List commingsoon = [];
+  List comingsoon = [];
   List deadline = [];
   List banner_posters = [];
   String? nickname = "";
@@ -103,8 +103,8 @@ class _Ticketing extends State<Ticketing> {
       var res = await http.get(Uri.parse(url));
       Map<String, dynamic> data = json.decode(res.body);
       if (data['statusCode'] == 200) {
-        List _commingsoon = data["data"];
-        for (Map<String, dynamic> item in _commingsoon) {
+        List _comingsoon = data["data"];
+        for (Map<String, dynamic> item in _comingsoon) {
           final booking_start_date = item['booking_start_date'];
 
           Map<String, dynamic> ex = {
@@ -130,11 +130,11 @@ class _Ticketing extends State<Ticketing> {
             }
           }
 
-          commingsoon.add(ex);
+          comingsoon.add(ex);
           setState(() {});
         }
       } else {
-        displayDialog_checkonly(context, "Comming Soon", "서버와의 상태가 원활하지 않습니다.");
+        displayDialog_checkonly(context, "Coming Soon", "서버와의 상태가 원활하지 않습니다.");
       }
     } catch (ex) {
       String msg = ex.toString();
@@ -267,7 +267,7 @@ class _Ticketing extends State<Ticketing> {
                                 children: <Widget> [
                                   SizedBox(height: height*0.025),
                                   const Text(
-                                    "Comming soon",
+                                    "Coming soon",
                                     style: TextStyle(
                                       fontSize: 25,
                                       fontFamily: "Pretendard",
@@ -283,7 +283,7 @@ class _Ticketing extends State<Ticketing> {
                                     ),
                                   ),
                                   SizedBox(height: height * 0.025),
-                                  (commingsoon.isEmpty) ? Container(
+                                  (comingsoon.isEmpty) ? Container(
                                     padding : EdgeInsets.fromLTRB(width * 0.05, 0, width * 0.05, 0),
                                     width : width * 0.9,
                                     height : width * 0.5,
@@ -305,7 +305,7 @@ class _Ticketing extends State<Ticketing> {
                                         crossAxisSpacing: width * 0.05, //수직 Padding
                                       ),
                                       shrinkWrap: true,
-                                      itemCount: commingsoon.length,
+                                      itemCount: comingsoon.length,
                                       itemBuilder: (context, index) {
                                         return Card(
                                           color: Colors.white24,
@@ -318,10 +318,10 @@ class _Ticketing extends State<Ticketing> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) => TicketDetails(
-                                                    product_name: commingsoon[index]['product_name'],
-                                                    place: commingsoon[index]['place'],
-                                                    booking_start_date: commingsoon[index]['booking_start_date'],
-                                                    booking_start_day_of_the_week: commingsoon[index]['booking_start_day_of_the_week'],
+                                                    product_name: comingsoon[index]['product_name'],
+                                                    place: comingsoon[index]['place'],
+                                                    booking_start_date: comingsoon[index]['booking_start_date'],
+                                                    booking_start_day_of_the_week: comingsoon[index]['booking_start_day_of_the_week'],
                                                     bottomButtonType: 0,
                                                   ),
                                                 ),
@@ -333,7 +333,7 @@ class _Ticketing extends State<Ticketing> {
                                                   Expanded(
                                                     flex : 4,
                                                     child: Image.network(
-                                                      commingsoon[index]['poster_url'],
+                                                      comingsoon[index]['poster_url'],
                                                       fit: BoxFit.fill,
                                                     ),
                                                   ),
@@ -347,7 +347,7 @@ class _Ticketing extends State<Ticketing> {
                                                           Row(
                                                               children: <Widget> [
                                                                 Text(
-                                                                  "${commingsoon[index]['booking_start_date'].substring(5, 10).replaceAll("-", ".")}",
+                                                                  "${comingsoon[index]['booking_start_date'].substring(5, 10).replaceAll("-", ".")}",
                                                                   style: TextStyle(
                                                                     fontSize: 13,
                                                                     fontWeight: FontWeight.bold,
@@ -356,7 +356,7 @@ class _Ticketing extends State<Ticketing> {
                                                                   ),
                                                                 ),
                                                                 Text(
-                                                                  "(${commingsoon[index]['booking_start_day_of_the_week']}) ",
+                                                                  "(${comingsoon[index]['booking_start_day_of_the_week']}) ",
                                                                   style: TextStyle(
                                                                     fontSize: 13,
                                                                     fontWeight: FontWeight.bold,
@@ -365,7 +365,7 @@ class _Ticketing extends State<Ticketing> {
                                                                   ),
                                                                 ),
                                                                 Text(
-                                                                  "${commingsoon[index]['booking_start_date'].substring(11, 16)}에 오픈",
+                                                                  "${comingsoon[index]['booking_start_date'].substring(11, 16)}에 오픈",
                                                                   style: TextStyle(
                                                                     fontSize: 13,
                                                                     fontWeight: FontWeight.bold,
@@ -376,7 +376,7 @@ class _Ticketing extends State<Ticketing> {
                                                               ]
                                                           ),
                                                           Text(
-                                                            commingsoon[index]['product_name'],
+                                                            comingsoon[index]['product_name'],
                                                             style: const TextStyle(
                                                               fontFamily: "NotoSans",
                                                               fontSize: 13,
@@ -385,7 +385,7 @@ class _Ticketing extends State<Ticketing> {
                                                             ),
                                                           ),
                                                           Text(
-                                                            commingsoon[index]['place'].toString(),
+                                                            comingsoon[index]['place'].toString(),
                                                             style: const TextStyle(
                                                               fontSize: 10,
                                                               fontFamily: "NotoSans",
