@@ -29,7 +29,7 @@ class _checkcurPW extends State<checkcurPW> {
     nickname = await storage.read(key: "nickname");
   }
 
-  Future<bool> check_curPW(String id, String pw) async{
+  Future<bool> check_curPW(String id, String pw) async {
     try {
       const url = "$SERVER_IP/auth/checkPassword";
       final res = await http.post(Uri.parse(url), body: {
