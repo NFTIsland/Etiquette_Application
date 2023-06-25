@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:Etiquette/Models/Settings.dart';
 import 'package:Etiquette/widgets/alertDialogWidget.dart';
 import 'package:Etiquette/widgets/appbar.dart';
@@ -442,11 +442,11 @@ class _UploadTicket extends State<UploadTicket> with SingleTickerProviderStateMi
                                                           },
                                                           style: ElevatedButton.styleFrom(
                                                             elevation: 0,
+                                                            backgroundColor: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
                                                             shadowColor: Colors.transparent,
                                                             shape: RoundedRectangleBorder(
                                                               borderRadius: BorderRadius.circular(9.5),
                                                             ),
-                                                            primary: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
                                                           ),
                                                           child: const Text(
                                                             '경매 마감 시각 선택',
