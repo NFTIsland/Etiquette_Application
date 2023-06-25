@@ -537,12 +537,12 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
+                        backgroundColor: theme ? const Color(0xffe8e8e8) : Colors.grey[300],
                         shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(9.5),
                         ),
                         minimumSize: Size.fromHeight(height * 0.062),
-                        primary: theme ? const Color(0xffe8e8e8) : Colors.grey[300],
                       ),
                       onPressed: () {
 
@@ -550,7 +550,6 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
                       child: Text(
                         "${widget.booking_start_date!.substring(5, 10).replaceAll("-", ".")}(${widget.booking_start_day_of_the_week!}) ${widget.booking_start_date!.substring(11, 16)}에 오픈",
                         style: const TextStyle(
-                          // color: theme ? const Color(0xff000000) : const Color(0xff000000),
                           color: Colors.black,
                         ),
                       ),
@@ -558,12 +557,12 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
+                        backgroundColor: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
                         shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(9.5),
                         ),
                         minimumSize: Size.fromHeight(height * 0.062),
-                        primary: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
                       ),
                       onPressed: () {
                         Navigator.push(
@@ -586,12 +585,12 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
                     ) : ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
+                        backgroundColor: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
                         shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(9.5),
                         ),
                         minimumSize: Size.fromHeight(height * 0.062),
-                        primary: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
                       ),
                       onPressed: () async{
                         original_price =  await load_price(widget.product_name!, widget.seat_class!);
@@ -624,79 +623,6 @@ class _TicketDetails extends State<TicketDetails> with SingleTickerProviderState
                         ),
                       ),
                     ),
-                    // child: Visibility(
-                    //   visible: widget.bottomButtonType! > 0,
-                    //   // child: widget.showPurchaseButton! ?
-                    //   child: widget.bottomButtonType! == 1 ?
-                    //   ElevatedButton(
-                    //     style: ElevatedButton.styleFrom(
-                    //       elevation: 0,
-                    //       shadowColor: Colors.transparent,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(9.5),
-                    //       ),
-                    //       minimumSize: Size.fromHeight(height * 0.062),
-                    //       primary: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
-                    //     ),
-                    //     onPressed: () {
-                    //       Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //           builder: (context) => SelectTicket(
-                    //             product_name: widget.product_name!,
-                    //             place: widget.place!,
-                    //             category: detail['category'],
-                    //           ),
-                    //         ),
-                    //       );
-                    //     },
-                    //     child: Text(
-                    //       "예매하기",
-                    //       style: TextStyle(
-                    //         color: theme ? const Color(0xff000000) : const Color(0xffffffff),
-                    //       ),
-                    //     ),
-                    //   ) :
-                    //   ElevatedButton(
-                    //     style: ElevatedButton.styleFrom(
-                    //       elevation: 0,
-                    //       shadowColor: Colors.transparent,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(9.5),
-                    //       ),
-                    //       minimumSize: Size.fromHeight(height * 0.062),
-                    //       primary: theme ? const Color(0xffe8e8e8) : const Color(0xffEE3D43),
-                    //     ),
-                    //     onPressed: () async{
-                    //       original_price =  await load_price(widget.product_name!, widget.seat_class!);
-                    //       Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //           builder: (context) => UploadTicket(
-                    //             token_id: widget.token_id,
-                    //             product_name: widget.product_name,
-                    //             owner: widget.owner,
-                    //             place: widget.place,
-                    //             seat_class: widget.seat_class,
-                    //             seat_No: widget.seat_No,
-                    //             performance_date: widget.performance_date,
-                    //             original_price: original_price.toString(),
-                    //             category: detail['category'],
-                    //           ),
-                    //         ),
-                    //       );
-                    //     },
-                    //     child: Text(
-                    //       "판매하기",
-                    //       style: TextStyle(
-                    //         fontSize: 15,
-                    //         fontFamily: 'NotoSans',
-                    //         fontWeight: FontWeight.w600,
-                    //         color: theme ? const Color(0xff000000) : const Color(0xffffffff),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                   ),
                 ],
                 ),

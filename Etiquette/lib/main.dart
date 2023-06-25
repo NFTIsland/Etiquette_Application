@@ -48,12 +48,8 @@ class _MyApp extends State<MyApp>{
             if (jwt.length != 3) {
               return GetMaterialApp(
                   localizationsDelegates: GlobalMaterialLocalizations.delegates,
-                  supportedLocales: [
-                    //const Locale('en', 'US'), // American English
-                    //const Locale('ru', 'RU'), // Russian
-                    //const Locale("pt"), // Portuguese
-                    //const Locale('ar'),
-                    const Locale('ko',),// Arabic
+                  supportedLocales: const [
+                    Locale('ko')
                   ],
                   debugShowCheckedModeBanner: false,
                   title: 'Etiquette', //앱 이름 etiquette으로 설정
@@ -68,12 +64,8 @@ class _MyApp extends State<MyApp>{
                 return GetMaterialApp(
                     debugShowCheckedModeBanner: false,
                     localizationsDelegates: GlobalMaterialLocalizations.delegates,
-                    supportedLocales: [
-                      //const Locale('en', 'US'), // American English
-                      //const Locale('ru', 'RU'), // Russian
-                      //const Locale("pt"), // Portuguese
-                      //const Locale('ar'),
-                      const Locale('ko',),// Arabic
+                    supportedLocales: const [
+                      Locale('ko')
                     ],
                     title: 'Etiquette', //앱 이름 etiquette으로 설정
                     theme: (theme ? ThemeData.dark() : ThemeData.light()),
@@ -83,14 +75,10 @@ class _MyApp extends State<MyApp>{
                 return GetMaterialApp(
                     debugShowCheckedModeBanner: false,
                     localizationsDelegates: GlobalMaterialLocalizations.delegates,
-                    supportedLocales: [
-                      //const Locale('en', 'US'), // American English
-                      //const Locale('ru', 'RU'), // Russian
-                      //const Locale("pt"), // Portuguese
-                      //const Locale('ar'),
-                      const Locale('ko',),// Arabic
+                    supportedLocales: const [
+                       Locale('ko')
                     ],
-                    title: 'Etiquette', //앱 이름 etiquette으로 설정
+                    title: 'Etiquette', // 앱 이름 etiquette으로 설정
                     theme: (theme ? ThemeData.dark() : ThemeData.light()),
                     home: const Login() // 최초 페이지로 Login()실행
                 );
