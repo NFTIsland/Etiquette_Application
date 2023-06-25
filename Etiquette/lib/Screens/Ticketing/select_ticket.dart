@@ -11,6 +11,7 @@ import 'package:Etiquette/Providers/Coinone/get_klay_currency.dart';
 import 'package:Etiquette/Providers/DB/get_ticket_seat_image_url.dart';
 import 'package:Etiquette/widgets/event.dart';
 import 'package:Etiquette/widgets/day_picker_page.dart';
+import 'package:Etiquette/Widgets/AlertDialogWidget.dart';
 
 class SelectTicket extends StatefulWidget {
   String? product_name;
@@ -138,6 +139,8 @@ class _SelectTicket extends State<SelectTicket> {
         }
       } else {
         _performanceDate = [];
+        await displayDialog_checkonly(context, "티켓 선택", "예매할 수 있는 티켓이 없습니다.");
+        Navigator.of(context).pop();
       }
     } catch (ex) {
       print("티켓 선택 --> ${ex.toString()}");
