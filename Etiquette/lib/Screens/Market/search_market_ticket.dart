@@ -135,11 +135,11 @@ class _SearchMarketTicket extends State<SearchMarketTicket> {
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(8),
                                           borderSide: BorderSide(
-                                            color: Theme.of(context).accentColor,
+                                            color: Theme.of(context).colorScheme.secondary,
                                           ),
                                         ),
                                         suffixIcon: IconButton(
-                                          color: Theme.of(context).accentColor,
+                                          color: Theme.of(context).colorScheme.secondary,
                                           icon: const Icon(
                                               Icons.search,
                                               size: 30
